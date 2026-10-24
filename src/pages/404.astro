@@ -1,0 +1,30 @@
+---
+// 404 com personalidade: provoca, mas acolhe e devolve a pessoa para o conteúdo.
+import Base from '../layouts/Base.astro';
+---
+<Base title="Página não encontrada · Quinta do Desabafo" description="Essa página não existe. Volte para a edição da semana ou para o arquivo de desabafos.">
+  <section class="erro escuro">
+    <div class="wrap">
+      <p class="numero" aria-hidden="true">4<span class="destaque">0</span>4</p>
+      <h1>Esse lead não <span class="destaque">existe</span>.</h1>
+      <p class="texto">Procurei no funil inteiro e essa página não está em nenhuma etapa. Ou o link veio errado, ou ela foi desqualificada antes da reunião.</p>
+      <p class="texto">Pelo menos aqui ninguém vai te pedir para "dar um follow-up".</p>
+      <nav class="saidas" aria-label="Para onde ir">
+        <a class="link" href="/">Ler o desabafo da semana →</a>
+        <a class="link" href="/desabafos">Ver todos os desabafos →</a>
+      </nav>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .erro { min-height: 78svh; display: flex; align-items: center; padding-block: clamp(64px, 10vw, 140px); }
+  .numero {
+    font-family: var(--serif); font-weight: var(--peso-serif);
+    font-size: clamp(7rem, 22vw, 16rem); line-height: 0.85; letter-spacing: -0.04em; margin: 0 0 0.15em;
+  }
+  h1 { font-size: clamp(var(--fs-3), 5vw, var(--fs-5)); margin: 0 0 0.6em; max-width: 16ch; }
+  .texto { font-size: var(--fs-2); line-height: 1.45; max-width: 34ch; margin: 0 0 0.8em; }
+  .saidas { display: flex; flex-wrap: wrap; gap: 1rem 2.4rem; margin-top: 2.4rem; font-weight: 500; }
+  @media (max-width: 900px) { .texto { font-size: 1.3rem; } }
+</style>

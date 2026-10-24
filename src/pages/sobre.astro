@@ -1,0 +1,61 @@
+---
+// Página Sobre: essencial para o E-E-A-T (quem escreve e por que confiar).
+// O texto fica em src/paginas/sobre.mdx.
+import Base from '../layouts/Base.astro';
+import Retrato from '../components/Retrato.astro';
+import Pendente from '../components/artigo/Pendente.astro';
+import { Content as Texto } from '../paginas/sobre.mdx';
+import { SITE } from '../lib/site';
+---
+<Base
+  title="Sobre Letícia Ferracioli · Quinta do Desabafo"
+  description="Letícia Ferracioli é supervisora comercial, com mais de 8 anos em marketing digital e liderança de times de vendas. Conheça a autora da Quinta do Desabafo."
+>
+  <header class="abertura-sobre escuro">
+    <div class="wrap grade">
+      <div class="texto">
+        <p class="kicker">Sobre a autora</p>
+        <h1>Letícia <span class="destaque">Ferracioli</span></h1>
+        <p class="cargo">Supervisora comercial · mais de 8 anos em marketing digital e liderança de times de vendas</p>
+        <p class="temas">Escreve sobre gestão comercial, vendas, IA aplicada a vendas e marketing digital.</p>
+      </div>
+      <div class="foto"><Retrato prioridade sizes="(max-width: 900px) 60vw, 380px" /></div>
+    </div>
+  </header>
+
+  <div class="wrap conteudo">
+    <Texto components={{ Pendente }} />
+
+    <h2 id="onde-me-encontrar">Onde me encontrar</h2>
+    <ul class="redes">
+      <li><a class="link" href={SITE.instagram} rel="me">Instagram · @leferracioli</a></li>
+      <li><a class="link" href={SITE.linkedin} rel="me">LinkedIn · Letícia Ferracioli</a></li>
+    </ul>
+  </div>
+</Base>
+
+<style>
+  .abertura-sobre { padding-block: clamp(56px, 8vw, 110px) clamp(64px, 8vw, 110px); }
+  .grade { display: grid; grid-template-columns: repeat(12, 1fr); gap: var(--gutter); align-items: end; }
+  .texto { grid-column: 1 / span 7; align-self: center; }
+  h1 { font-size: clamp(var(--fs-4), 7vw, var(--fs-7)); letter-spacing: -0.02em; margin: 0.3em 0 0.4em; }
+  .cargo { font-size: var(--fs-2); line-height: 1.4; max-width: 30ch; margin: 0 0 1rem; }
+  .temas { color: var(--taupe); margin: 0; }
+  .foto { grid-column: 9 / span 4; padding-top: 60px; }
+
+  .conteudo { max-width: calc(var(--medida) + 2 * var(--gutter)); padding-block: clamp(56px, 8vw, 100px) clamp(72px, 10vw, 140px); }
+  .conteudo :global(h2) { font-size: var(--fs-3); margin: 1.8em 0 0.6em; }
+  .conteudo :global(h2:first-child) { margin-top: 0; }
+  .conteudo :global(p) { margin: 0 0 1.3em; }
+  .conteudo :global(ul) { list-style: none; padding: 0; margin: 0 0 1.3em; }
+  .conteudo :global(li) { position: relative; padding-left: 1.5rem; margin-bottom: 0.6em; }
+  .conteudo :global(li::before) { content: ''; position: absolute; left: 0; top: 0.8em; width: 0.75rem; height: 2px; background: var(--laranja); }
+  .conteudo :global(.pendente) { background: rgba(224, 102, 47, 0.18); color: inherit; padding: 0.1em 0.4em; border-left: 3px solid var(--laranja); }
+  .redes a { font-weight: 500; }
+
+  @media (max-width: 900px) {
+    .texto, .foto { grid-column: 1 / -1; }
+    .foto { order: -1; max-width: 240px; padding-top: 50px; }
+    .cargo { font-size: 1.35rem; }
+  }
+</style>

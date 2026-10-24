@@ -1,26 +1,104 @@
 ---
-// Home provisória: a "edição da semana" com sumário entra na Etapa 3.
+// Home: a edição da semana como capa de revista + o sumário das edições anteriores.
 import Base from '../layouts/Base.astro';
-import { getArtigos, numeroEdicao } from '../lib/artigos';
-const artigos = await getArtigos();
+import Retrato from '../components/Retrato.astro';
+import TituloDestaque from '../components/TituloDestaque.astro';
+import ListaEdicoes from '../components/ListaEdicoes.astro';
+import { getArtigos, numeroEdicao, dataCurta, primeirasFrases } from '../lib/artigos';
+
+const [atual, ...anteriores] = await getArtigos();
 ---
-<Base title="Quinta do Desabafo · Letícia Ferracioli" description="Toda quinta, um desabafo sobre vendas, gestão comercial, IA em vendas e marketing digital, por Letícia Ferracioli.">
-  <section class="wrap provisoria">
-    <p class="kicker">Home provisória · Etapa 1</p>
-    <h1>Desabafos</h1>
-    <ol>
-      {artigos.map((a) => (
-        <li>
-          <a class="link" href={`/desabafos/${a.data.slug}`}>Nº {numeroEdicao(a.data.edicao)} · {a.data.title}</a>
-          {a.data.draft && <span class="kicker"> (rascunho, só aparece no dev)</span>}
-        </li>
-      ))}
-    </ol>
+<Base
+  title="Quinta do Desabafo · Letícia Ferracioli"
+  description="Toda quinta, um desabafo sobre vendas, gestão comercial, IA em vendas e marketing digital: a notícia da semana, os dados e a visão de quem lidera time comercial."
+>
+  <h1 class="sr-only">Quinta do Desabafo, o blog de Letícia Ferracioli sobre vendas, gestão comercial, IA em vendas e marketing digital</h1>
+
+  <section class="capa-sec escuro">
+    <div class="wrap capa">
+      <div class="capa-texto">
+        {atual ? (
+          <>
+            <p class="kicker">{atual.data.tema} · Desabafo Nº {numeroEdicao(atual.data.edicao)} · {dataCurta(atual.data.publishedAt)}</p>
+            <a class="capa-link" href={`/desabafos/${atual.data.slug}`}>
+              <TituloDestaque tag="h2" class="capa-titulo" titulo={atual.data.title} destaque={atual.data.palavraDestaque} />
+            </a>
+            <p class="capa-lead">{primeirasFrases(atual.data.resumoDireto, 2)}</p>
+            <a class="link capa-cta" href={`/desabafos/${atual.data.slug}`}>Ler o desabafo →</a>
+          </>
+        ) : (
+          <>
+            <p class="kicker">Toda quinta-feira</p>
+            <h2 class="capa-titulo">O primeiro desabafo sai na <span class="destaque">quinta</span></h2>
+            <p class="capa-lead">A notícia da semana sobre vendas, gestão comercial e IA, com dados, outras vozes e a minha visão de quem está na operação.</p>
+          </>
+        )}
+      </div>
+      <div class="capa-foto">
+        <Retrato prioridade />
+        <div class="capa-numero" aria-hidden="true"><small>Nº</small>{numeroEdicao(atual?.data.edicao ?? 1)}</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap sumario" aria-labelledby="sumario">
+    <div class="sumario-head">
+      <h2 id="sumario">Edições anteriores</h2>
+      <a class="link kicker" href="/desabafos">Ver arquivo →</a>
+    </div>
+    {anteriores.length > 0 ? (
+      <ListaEdicoes artigos={anteriores} />
+    ) : (
+      <p class="vazio">Esta é a primeira edição. As próximas vão aparecendo aqui, toda quinta.</p>
+    )}
+  </section>
+
+  <section class="quem escuro" aria-labelledby="quem">
+    <div class="wrap quem-grid">
+      <p class="kicker">Quem escreve</p>
+      <h2 id="quem">Letícia Ferracioli</h2>
+      <p>Supervisora comercial, com mais de 8 anos em marketing digital e liderança de times de vendas. Primeiro eu cutuco no Instagram, depois eu explico aqui.</p>
+      <a class="link" href="/sobre">Conheça a autora →</a>
+    </div>
   </section>
 </Base>
 
 <style>
-  .provisoria { padding-block: 80px 120px; }
-  h1 { font-size: var(--fs-5); margin: 0.3em 0 0.6em; }
-  ol { padding-left: 1.2rem; }
+  .capa {
+    display: grid; grid-template-columns: repeat(12, 1fr); gap: var(--gutter);
+    padding-block: clamp(48px, 6vw, 88px) clamp(64px, 8vw, 110px);
+  }
+  .capa-texto { grid-column: 1 / span 7; align-self: center; }
+  .capa-link { text-decoration: none; }
+  .capa :global(.capa-titulo) { font-size: clamp(var(--fs-4), 6.4vw, var(--fs-6)); margin: 0.4em 0 0.45em; letter-spacing: -0.015em; }
+  .capa-link:hover :global(.capa-titulo) { text-decoration: underline; text-decoration-color: var(--laranja); text-decoration-thickness: 3px; text-underline-offset: 0.12em; }
+  .capa-lead { font-size: var(--fs-2); line-height: 1.45; max-width: 30ch; margin: 0 0 1.6em; }
+  .capa-cta { font-weight: 500; }
+  .capa-foto { grid-column: 8 / span 5; position: relative; align-self: end; }
+  .capa-numero {
+    position: absolute; left: -0.72em; bottom: -0.18em; z-index: 2;
+    font-family: var(--serif); font-weight: var(--peso-serif); font-size: clamp(6rem, 15vw, 14rem); line-height: 1;
+  }
+  .capa-numero small { font-size: 0.22em; font-style: italic; vertical-align: top; margin-right: 0.08em; }
+
+  .sumario { padding-block: clamp(56px, 8vw, 110px); }
+  .sumario-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    border-top: 1px solid var(--carvao); padding-top: 1.2rem; margin-bottom: 1rem;
+  }
+  .sumario-head h2 { font-size: var(--fs-3); font-style: italic; }
+  .vazio { color: var(--taupe-tinta); border-top: 1px solid var(--pedra); padding-top: 1.2rem; }
+
+  .quem { padding-block: clamp(56px, 8vw, 100px); }
+  .quem-grid > * { max-width: 760px; }
+  .quem h2 { font-size: var(--fs-4); margin: 0.3em 0 0.4em; }
+  .quem p:not(.kicker) { font-size: var(--fs-2); line-height: 1.45; margin: 0 0 1.2em; }
+  .quem a { font-weight: 500; }
+
+  @media (max-width: 900px) {
+    .capa-texto, .capa-foto { grid-column: 1 / -1; }
+    .capa-foto { order: -1; max-width: 300px; width: 72%; margin: 40px auto 0 1.6rem; }
+    .capa-numero { left: -0.15em; }
+    .capa-lead { font-size: 1.35rem; }
+  }
 </style>

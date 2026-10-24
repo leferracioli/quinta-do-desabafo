@@ -30,3 +30,17 @@ export const dataLonga = (d: Date) =>
 
 /** 7 → "07" */
 export const numeroEdicao = (n: number) => String(n).padStart(2, '0');
+
+/** 24 out 2026 */
+export const dataCurta = (d: Date) =>
+  d.toLocaleDateString('pt-BR', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' }).replace(/\./g, '').replace(/ de /g, ' ');
+
+/** As primeiras n frases de um texto (para a capa da home) */
+export function primeirasFrases(texto: string, n = 2): string {
+  const frases = texto.match(/[^.!?]+[.!?]+/g) ?? [texto];
+  return frases.slice(0, n).join('').trim();
+}
+
+/** "gestão comercial" → "gestao-comercial" (endereço da página do tema) */
+export const temaSlug = (tema: string) =>
+  tema.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-');

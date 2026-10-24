@@ -1,0 +1,63 @@
+---
+// Arquivo de todos os Desabafos, com filtro por tema.
+// Cada tema é uma página estática própria (/desabafos/tema/...): zero JS e indexável.
+import Base from '../layouts/Base.astro';
+import ListaEdicoes from './ListaEdicoes.astro';
+import { TEMAS, type Tema } from '../lib/temas';
+import { temaSlug, type Artigo } from '../lib/artigos';
+
+interface Props { artigos: Artigo[]; tema?: Tema }
+const { artigos, tema } = Astro.props;
+const lista = tema ? artigos.filter((a) => a.data.tema === tema) : artigos;
+const total = lista.length;
+
+const titulo = tema ? `Desabafos sobre ${tema}` : 'Todos os Desabafos';
+const descricao = tema
+  ? `Todos os artigos da Quinta do Desabafo sobre ${tema}, por Letícia Ferracioli.`
+  : 'O arquivo completo da Quinta do Desabafo: artigos semanais sobre vendas, gestão comercial, IA em vendas e marketing digital.';
+---
+<Base title={`${titulo} · Quinta do Desabafo`} description={descricao}>
+  <header class="topo-arquivo escuro">
+    <div class="wrap">
+      <p class="kicker">Arquivo</p>
+      <h1>{tema ? <>Desabafos sobre <span class="destaque">{tema}</span></> : <>Todos os <span class="destaque">Desabafos</span></>}</h1>
+      <p class="contagem">{total === 0 ? 'Nenhuma edição ainda' : total === 1 ? '1 edição' : `${total} edições`}</p>
+    </div>
+  </header>
+
+  <div class="wrap corpo-arquivo">
+    <nav class="filtro" aria-label="Filtrar por tema">
+      <a href="/desabafos" aria-current={!tema ? 'page' : undefined}>Todos</a>
+      {TEMAS.map((t) => (
+        <a href={`/desabafos/tema/${temaSlug(t)}`} aria-current={t === tema ? 'page' : undefined}>{t}</a>
+      ))}
+    </nav>
+
+    {total > 0 ? (
+      <ListaEdicoes artigos={lista} nivel="h2" />
+    ) : (
+      <p class="vazio">
+        {tema ? <>Ainda não tem desabafo sobre {tema}. <a class="link" href="/desabafos">Ver todos →</a></> : 'A primeira edição sai na próxima quinta.'}
+      </p>
+    )}
+  </div>
+</Base>
+
+<style>
+  .topo-arquivo { padding-block: clamp(56px, 8vw, 110px) clamp(40px, 6vw, 72px); }
+  h1 { font-size: clamp(var(--fs-4), 7vw, var(--fs-7)); letter-spacing: -0.02em; margin: 0.3em 0 0.3em; max-width: 16ch; }
+  .contagem { color: var(--taupe); font-size: var(--fs-0); letter-spacing: 0.14em; text-transform: uppercase; margin: 0; }
+  .corpo-arquivo { padding-block: clamp(40px, 6vw, 72px) clamp(64px, 10vw, 140px); }
+  .filtro {
+    display: flex; flex-wrap: wrap; gap: 0.6rem 1.8rem; margin-bottom: clamp(32px, 5vw, 56px);
+    font-size: var(--fs-0); letter-spacing: 0.14em; text-transform: uppercase; font-weight: 500;
+  }
+  .filtro a {
+    text-decoration: none; color: var(--taupe-tinta); padding-bottom: 4px;
+    background: linear-gradient(var(--laranja), var(--laranja)) 0 100% / 0 2px no-repeat;
+    transition: background-size 0.35s ease, color 0.2s;
+  }
+  .filtro a:hover { color: var(--carvao); background-size: 100% 2px; }
+  .filtro a[aria-current='page'] { color: var(--carvao); background-size: 100% 2px; }
+  .vazio { color: var(--taupe-tinta); border-top: 1px solid var(--pedra); padding-top: 1.2rem; }
+</style>

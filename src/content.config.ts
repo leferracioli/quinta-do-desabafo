@@ -3,8 +3,7 @@
 import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
-
-export const TEMAS = ['vendas', 'gestão comercial', 'IA em vendas', 'marketing digital'] as const;
+import { TEMAS } from './lib/temas';
 
 const artigos = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/artigos' }),

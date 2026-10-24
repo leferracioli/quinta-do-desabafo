@@ -1,0 +1,47 @@
+---
+// Índice tipográfico das edições (como o sumário de uma revista), sem cards.
+import { numeroEdicao, dataCurta, type Artigo } from '../lib/artigos';
+interface Props { artigos: Artigo[]; nivel?: 'h2' | 'h3' }
+const { artigos, nivel: Nivel = 'h3' } = Astro.props;
+---
+<ol class="edicoes">
+  {artigos.map((a) => (
+    <li>
+      <a href={`/desabafos/${a.data.slug}`}>
+        <span class="num" aria-label={`Desabafo Nº ${a.data.edicao}`}>{numeroEdicao(a.data.edicao)}</span>
+        <span class="titulo">
+          <Nivel class="texto">{a.data.title}</Nivel>
+          <span class="pontos" aria-hidden="true"></span>
+        </span>
+        <span class="meta">
+          {a.data.tema} · <time datetime={a.data.publishedAt.toISOString().slice(0, 10)}>{dataCurta(a.data.publishedAt)}</time>
+          {a.data.draft && ' · rascunho'}
+        </span>
+      </a>
+    </li>
+  ))}
+</ol>
+
+<style>
+  .edicoes { list-style: none; margin: 0; padding: 0; }
+  a {
+    display: grid; grid-template-columns: 4.5rem 1fr auto; align-items: baseline; gap: 1.2rem;
+    padding: 1.15rem 0; border-top: 1px solid var(--pedra); text-decoration: none;
+  }
+  li:last-child a { border-bottom: 1px solid var(--pedra); }
+  .num { font-family: var(--serif); font-weight: var(--peso-serif); font-size: var(--fs-3); line-height: 1; }
+  .titulo { display: flex; gap: 0.8rem; align-items: baseline; }
+  .texto {
+    font-family: var(--sans); font-size: var(--fs-1); font-weight: 500; line-height: 1.35;
+    background: linear-gradient(var(--laranja), var(--laranja)) 0 100% / 0 2px no-repeat;
+    transition: background-size 0.35s ease;
+  }
+  a:hover .texto, a:focus-visible .texto { background-size: 100% 2px; }
+  .pontos { flex: 1; min-width: 2rem; border-bottom: 1px dotted var(--taupe); transform: translateY(-0.3em); }
+  .meta { font-size: var(--fs-0); text-transform: uppercase; letter-spacing: 0.12em; color: var(--taupe-tinta); white-space: nowrap; }
+  @media (max-width: 900px) {
+    a { grid-template-columns: 3rem 1fr; gap: 0.4rem 1rem; }
+    .meta { grid-column: 2; white-space: normal; }
+    .pontos { display: none; }
+  }
+</style>

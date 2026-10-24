@@ -1,0 +1,12 @@
+---
+import Arquivo from '../../../components/Arquivo.astro';
+import { TEMAS } from '../../../lib/temas';
+import { getArtigos, temaSlug } from '../../../lib/artigos';
+
+export async function getStaticPaths() {
+  const artigos = await getArtigos();
+  return TEMAS.map((tema) => ({ params: { tema: temaSlug(tema) }, props: { tema, artigos } }));
+}
+const { tema, artigos } = Astro.props;
+---
+<Arquivo artigos={artigos} tema={tema} />
