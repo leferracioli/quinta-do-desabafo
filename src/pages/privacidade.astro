@@ -1,0 +1,32 @@
+---
+// Política de privacidade e cookies. O texto fica em src/paginas/privacidade.mdx.
+import Base from '../layouts/Base.astro';
+import { Content as Texto } from '../paginas/privacidade.mdx';
+import { migalhas } from '../lib/seo';
+const jsonLd = [migalhas(Astro.site!, [{ nome: 'Início', caminho: '/' }, { nome: 'Privacidade', caminho: '/privacidade/' }])];
+---
+<Base
+  title="Política de privacidade e cookies · Letícia Ferracioli"
+  description="Como o site leticiaferracioli.com.br coleta, usa e protege dados pessoais e cookies, de acordo com a LGPD."
+  jsonLd={jsonLd}
+>
+  <header class="topo-pagina escuro">
+    <div class="wrap">
+      <p class="kicker">Privacidade</p>
+      <h1>Política de privacidade e <span class="destaque">cookies</span></h1>
+    </div>
+  </header>
+  <div class="wrap conteudo">
+    <Texto />
+  </div>
+</Base>
+
+<style>
+  .topo-pagina { padding-block: clamp(56px, 8vw, 100px); }
+  h1 { font-size: clamp(var(--fs-4), 6vw, var(--fs-6)); letter-spacing: -0.02em; margin: 0.3em 0 0; max-width: 16ch; }
+  .conteudo { max-width: calc(var(--medida) + 2 * var(--gutter)); padding-block: clamp(48px, 7vw, 88px) clamp(72px, 10vw, 140px); }
+  .conteudo :global(h2) { font-size: var(--fs-2); margin: 1.8em 0 0.5em; }
+  .conteudo :global(p) { margin: 0 0 1.1em; }
+  .conteudo :global(ul) { padding-left: 1.2rem; margin: 0 0 1.1em; }
+  .conteudo :global(li) { margin-bottom: 0.4em; }
+</style>

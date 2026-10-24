@@ -17,7 +17,7 @@ const rotulo = maisNovo ? 'Próximo desabafo' : 'Desabafo anterior';
   <div class="wrap">
     <p class="kicker">{alvo ? rotulo : 'Próximo desabafo'}</p>
     {alvo ? (
-      <a class="bloco" href={`/desabafos/${alvo.data.slug}`}>
+      <a class="bloco" href={`/desabafos/${alvo.data.slug}/`}>
         <span class="num" aria-hidden="true">{numeroEdicao(alvo.data.edicao)}</span>
         <TituloDestaque tag="p" class="titulo" titulo={alvo.data.title} destaque={alvo.data.palavraDestaque} />
       </a>

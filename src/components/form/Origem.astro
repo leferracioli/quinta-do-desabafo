@@ -1,0 +1,39 @@
+---
+// Campos escondidos com a origem da visita (página, de onde veio e UTMs).
+// Guarda o PRIMEIRO contato da pessoa: se ela chegou por um post do Instagram e
+// voltou dias depois pelo Google, o lead registra o Instagram.
+---
+<input type="hidden" name="pagina" />
+<input type="hidden" name="referrer" />
+<input type="hidden" name="utm_source" />
+<input type="hidden" name="utm_medium" />
+<input type="hidden" name="utm_campaign" />
+<input type="hidden" name="utm_content" />
+
+<script>
+  const CHAVE = 'origem-visita';
+  const params = new URLSearchParams(location.search);
+  const agora = {
+    referrer: document.referrer && !document.referrer.startsWith(location.origin) ? document.referrer : '',
+    utm_source: params.get('utm_source') ?? '',
+    utm_medium: params.get('utm_medium') ?? '',
+    utm_campaign: params.get('utm_campaign') ?? '',
+    utm_content: params.get('utm_content') ?? '',
+  };
+  let origem = agora;
+  try {
+    const salva = JSON.parse(localStorage.getItem(CHAVE) ?? 'null');
+    const temAgora = agora.referrer || agora.utm_source;
+    if (salva) origem = salva;
+    else if (temAgora) localStorage.setItem(CHAVE, JSON.stringify(agora));
+  } catch { /* navegação privada: usa só a visita atual */ }
+
+  document.querySelectorAll<HTMLFormElement>('form[data-origem]').forEach((form) => {
+    const preencher = (nome: string, valor: string) => {
+      const campo = form.elements.namedItem(nome) as HTMLInputElement | null;
+      if (campo) campo.value = valor;
+    };
+    preencher('pagina', location.pathname);
+    for (const [nome, valor] of Object.entries(origem)) preencher(nome, valor);
+  });
+</script>

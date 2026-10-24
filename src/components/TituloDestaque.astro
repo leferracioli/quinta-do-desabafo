@@ -3,7 +3,7 @@
 interface Props {
   titulo: string;
   destaque: string;
-  tag?: 'h1' | 'h2' | 'p';
+  tag?: 'h1' | 'h2' | 'h3' | 'p';
   class?: string;
 }
 const { titulo, destaque, tag: Tag = 'h1', class: classe } = Astro.props;

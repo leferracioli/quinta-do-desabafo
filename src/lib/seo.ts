@@ -1,18 +1,19 @@
 // Dados estruturados (JSON-LD) para Google e buscadores com IA.
 import { SITE } from './site';
 import type { Artigo } from './artigos';
+import { SOLUCOES } from './solucoes';
 
 const url = (caminho: string, site: URL) => new URL(caminho, site).href;
 
 /** Identificador único da Letícia, referenciado em todas as páginas */
-export const idPessoa = (site: URL) => `${url('/sobre', site)}#leticia`;
+export const idPessoa = (site: URL) => `${url('/sobre/', site)}#leticia`;
 
 /** Person resumida (para author/publisher) */
 export const pessoaRef = (site: URL) => ({
   '@type': 'Person',
   '@id': idPessoa(site),
   name: SITE.autora,
-  url: url('/sobre', site),
+  url: url('/sobre/', site),
 });
 
 /** Person completa, usada na página Sobre */
@@ -41,14 +42,14 @@ export const siteWeb = (site: URL) => ({
   name: SITE.nome,
   url: url('/', site),
   inLanguage: 'pt-BR',
-  description: 'Toda quinta, um desabafo sobre vendas, gestão comercial, IA em vendas e marketing digital.',
+  description: 'Mentoria e consultoria comercial com Letícia Ferracioli, e a Quinta do Desabafo: toda quinta, vendas, gestão comercial, IA e marketing digital além da manchete.',
   publisher: { '@id': idPessoa(site) },
 });
 
 /** Article + FAQPage + BreadcrumbList de um Desabafo */
 export function grafoArtigo(artigo: Artigo, site: URL, imagem: string) {
   const d = artigo.data;
-  const caminho = `/desabafos/${d.slug}`;
+  const caminho = `/desabafos/${d.slug}/`;
   const grafo: object[] = [
     {
       '@type': 'Article',
@@ -69,7 +70,7 @@ export function grafoArtigo(artigo: Artigo, site: URL, imagem: string) {
     },
     migalhas(site, [
       { nome: 'Início', caminho: '/' },
-      { nome: 'Desabafos', caminho: '/desabafos' },
+      { nome: 'Quinta do Desabafo', caminho: '/desabafos/' },
       { nome: d.title, caminho },
     ]),
   ];
@@ -85,3 +86,17 @@ export function grafoArtigo(artigo: Artigo, site: URL, imagem: string) {
   }
   return grafo;
 }
+
+/** Mentoria e consultoria como Service, oferecidas pela Letícia */
+export const servicos = (site: URL) =>
+  SOLUCOES.map((s) => ({
+    '@type': 'Service',
+    '@id': `${url('/solucoes/', site)}#${s.id}`,
+    name: s.nome,
+    serviceType: s.nome,
+    description: `${s.paraQuem} ${s.resumo}`,
+    provider: { '@id': idPessoa(site) },
+    areaServed: { '@type': 'Country', name: 'Brasil' },
+    availableLanguage: 'pt-BR',
+    url: url(`/solucoes/#${s.id}`, site),
+  }));

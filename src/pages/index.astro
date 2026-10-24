@@ -1,107 +1,132 @@
 ---
-// Home: a edição da semana como capa de revista + o sumário das edições anteriores.
+// Home: quem é a Letícia, as soluções, o Desabafo da semana e o contato.
 import Base from '../layouts/Base.astro';
 import Retrato from '../components/Retrato.astro';
 import TituloDestaque from '../components/TituloDestaque.astro';
-import ListaEdicoes from '../components/ListaEdicoes.astro';
-import { getArtigos, numeroEdicao, dataCurta, primeirasFrases } from '../lib/artigos';
-import { siteWeb, pessoaRef } from '../lib/seo';
+import BotaoWhatsapp from '../components/BotaoWhatsapp.astro';
+import FormLead from '../components/form/FormLead.astro';
+import { getArtigos, numeroEdicao, primeirasFrases } from '../lib/artigos';
+import { SOLUCOES } from '../lib/solucoes';
+import { siteWeb, pessoaRef, servicos } from '../lib/seo';
 
-const [atual, ...anteriores] = await getArtigos();
-const jsonLd = [siteWeb(Astro.site!), pessoaRef(Astro.site!)];
+const [atual] = await getArtigos();
+const jsonLd = [siteWeb(Astro.site!), pessoaRef(Astro.site!), ...servicos(Astro.site!)];
 ---
 <Base
+  title="Letícia Ferracioli · Mentoria e consultoria comercial"
+  description="Mentoria e consultoria comercial com Letícia Ferracioli: equipes, processos, indicadores, CRM e automações. E toda quinta, a Quinta do Desabafo."
+  imagem="/og/inicio.png"
   jsonLd={jsonLd}
-  title="Quinta do Desabafo · Letícia Ferracioli"
-  description="Toda quinta, um desabafo sobre vendas, gestão comercial, IA em vendas e marketing digital: a notícia da semana, os dados e a visão de quem lidera time comercial."
 >
-  <h1 class="sr-only">Quinta do Desabafo, o blog de Letícia Ferracioli sobre vendas, gestão comercial, IA em vendas e marketing digital</h1>
+  <section class="hero escuro">
+    <div class="wrap hero-grade">
+      <div class="hero-texto">
+        <p class="kicker">Mentoria e consultoria comercial</p>
+        <h1>Vendas e gestão comercial, sem fórmula <span class="destaque">mágica</span>.</h1>
+        <p class="lead">Sou a Letícia Ferracioli. Trabalho com marketing digital desde 2018 e hoje atuo na gestão comercial: equipes, processos, indicadores, CRM e automações.</p>
+        <div class="acoes">
+          <BotaoWhatsapp variante="claro" />
+          <a class="link" href="/solucoes/">Conheça as soluções →</a>
+        </div>
+      </div>
+      <div class="hero-foto"><Retrato prioridade sizes="(max-width: 900px) 64vw, 420px" /></div>
+    </div>
+  </section>
 
-  <section class="capa-sec escuro">
-    <div class="wrap capa">
-      <div class="capa-texto">
+  <section class="wrap solucoes" aria-labelledby="como-ajudo">
+    <div class="cabeca">
+      <p class="kicker">Soluções</p>
+      <h2 id="como-ajudo">Como eu posso ajudar</h2>
+    </div>
+    <div class="lista">
+      {SOLUCOES.map((s, i) => (
+        <article class="solucao">
+          <span class="num" aria-hidden="true">{numeroEdicao(i + 1)}</span>
+          <TituloDestaque tag="h3" titulo={s.nome} destaque={s.destaque} />
+          <p class="para-quem">{s.paraQuem}</p>
+          <p>{s.resumo}</p>
+          <a class="link" href={`/solucoes/#${s.id}`}>Saber mais sobre a {s.nome.toLowerCase()} →</a>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="quinta escuro" aria-labelledby="quinta">
+    <div class="wrap quinta-grade">
+      <div>
+        <p class="kicker">Toda quinta-feira</p>
+        <h2 id="quinta">Quinta do <span class="destaque">Desabafo</span></h2>
+        <p class="sobre-quinta">Uma notícia da semana sobre vendas, gestão comercial, IA ou marketing digital, além da manchete: dados, outras vozes e o que eu vejo na prática.</p>
+      </div>
+      <div class="edicao">
         {atual ? (
           <>
-            <p class="kicker">{atual.data.tema} · Desabafo Nº {numeroEdicao(atual.data.edicao)} · {dataCurta(atual.data.publishedAt)}</p>
-            <a class="capa-link" href={`/desabafos/${atual.data.slug}`}>
-              <TituloDestaque tag="h2" class="capa-titulo" titulo={atual.data.title} destaque={atual.data.palavraDestaque} />
+            <p class="kicker">Nº {numeroEdicao(atual.data.edicao)} · {atual.data.tema}</p>
+            <a class="titulo-edicao" href={`/desabafos/${atual.data.slug}/`}>
+              <TituloDestaque tag="h3" titulo={atual.data.title} destaque={atual.data.palavraDestaque} />
             </a>
-            <p class="capa-lead">{primeirasFrases(atual.data.resumoDireto, 2)}</p>
-            <a class="link capa-cta" href={`/desabafos/${atual.data.slug}`}>Ler o desabafo →</a>
+            <p>{primeirasFrases(atual.data.resumoDireto, 2)}</p>
+            <p class="links"><a class="link" href={`/desabafos/${atual.data.slug}/`}>Ler o desabafo →</a><a class="link" href="/desabafos/">Todas as edições →</a></p>
           </>
         ) : (
-          <>
-            <p class="kicker">Toda quinta-feira</p>
-            <h2 class="capa-titulo">O primeiro desabafo sai na <span class="destaque">quinta</span></h2>
-            <p class="capa-lead">A notícia da semana sobre vendas, gestão comercial e IA, com dados, outras vozes e a minha visão de quem está na operação.</p>
-          </>
+          <p>O primeiro desabafo sai na próxima quinta.</p>
         )}
       </div>
-      <div class="capa-foto">
-        <Retrato prioridade />
-        <div class="capa-numero" aria-hidden="true"><small>Nº</small>{numeroEdicao(atual?.data.edicao ?? 1)}</div>
-      </div>
     </div>
   </section>
 
-  <section class="wrap sumario" aria-labelledby="sumario">
-    <div class="sumario-head">
-      <h2 id="sumario">Edições anteriores</h2>
-      <a class="link kicker" href="/desabafos">Ver arquivo →</a>
+  <section class="wrap contato" id="contato" aria-labelledby="conversar">
+    <div class="contato-texto">
+      <p class="kicker">Contato</p>
+      <h2 id="conversar">Vamos <span class="destaque">conversar</span>?</h2>
+      <p>Me conta o seu momento. A conversa começa entendendo o que está acontecendo na sua operação ou na sua liderança.</p>
+      <BotaoWhatsapp />
+      <p class="ou">ou deixe seus dados que eu te chamo:</p>
     </div>
-    {anteriores.length > 0 ? (
-      <ListaEdicoes artigos={anteriores} />
-    ) : (
-      <p class="vazio">Esta é a primeira edição. As próximas vão aparecendo aqui, toda quinta.</p>
-    )}
-  </section>
-
-  <section class="quem escuro" aria-labelledby="quem">
-    <div class="wrap quem-grid">
-      <p class="kicker">Quem escreve</p>
-      <h2 id="quem">Letícia Ferracioli</h2>
-      <p>Supervisora comercial, com mais de 8 anos em marketing digital e liderança de times de vendas. Primeiro eu cutuco no Instagram, depois eu explico aqui.</p>
-      <a class="link" href="/sobre">Conheça a autora →</a>
-    </div>
+    <FormLead />
   </section>
 </Base>
 
 <style>
-  .capa {
-    display: grid; grid-template-columns: repeat(12, 1fr); gap: var(--gutter);
-    padding-block: clamp(48px, 6vw, 88px) clamp(64px, 8vw, 110px);
-  }
-  .capa-texto { grid-column: 1 / span 7; align-self: center; }
-  .capa-link { text-decoration: none; }
-  .capa :global(.capa-titulo) { font-size: clamp(var(--fs-4), 6.4vw, var(--fs-6)); margin: 0.4em 0 0.45em; letter-spacing: -0.015em; }
-  .capa-link:hover :global(.capa-titulo) { text-decoration: underline; text-decoration-color: var(--laranja); text-decoration-thickness: 3px; text-underline-offset: 0.12em; }
-  .capa-lead { font-size: var(--fs-2); line-height: 1.45; max-width: 30ch; margin: 0 0 1.6em; }
-  .capa-cta { font-weight: 500; }
-  .capa-foto { grid-column: 8 / span 5; position: relative; align-self: end; }
-  .capa-numero {
-    position: absolute; left: -0.72em; bottom: -0.18em; z-index: 2;
-    font-family: var(--serif); font-weight: var(--peso-serif); font-size: clamp(6rem, 15vw, 14rem); line-height: 1;
-  }
-  .capa-numero small { font-size: 0.22em; font-style: italic; vertical-align: top; margin-right: 0.08em; }
+  .hero { padding-block: clamp(48px, 7vw, 100px) 0; overflow: hidden; }
+  .hero-grade { display: grid; grid-template-columns: repeat(12, 1fr); gap: var(--gutter); align-items: end; }
+  .hero-texto { grid-column: 1 / span 7; align-self: center; padding-bottom: clamp(48px, 7vw, 100px); }
+  h1 { font-size: clamp(var(--fs-4), 6.4vw, var(--fs-6)); letter-spacing: -0.015em; margin: 0.4em 0 0.45em; }
+  .lead { font-size: var(--fs-2); line-height: 1.45; max-width: 32ch; margin: 0 0 1.8em; }
+  .acoes { display: flex; flex-wrap: wrap; align-items: center; gap: 1.2rem 2rem; font-weight: 500; }
+  .hero-foto { grid-column: 8 / span 5; padding-top: 60px; }
 
-  .sumario { padding-block: clamp(56px, 8vw, 110px); }
-  .sumario-head {
-    display: flex; justify-content: space-between; align-items: baseline;
-    border-top: 1px solid var(--carvao); padding-top: 1.2rem; margin-bottom: 1rem;
-  }
-  .sumario-head h2 { font-size: var(--fs-3); font-style: italic; }
-  .vazio { color: var(--taupe-tinta); border-top: 1px solid var(--pedra); padding-top: 1.2rem; }
+  .solucoes { padding-block: clamp(64px, 9vw, 120px); }
+  .cabeca { border-top: 1px solid var(--carvao); padding-top: 1.2rem; margin-bottom: clamp(32px, 5vw, 56px); }
+  .cabeca h2 { font-size: var(--fs-4); margin-top: 0.3em; }
+  .lista { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(40px, 6vw, 96px); }
+  .solucao .num { font-family: var(--serif); font-weight: var(--peso-serif); font-size: var(--fs-5); line-height: 1; color: var(--pedra); }
+  .solucao :global(h3) { font-size: var(--fs-3); margin: 0.2em 0 0.4em; }
+  .para-quem { font-weight: 500; }
+  .solucao p { margin: 0 0 1em; max-width: 46ch; }
+  .solucao .link { font-weight: 500; }
 
-  .quem { padding-block: clamp(56px, 8vw, 100px); }
-  .quem-grid > * { max-width: 760px; }
-  .quem h2 { font-size: var(--fs-4); margin: 0.3em 0 0.4em; }
-  .quem p:not(.kicker) { font-size: var(--fs-2); line-height: 1.45; margin: 0 0 1.2em; }
-  .quem a { font-weight: 500; }
+  .quinta { padding-block: clamp(64px, 9vw, 120px); }
+  .quinta-grade { display: grid; grid-template-columns: 5fr 7fr; gap: clamp(32px, 6vw, 96px); }
+  .quinta h2 { font-size: var(--fs-4); margin: 0.3em 0 0.4em; }
+  .sobre-quinta { color: var(--areia); margin: 0; max-width: 38ch; }
+  .edicao { border-top: 1px solid var(--linha-escura); padding-top: 1.2rem; }
+  .titulo-edicao { text-decoration: none; }
+  .titulo-edicao :global(h3) { font-size: var(--fs-3); margin: 0.3em 0 0.5em; }
+  .titulo-edicao:hover :global(h3) { text-decoration: underline; text-decoration-color: var(--laranja); text-underline-offset: 0.12em; }
+  .edicao p { max-width: 52ch; }
+  .links { display: flex; flex-wrap: wrap; gap: 0.8rem 2rem; font-weight: 500; }
+
+  .contato { display: grid; grid-template-columns: 5fr 7fr; gap: clamp(32px, 6vw, 96px); padding-block: clamp(64px, 9vw, 120px); }
+  .contato h2 { font-size: var(--fs-4); margin: 0.3em 0 0.4em; }
+  .contato-texto p:not(.kicker) { max-width: 38ch; }
+  .ou { color: var(--taupe-tinta); font-size: var(--fs-0); margin-top: 1.6rem; }
 
   @media (max-width: 900px) {
-    .capa-texto, .capa-foto { grid-column: 1 / -1; }
-    .capa-foto { order: -1; max-width: 300px; width: 72%; margin: 40px auto 0 1.6rem; }
-    .capa-numero { left: -0.15em; }
-    .capa-lead { font-size: 1.35rem; }
+    .hero-texto, .hero-foto { grid-column: 1 / -1; }
+    .hero-foto { order: -1; max-width: 280px; width: 70%; margin: 30px auto 0 1.6rem; padding-top: 50px; }
+    .hero-texto { padding-bottom: 56px; }
+    .lead { font-size: 1.35rem; }
+    .lista, .quinta-grade, .contato { grid-template-columns: 1fr; }
   }
 </style>

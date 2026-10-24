@@ -1,0 +1,10 @@
+---
+import Aviso from '../components/Aviso.astro';
+import BotaoWhatsapp from '../components/BotaoWhatsapp.astro';
+---
+<Aviso pageTitle="Não foi possível enviar · Letícia Ferracioli" titulo="Algo deu errado no envio." destaque="errado" texto="Não consegui registrar o formulário. Confira se os campos obrigatórios estão preenchidos ou fale direto comigo pelo WhatsApp.">
+  <nav aria-label="Alternativas">
+    <BotaoWhatsapp variante="claro" />
+    <a class="link" href="javascript:history.back()">Voltar e tentar de novo</a>
+  </nav>
+</Aviso>

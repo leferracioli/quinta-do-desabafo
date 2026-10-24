@@ -1,0 +1,77 @@
+---
+// Soluções: mentoria e consultoria comercial, com chamada para o WhatsApp.
+// Os textos ficam em src/lib/solucoes.ts.
+import Base from '../layouts/Base.astro';
+import TituloDestaque from '../components/TituloDestaque.astro';
+import BotaoWhatsapp from '../components/BotaoWhatsapp.astro';
+import { SOLUCOES } from '../lib/solucoes';
+import { numeroEdicao } from '../lib/artigos';
+import { servicos, migalhas } from '../lib/seo';
+
+const jsonLd = [
+  ...servicos(Astro.site!),
+  migalhas(Astro.site!, [{ nome: 'Início', caminho: '/' }, { nome: 'Soluções', caminho: '/solucoes/' }]),
+];
+---
+<Base
+  title="Mentoria e consultoria comercial · Letícia Ferracioli"
+  description="Mentoria para quem lidera times de vendas e consultoria para organizar a operação comercial: processos, indicadores, CRM e automações. Fale com a Letícia."
+  imagem="/og/inicio.png"
+  jsonLd={jsonLd}
+>
+  <header class="topo-pagina escuro">
+    <div class="wrap">
+      <p class="kicker">Soluções</p>
+      <h1>Mentoria e consultoria <span class="destaque">comercial</span></h1>
+      <p class="lead">Vendas não acontecem isoladas. Tem muita coisa antes, durante e depois de uma venda, e é aí que mora boa parte dos problemas que a gente tenta resolver só cobrando mais resultado do time.</p>
+    </div>
+  </header>
+
+  <div class="wrap corpo">
+    {SOLUCOES.map((s, i) => (
+      <section class="solucao" id={s.id}>
+        <span class="num" aria-hidden="true">{numeroEdicao(i + 1)}</span>
+        <div>
+          <TituloDestaque tag="h2" titulo={s.nome} destaque={s.destaque} class="titulo" />
+          <p class="para-quem">{s.paraQuem}</p>
+          <p>{s.resumo}</p>
+          <h3>O que costuma entrar na conversa</h3>
+          <ul>{s.temas.map((t) => <li>{t}</li>)}</ul>
+        </div>
+      </section>
+    ))}
+
+    <section class="como" aria-labelledby="como-funciona">
+      <h2 id="como-funciona">Como começa</h2>
+      <p>Tudo começa com uma conversa para entender o seu momento: o que está acontecendo no time, no processo ou na sua liderança. A partir dela, a gente define juntos qual formato faz sentido.</p>
+      <BotaoWhatsapp texto="Tenho interesse: chamar no WhatsApp" />
+      <p class="alternativa">Prefere que eu te chame? <a class="link" href="/contato/">Deixe seus dados aqui →</a></p>
+    </section>
+  </div>
+</Base>
+
+<style>
+  .topo-pagina { padding-block: clamp(56px, 8vw, 110px); }
+  h1 { font-size: clamp(var(--fs-4), 7vw, var(--fs-7)); letter-spacing: -0.02em; margin: 0.3em 0 0.4em; max-width: 14ch; }
+  .lead { font-size: var(--fs-2); line-height: 1.45; max-width: 40ch; margin: 0; }
+  .corpo { padding-block: clamp(56px, 8vw, 110px); max-width: 1000px; }
+  .solucao { display: grid; grid-template-columns: 7rem 1fr; gap: var(--gutter); border-top: 1px solid var(--carvao); padding: 2rem 0 clamp(48px, 7vw, 88px); scroll-margin-top: 20px; }
+  .num { font-family: var(--serif); font-weight: var(--peso-serif); font-size: var(--fs-6); line-height: 0.9; color: var(--pedra); }
+  .solucao :global(.titulo) { font-size: var(--fs-4); margin: 0 0 0.4em; }
+  .para-quem { font-size: var(--fs-2); line-height: 1.4; margin: 0 0 0.8em; }
+  .solucao p { max-width: var(--medida); }
+  h3 { font-family: var(--sans); font-size: var(--fs-0); font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--taupe-tinta); margin: 1.6em 0 0.6em; }
+  ul { list-style: none; padding: 0; margin: 0; }
+  li { position: relative; padding-left: 1.5rem; margin-bottom: 0.5em; }
+  li::before { content: ''; position: absolute; left: 0; top: 0.8em; width: 0.75rem; height: 2px; background: var(--laranja); }
+  .como { background: var(--pedra); padding: clamp(32px, 5vw, 56px); margin-top: 1rem; }
+  .como h2 { font-size: var(--fs-4); margin: 0 0 0.4em; }
+  .como p { max-width: var(--medida); }
+  .alternativa { font-size: var(--fs-0); margin-top: 1.4rem; }
+  .alternativa .link { font-weight: 500; }
+  @media (max-width: 700px) {
+    .solucao { grid-template-columns: 1fr; gap: 0.4rem; }
+    .num { font-size: var(--fs-5); }
+    .lead, .para-quem { font-size: 1.3rem; }
+  }
+</style>

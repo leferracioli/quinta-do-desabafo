@@ -1,0 +1,53 @@
+---
+import Base from '../layouts/Base.astro';
+import BotaoWhatsapp from '../components/BotaoWhatsapp.astro';
+import FormLead from '../components/form/FormLead.astro';
+import { SITE } from '../lib/site';
+import { migalhas } from '../lib/seo';
+const jsonLd = [migalhas(Astro.site!, [{ nome: 'Início', caminho: '/' }, { nome: 'Contato', caminho: '/contato/' }])];
+---
+<Base
+  title="Contato · Letícia Ferracioli"
+  description="Fale com a Letícia Ferracioli sobre mentoria ou consultoria comercial, pelo WhatsApp ou deixando seus dados."
+  imagem="/og/inicio.png"
+  jsonLd={jsonLd}
+>
+  <header class="topo-pagina escuro">
+    <div class="wrap">
+      <p class="kicker">Contato</p>
+      <h1>Vamos <span class="destaque">conversar</span>?</h1>
+      <p class="lead">Sobre mentoria, consultoria ou só para trocar uma ideia sobre a sua operação comercial.</p>
+    </div>
+  </header>
+
+  <div class="wrap grade">
+    <div class="canais">
+      <h2>O jeito mais rápido</h2>
+      <p>Me chama no WhatsApp: a mensagem já vai pronta.</p>
+      <BotaoWhatsapp />
+      <p class="numero">{SITE.telefone}</p>
+      <h2 class="h-redes">Também estou aqui</h2>
+      <ul>
+        <li><a class="link" href={SITE.instagram} rel="me">Instagram · @leferracioli</a></li>
+        <li><a class="link" href={SITE.linkedin} rel="me">LinkedIn · Letícia Ferracioli</a></li>
+      </ul>
+    </div>
+    <div>
+      <h2>Ou deixe seus dados que eu te chamo</h2>
+      <FormLead />
+    </div>
+  </div>
+</Base>
+
+<style>
+  .topo-pagina { padding-block: clamp(56px, 8vw, 110px); }
+  h1 { font-size: clamp(var(--fs-4), 7vw, var(--fs-7)); letter-spacing: -0.02em; margin: 0.3em 0 0.4em; }
+  .lead { font-size: var(--fs-2); line-height: 1.45; max-width: 36ch; margin: 0; }
+  .grade { display: grid; grid-template-columns: 5fr 7fr; gap: clamp(32px, 6vw, 96px); padding-block: clamp(56px, 8vw, 110px); }
+  h2 { font-size: var(--fs-3); margin: 0 0 0.6em; }
+  .h-redes { margin-top: 2.4rem; font-size: var(--fs-2); }
+  .numero { font-size: var(--fs-0); color: var(--taupe-tinta); letter-spacing: 0.06em; margin-top: 0.8rem; }
+  ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.6rem; }
+  ul .link { font-weight: 500; }
+  @media (max-width: 900px) { .grade { grid-template-columns: 1fr; } .lead { font-size: 1.3rem; } }
+</style>

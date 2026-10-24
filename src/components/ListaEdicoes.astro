@@ -7,7 +7,7 @@ const { artigos, nivel: Nivel = 'h3' } = Astro.props;
 <ol class="edicoes">
   {artigos.map((a) => (
     <li>
-      <a href={`/desabafos/${a.data.slug}`}>
+      <a href={`/desabafos/${a.data.slug}/`}>
         <span class="num" aria-label={`Desabafo Nº ${a.data.edicao}`}>{numeroEdicao(a.data.edicao)}</span>
         <span class="titulo">
           <Nivel class="texto">{a.data.title}</Nivel>

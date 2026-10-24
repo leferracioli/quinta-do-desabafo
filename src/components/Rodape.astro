@@ -2,20 +2,39 @@
 import { SITE } from '../lib/site';
 ---
 <footer class="rodape escuro">
-  <div class="wrap">
-    <span>{SITE.nome} · {SITE.autora} · {new Date().getFullYear()}</span>
-    <span class="redes">
+  <div class="wrap grade">
+    <div>
+      <p class="marca">Letícia <em>Ferracioli</em></p>
+      <p class="sub">Mentoria e consultoria comercial · Quinta do Desabafo</p>
+    </div>
+    <nav aria-label="Rodapé">
+      <a class="link" href="/solucoes/">Soluções</a>
+      <a class="link" href="/desabafos/">Quinta do Desabafo</a>
+      <a class="link" href="/sobre/">Sobre</a>
+      <a class="link" href="/contato/">Contato</a>
+    </nav>
+    <nav aria-label="Redes e contato">
+      <a class="link" href={SITE.whatsapp} target="_blank" rel="noopener">WhatsApp</a>
       <a class="link" href={SITE.instagram} rel="me">Instagram</a>
       <a class="link" href={SITE.linkedin} rel="me">LinkedIn</a>
-    </span>
+      <a class="link" href="/rss.xml">RSS</a>
+    </nav>
+  </div>
+  <div class="wrap base">
+    <span>© {new Date().getFullYear()} {SITE.autora}</span>
+    <a class="link" href="/privacidade/">Política de privacidade e cookies</a>
   </div>
 </footer>
 
 <style>
-  .rodape { border-top: 1px solid var(--linha-escura); }
-  .wrap {
-    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
-    padding-block: 1.6rem; font-size: var(--fs-0); color: var(--taupe);
-  }
-  .redes { display: flex; gap: 1.4rem; }
+  .rodape { border-top: 1px solid var(--linha-escura); font-size: var(--fs-0); color: var(--taupe); }
+  .grade { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 2rem; padding-block: 2.4rem 1.6rem; }
+  .marca { font-family: var(--serif); font-size: 1.45rem; color: var(--areia); margin: 0 0 0.3rem; }
+  .marca em { color: var(--laranja-luz); }
+  .sub { margin: 0; }
+  nav { display: grid; gap: 0.5rem; align-content: start; }
+  nav a { color: var(--areia); text-decoration: none; justify-self: start; }
+  .base { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem; border-top: 1px solid var(--linha-escura); padding-block: 1.2rem 1.6rem; }
+  .base a { text-decoration: none; }
+  @media (max-width: 760px) { .grade { grid-template-columns: 1fr 1fr; } .grade > div { grid-column: 1 / -1; } }
 </style>

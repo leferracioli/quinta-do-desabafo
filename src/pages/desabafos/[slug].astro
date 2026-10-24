@@ -6,6 +6,7 @@ import TituloDestaque from '../../components/TituloDestaque.astro';
 import Progresso from '../../components/artigo/Progresso.astro';
 import Indice, { type ItemIndice } from '../../components/artigo/Indice.astro';
 import ProximoDesabafo from '../../components/artigo/ProximoDesabafo.astro';
+import FormTema from '../../components/form/FormTema.astro';
 import { getArtigos, tempoLeitura, dataLonga, numeroEdicao, type Artigo } from '../../lib/artigos';
 import foto from '../../assets/leticia.webp';
 import { grafoArtigo } from '../../lib/seo';
@@ -71,7 +72,7 @@ const jsonLd = grafoArtigo(artigo, Astro.site!, new URL(imagemOg, Astro.site).hr
         <div class="autora">
           <Image src={foto} alt="" width={104} densities={[1]} />
           <div>
-            <b><a href="/sobre">Letícia Ferracioli</a></b>
+            <b><a href="/sobre/">Letícia Ferracioli</a></b>
             <span>
               <time datetime={d.publishedAt.toISOString().slice(0, 10)}>{dataLonga(d.publishedAt)}</time>
               {d.updatedAt && <> · atualizado em <time datetime={d.updatedAt.toISOString().slice(0, 10)}>{dataLonga(d.updatedAt)}</time></>}
@@ -118,6 +119,7 @@ const jsonLd = grafoArtigo(artigo, Astro.site!, new URL(imagemOg, Astro.site).hr
       </div>
     </div>
 
+    <FormTema />
     <ProximoDesabafo atual={artigo} artigos={artigos} />
   </article>
 </Base>

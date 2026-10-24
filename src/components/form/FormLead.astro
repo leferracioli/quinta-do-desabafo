@@ -1,0 +1,83 @@
+---
+// Formulário de contato (lead): grava na planilha via /api/formulario.
+// Funciona sem JavaScript (envio normal de formulário).
+import Origem from './Origem.astro';
+interface Props { interesse?: 'Mentoria' | 'Consultoria' }
+const { interesse } = Astro.props;
+---
+<form class="form" method="post" action="/api/formulario" data-origem>
+  <input type="hidden" name="tipo" value="lead" />
+  <Origem />
+
+  <div class="linha">
+    <label>
+      <span>Nome *</span>
+      <input name="nome" required maxlength="120" autocomplete="name" />
+    </label>
+    <label>
+      <span>WhatsApp *</span>
+      <input name="whatsapp" required maxlength="30" inputmode="tel" autocomplete="tel" placeholder="(00) 00000-0000" />
+    </label>
+  </div>
+
+  <label>
+    <span>E-mail <small>(opcional)</small></span>
+    <input name="email" type="email" maxlength="160" autocomplete="email" />
+  </label>
+
+  <fieldset>
+    <legend>Tenho interesse em</legend>
+    <div class="opcoes">
+      {['Mentoria', 'Consultoria', 'Ainda não sei'].map((o) => (
+        <label class="opcao">
+          <input type="radio" name="interesse" value={o} checked={o === (interesse ?? 'Ainda não sei')} />
+          <span>{o}</span>
+        </label>
+      ))}
+    </div>
+  </fieldset>
+
+  <label>
+    <span>Conte um pouco do seu momento <small>(opcional)</small></span>
+    <textarea name="mensagem" rows="4" maxlength="2000"></textarea>
+  </label>
+
+  <!-- Armadilha para robôs: fica escondido de pessoas -->
+  <label class="armadilha" aria-hidden="true">Site <input name="site" tabindex="-1" autocomplete="off" /></label>
+
+  <label class="consentimento">
+    <input type="checkbox" name="consentimento" value="sim" required />
+    <span>Concordo em ser contatada(o) e com a <a href="/privacidade/">política de privacidade</a>.</span>
+  </label>
+
+  <button type="submit">Enviar</button>
+</form>
+
+<style>
+  .form { display: grid; gap: 1.1rem; font-size: var(--fs-0); }
+  .linha { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; }
+  label > span, legend { display: block; font-weight: 500; letter-spacing: 0.06em; margin-bottom: 0.35rem; }
+  small { font-weight: 400; color: var(--taupe-tinta); }
+  input:not([type='radio']):not([type='checkbox']), textarea {
+    width: 100%; font: inherit; font-size: 1rem; color: var(--carvao);
+    background: var(--branco); border: 1px solid var(--pedra); border-radius: 2px; padding: 0.75rem 0.85rem;
+  }
+  input:focus, textarea:focus { outline: 2px solid var(--laranja); outline-offset: 1px; border-color: var(--carvao); }
+  fieldset { border: 0; padding: 0; margin: 0; }
+  .opcoes { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+  .opcao { display: flex; align-items: center; gap: 0.45rem; border: 1px solid var(--pedra); padding: 0.5rem 0.9rem; cursor: pointer; background: var(--branco); }
+  .opcao:has(input:checked) { border-color: var(--carvao); box-shadow: inset 0 -3px 0 var(--laranja); }
+  .opcao span { margin: 0; font-weight: 400; letter-spacing: 0; }
+  .consentimento { display: flex; gap: 0.6rem; align-items: flex-start; line-height: 1.45; }
+  .consentimento span { font-weight: 400; letter-spacing: 0; margin: 0; }
+  .consentimento input { margin-top: 0.2rem; accent-color: var(--carvao); }
+  .consentimento a { color: var(--carvao); }
+  .armadilha { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+  button {
+    justify-self: start; font: 500 var(--fs-0) var(--sans); letter-spacing: 0.14em; text-transform: uppercase;
+    background: var(--carvao); color: var(--areia); border: 0; padding: 1rem 1.8rem; cursor: pointer;
+    box-shadow: inset 0 -3px 0 var(--laranja); transition: transform 0.2s;
+  }
+  button:hover { transform: translateY(-1px); }
+  @media (max-width: 600px) { .linha { grid-template-columns: 1fr; } }
+</style>

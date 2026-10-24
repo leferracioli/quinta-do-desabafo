@@ -1,8 +1,8 @@
-# Quinta do Desabafo
+# leticiaferracioli.com.br
 
-Blog da Letícia Ferracioli (@leferracioli). Toda quinta, um artigo que aprofunda uma notícia da semana sobre vendas, gestão comercial, IA em vendas e marketing digital.
+Site da Letícia Ferracioli (@leferracioli): mentoria e consultoria comercial, e a **Quinta do Desabafo**, o blog com um artigo toda quinta sobre vendas, gestão comercial, IA em vendas e marketing digital.
 
-Feito com [Astro](https://astro.build) (site estático, sem banco de dados). Cada artigo é um arquivo `.mdx` dentro do projeto.
+Feito com [Astro](https://astro.build). As páginas são estáticas e cada artigo é um arquivo `.mdx` dentro do projeto. Só o recebimento dos formulários roda no servidor (uma função da Vercel), gravando numa planilha do Google.
 
 **Sumário**
 
@@ -10,6 +10,7 @@ Feito com [Astro](https://astro.build) (site estático, sem banco de dados). Cad
 2. [Como rodar o site no seu computador](#2-como-rodar-o-site-no-seu-computador)
 3. [Como fazer o deploy e conectar o domínio](#3-como-fazer-o-deploy-e-conectar-o-domínio)
 4. [Onde fica cada coisa](#4-onde-fica-cada-coisa)
+5. [Planilha de leads e temas](#5-planilha-de-leads-e-temas)
 
 ---
 
@@ -185,15 +186,19 @@ blog/
 ├── src/
 │   ├── content/artigos/       ← os artigos (.mdx)
 │   ├── paginas/sobre.mdx      ← o texto da página Sobre
+│   ├── paginas/privacidade.mdx ← a política de privacidade e cookies
+│   ├── lib/solucoes.ts        ← os textos da mentoria e da consultoria
 │   ├── assets/                ← fotos (e capas/, para as capas dos artigos)
 │   ├── content.config.ts      ← as regras do frontmatter
-│   ├── lib/site.ts            ← nome do site e links das redes
+│   ├── lib/site.ts            ← nome, WhatsApp (e a mensagem pronta) e redes
 │   ├── lib/temas.ts           ← a lista de temas
 │   ├── styles/tokens.css      ← cores, fontes e tamanhos
 │   ├── components/            ← peças visuais (artigo/ = blocos do texto)
 │   └── pages/                 ← as páginas e os arquivos gerados
-│       ├── index.astro        ← home
-│       ├── desabafos/         ← arquivo, temas e página de cada artigo
+│       ├── index.astro        ← home (apresentação, soluções, desabafo da semana, contato)
+│       ├── solucoes.astro, contato.astro, privacidade.astro
+│       ├── api/formulario.ts  ← recebe os formulários e grava na planilha
+│       ├── desabafos/         ← a Quinta do Desabafo: capa da semana, temas e cada artigo
 │       ├── sobre.astro, 404.astro
 │       ├── og/                ← imagens de compartilhamento
 │       └── robots.txt, rss.xml, llms.txt
@@ -203,3 +208,39 @@ blog/
 **Identidade visual**
 - Cores: carvão `#2a2a2c`, areia `#efeae3`, laranja `#e0662f`, taupe `#a89f94` e pedra `#cfc7bc`. Os tons derivados que garantem contraste estão em `tokens.css`.
 - Fontes: Fraunces, a voz editorial (títulos, números, citações), e Jost, a leitura (corpo, metadados).
+
+---
+
+## 5. Planilha de leads e temas
+
+Os formulários de contato (home e `/contato`) e o "Sugira um desabafo" (fim de cada artigo) gravam numa planilha do Google, com a origem da visita: página, site de onde a pessoa veio e UTMs do primeiro acesso.
+
+### Instalação (uma vez só)
+
+1. Crie uma planilha nova no Google Planilhas, por exemplo "Site · leads e temas".
+2. Menu **Extensões → Apps Script**. Apague o que aparecer e cole todo o conteúdo de [`planilha/apps-script.gs`](planilha/apps-script.gs).
+3. Na linha `const TOKEN = '...'`, troque pelo código secreto. Ele está no arquivo `token-planilha.txt`, na pasta do projeto (fora do repositório), e já está configurado na Vercel como `PLANILHA_TOKEN`.
+4. Clique em **Implantar → Nova implantação**, escolha o tipo **App da Web** e configure:
+   - **Executar como:** Eu;
+   - **Quem pode acessar:** Qualquer pessoa.
+
+   O Google vai pedir para você autorizar o script a editar a planilha: autorize.
+5. Copie o **URL do app da Web** (termina em `/exec`).
+6. Na Vercel, em **Settings → Environment Variables**, crie `PLANILHA_URL` com esse endereço (Production e Preview) e faça um **Redeploy**.
+
+As abas **Leads** e **Temas sugeridos** aparecem sozinhas no primeiro envio.
+
+> O endereço `/exec` só aceita envios com o código secreto. Sem ele, nada é gravado. Se você mudar o código no Apps Script, mude também `PLANILHA_TOKEN` na Vercel.
+
+### Se um formulário falhar
+
+A pessoa vai para uma página que oferece o WhatsApp como alternativa, e o erro aparece nos logs da Vercel (**Project → Logs**). As causas mais comuns são `PLANILHA_URL` não configurada ou o código secreto diferente nos dois lugares.
+
+### Links do Instagram com UTM
+
+Para saber qual post trouxe cada lead, use links assim na bio e nos stories:
+
+```
+https://leticiaferracioli.com.br/desabafos/?utm_source=instagram&utm_medium=bio&utm_campaign=quinta-desabafo
+https://leticiaferracioli.com.br/desabafos/ia-vai-substituir-sdr/?utm_source=instagram&utm_medium=stories&utm_campaign=desabafo-01
+```

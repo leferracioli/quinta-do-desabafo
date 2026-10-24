@@ -7,26 +7,48 @@ import { TEMAS, type Tema } from '../lib/temas';
 import { temaSlug, type Artigo } from '../lib/artigos';
 import { migalhas } from '../lib/seo';
 
-interface Props { artigos: Artigo[]; tema?: Tema }
-const { artigos, tema } = Astro.props;
+// inicio: true em /desabafos (abre com um resumo do que é a Quinta do Desabafo)
+interface Props { artigos: Artigo[]; tema?: Tema; inicio?: boolean }
+const { artigos, tema, inicio = false } = Astro.props;
 const lista = tema ? artigos.filter((a) => a.data.tema === tema) : artigos;
 const total = lista.length;
 
-const titulo = tema ? `Desabafos sobre ${tema}` : 'Todos os Desabafos';
+const titulo = tema ? `Desabafos sobre ${tema}` : 'Quinta do Desabafo';
 const descricao = tema
   ? `Todos os artigos da Quinta do Desabafo sobre ${tema}, por Letícia Ferracioli.`
-  : 'O arquivo completo da Quinta do Desabafo: artigos semanais sobre vendas, gestão comercial, IA em vendas e marketing digital.';
-const caminho = tema ? `/desabafos/tema/${temaSlug(tema)}` : '/desabafos';
+  : 'Quinta do Desabafo, o blog de Letícia Ferracioli: toda quinta, uma notícia sobre vendas, gestão comercial, IA ou marketing digital, além da manchete.';
+const caminho = tema ? `/desabafos/tema/${temaSlug(tema)}/` : '/desabafos/';
 const jsonLd = [
   { '@type': 'CollectionPage', name: titulo, url: new URL(caminho, Astro.site).href, inLanguage: 'pt-BR' },
   migalhas(Astro.site!, [
     { nome: 'Início', caminho: '/' },
-    { nome: 'Desabafos', caminho: '/desabafos' },
+    { nome: 'Quinta do Desabafo', caminho: '/desabafos/' },
     ...(tema ? [{ nome: tema, caminho }] : []),
   ]),
 ];
 ---
-<Base title={`${titulo} · Quinta do Desabafo`} description={descricao} jsonLd={jsonLd}>
+<Base title={tema ? `${titulo} · Quinta do Desabafo` : 'Quinta do Desabafo · Letícia Ferracioli'} description={descricao} jsonLd={jsonLd}>
+  {inicio ? (
+    <header class="intro escuro">
+      <div class="wrap intro-grade">
+        <div>
+          <p class="kicker">Toda quinta-feira · por Letícia Ferracioli</p>
+          <h1>Quinta do <span class="destaque">Desabafo</span></h1>
+        </div>
+        <div class="intro-texto">
+          <p class="intro-lead">Toda semana, eu escolho uma notícia sobre vendas, gestão comercial, inteligência artificial ou marketing digital e vou além da manchete: pesquiso, busco os dados, consulto as fontes e trago a minha visão de quem está na operação.</p>
+          <p>No Instagram, trago a provocação. Aqui, aprofundo a conversa.</p>
+          <ul class="assuntos" aria-label="Assuntos">
+            <li>Vendas e gestão comercial</li>
+            <li>IA aplicada ao trabalho</li>
+            <li>Marketing digital</li>
+            <li>CRM, automações e processos</li>
+          </ul>
+          <a class="link" href="/sobre/">Como a Quinta do Desabafo nasceu →</a>
+        </div>
+      </div>
+    </header>
+  ) : (
   <header class="topo-arquivo escuro">
     <div class="wrap">
       <p class="kicker">Arquivo</p>
@@ -34,12 +56,14 @@ const jsonLd = [
       <p class="contagem">{total === 0 ? 'Nenhuma edição ainda' : total === 1 ? '1 edição' : `${total} edições`}</p>
     </div>
   </header>
+  )}
 
   <div class="wrap corpo-arquivo">
+    {inicio && <h2 class="todas">Todas as edições</h2>}
     <nav class="filtro" aria-label="Filtrar por tema">
-      <a href="/desabafos" aria-current={!tema ? 'page' : undefined}>Todos</a>
+      <a href="/desabafos/" aria-current={!tema ? 'page' : undefined}>Todos</a>
       {TEMAS.map((t) => (
-        <a href={`/desabafos/tema/${temaSlug(t)}`} aria-current={t === tema ? 'page' : undefined}>{t}</a>
+        <a href={`/desabafos/tema/${temaSlug(t)}/`} aria-current={t === tema ? 'page' : undefined}>{t}</a>
       ))}
     </nav>
 
@@ -47,7 +71,7 @@ const jsonLd = [
       <ListaEdicoes artigos={lista} nivel="h2" />
     ) : (
       <p class="vazio">
-        {tema ? <>Ainda não tem desabafo sobre {tema}. <a class="link" href="/desabafos">Ver todos →</a></> : 'A primeira edição sai na próxima quinta.'}
+        {tema ? <>Ainda não tem desabafo sobre {tema}. <a class="link" href="/desabafos/">Ver todos →</a></> : 'A primeira edição sai na próxima quinta.'}
       </p>
     )}
   </div>
@@ -69,5 +93,18 @@ const jsonLd = [
   }
   .filtro a:hover { color: var(--carvao); background-size: 100% 2px; }
   .filtro a[aria-current='page'] { color: var(--carvao); background-size: 100% 2px; }
+  .intro { padding-block: clamp(56px, 8vw, 110px); }
+  .intro-grade { display: grid; grid-template-columns: 5fr 7fr; gap: clamp(32px, 6vw, 96px); align-items: end; }
+  .intro h1 { margin-bottom: 0; }
+  .intro-lead { font-size: var(--fs-2); line-height: 1.45; margin-top: 0; }
+  .intro-texto p { max-width: 44ch; }
+  .assuntos { list-style: none; padding: 0; margin: 1.4rem 0 1.6rem; display: flex; flex-wrap: wrap; gap: 0.6rem; }
+  .assuntos li { border: 1px solid var(--linha-escura); padding: 0.35rem 0.8rem; font-size: var(--fs-0); letter-spacing: 0.06em; color: var(--areia); }
+  .intro .link { font-weight: 500; }
+  @media (max-width: 900px) {
+    .intro-grade { grid-template-columns: 1fr; }
+    .intro-lead { font-size: 1.3rem; }
+  }
+  .todas { font-size: var(--fs-3); font-style: italic; border-top: 1px solid var(--carvao); padding-top: 1.2rem; margin: 0 0 1.4rem; }
   .vazio { color: var(--taupe-tinta); border-top: 1px solid var(--pedra); padding-top: 1.2rem; }
 </style>
