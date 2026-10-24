@@ -1,0 +1,11 @@
+---
+// Bloco de dado: número enorme + o que significa + a fonte.
+// Uso: <Dado numero="54%" fonte="Instituição, ano">das empresas operam sem CRM.</Dado>
+interface Props { numero: string; fonte: string }
+const { numero, fonte } = Astro.props;
+---
+<figure class="dado">
+  <p class="dado-num">{numero}</p>
+  <p class="dado-txt"><slot /></p>
+  <figcaption class="dado-fonte">Fonte: {fonte}</figcaption>
+</figure>

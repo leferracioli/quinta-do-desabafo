@@ -1,0 +1,155 @@
+/* Página do artigo (Direção C): abertura em carvão, leitura em areia */
+
+/* ---------- Abertura ---------- */
+.abertura { padding-block: clamp(48px, 8vw, 120px) clamp(48px, 7vw, 96px); }
+.abertura-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: var(--gutter); }
+.abertura-grid > * { grid-column: 2 / span 10; }
+.abertura h1 {
+  font-size: clamp(var(--fs-4), 7vw, var(--fs-7));
+  letter-spacing: -0.02em;
+  margin: 0.35em 0 0.5em;
+  max-width: 14ch;
+}
+.lead { font-size: var(--fs-2); line-height: 1.45; max-width: 34ch; margin: 0; }
+.autora { display: flex; align-items: center; gap: 1rem; margin-top: 2.2rem; font-size: var(--fs-0); }
+.autora img {
+  width: 52px; height: 64px; border-radius: 99px 99px 0 0;
+  object-fit: cover; object-position: 50% 15%; background: var(--pedra);
+}
+.autora b { font-weight: 500; display: block; font-size: 1rem; }
+.autora a { text-decoration: none; }
+.autora span { color: var(--taupe); }
+@media (max-width: 900px) {
+  .abertura-grid > * { grid-column: 1 / -1; }
+  .lead { font-size: 1.35rem; }
+}
+
+/* ---------- Corpo: grid com coluna de texto, coluna de notas e linhas "cheias" ---------- */
+.corpo {
+  display: grid;
+  grid-template-columns:
+    [cheia-start] minmax(var(--gutter), 1fr)
+    [texto-start] minmax(0, var(--medida)) [texto-end]
+    clamp(24px, 4vw, 64px)
+    [nota-start] 240px [nota-end]
+    minmax(var(--gutter), 1fr) [cheia-end];
+  padding-block: clamp(48px, 7vw, 88px);
+}
+.corpo > * { grid-column: texto; }
+.corpo > .cheia { grid-column: cheia; }
+.corpo > .nota { grid-column: nota; grid-row-end: span 3; align-self: start; }
+@media (max-width: 1100px) {
+  .corpo {
+    grid-template-columns:
+      [cheia-start] var(--gutter)
+      [texto-start nota-start] minmax(0, 1fr) [texto-end nota-end]
+      var(--gutter) [cheia-end];
+  }
+  .corpo > .nota { grid-row-end: auto; margin: -0.6rem 0 1.4rem; }
+}
+
+.corpo > p, .corpo > ul, .corpo > blockquote { margin: 0 0 1.3em; }
+.corpo > h2 { font-size: var(--fs-3); margin: 1.8em 0 0.6em; scroll-margin-top: 30px; }
+.corpo > h2:first-child { margin-top: 0; }
+
+/* Capitular no primeiro parágrafo */
+.corpo > p:first-of-type::first-letter {
+  font-family: var(--serif); font-weight: var(--peso-serif);
+  float: left; font-size: 5.2em; line-height: 0.82; padding: 0.06em 0.1em 0 0;
+}
+
+/* Listas com traço laranja */
+.corpo > ul { list-style: none; padding: 0; }
+.corpo > ul li { position: relative; padding-left: 1.5rem; margin-bottom: 0.6em; }
+.corpo > ul li::before {
+  content: ''; position: absolute; left: 0; top: 0.8em;
+  width: 0.75rem; height: 2px; background: var(--laranja);
+}
+
+/* Blockquote do markdown (>) = ressalva */
+.corpo > blockquote:not(.pull) {
+  font-size: var(--fs-0); color: var(--taupe-tinta);
+  border-left: 2px solid var(--pedra); padding-left: 1rem;
+}
+.corpo > blockquote:not(.pull) p { margin: 0; }
+
+.ref a { color: var(--laranja-tinta); text-decoration: none; font-weight: 500; }
+
+/* Nota de margem */
+.nota {
+  font-size: var(--fs-0); line-height: 1.5; color: var(--taupe-tinta);
+  border-top: 1px solid var(--pedra); padding-top: 0.6rem; margin-top: 1.3rem;
+}
+.nota b { color: var(--carvao); font-weight: 500; }
+
+/* Bloco de dado */
+.dado {
+  display: grid; grid-template-columns: auto 1fr; gap: 0 1.6rem; align-items: end;
+  background: var(--pedra); border-top: 3px solid var(--carvao);
+  padding: 1.8rem 1.6rem 1.4rem; margin: 1.2em 0 2em;
+}
+.dado p { margin: 0; }
+.dado-num {
+  font-family: var(--serif); font-weight: var(--peso-serif);
+  font-size: clamp(var(--fs-6), 10vw, var(--fs-7)); line-height: 0.85; white-space: nowrap;
+}
+.dado-txt { font-size: var(--fs-1); line-height: 1.4; border-left: 3px solid var(--laranja); padding: 0 0 0.4rem 1rem; }
+.dado-fonte { grid-column: 1 / -1; font-size: var(--fs-0); color: var(--taupe-tinta); margin-top: 1rem; }
+@media (max-width: 900px) {
+  .dado { grid-template-columns: 1fr; }
+  .dado-txt { margin-top: 1rem; }
+}
+
+/* Pull quote */
+.pull {
+  font-family: var(--serif); font-weight: var(--peso-serif); font-style: italic;
+  font-size: clamp(var(--fs-3), 4vw, var(--fs-4)); line-height: 1.15; text-align: center;
+  margin: 1.2em 0 1.4em; padding: 1.2em 0;
+  border-top: 1px solid var(--pedra); border-bottom: 1px solid var(--pedra);
+}
+.pull p { margin: 0; }
+
+/* ---------- Outras vozes ---------- */
+.vozes { padding-block: clamp(56px, 8vw, 110px); border-top: 1px solid var(--pedra); margin-top: 2rem; }
+.vozes h2 { font-size: var(--fs-4); margin: 0.3em 0 0.6em; max-width: 16ch; }
+.vozes-intro { font-size: var(--fs-2); line-height: 1.4; max-width: 34ch; margin: 0 0 1.6em; }
+.vozes-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(40px, 5vw, 64px) var(--gutter); }
+.voz { border-top: 1px solid var(--carvao); padding-top: 1.2rem; margin: 0; }
+.voz blockquote { margin: 0 0 1rem; font-family: var(--serif); font-weight: var(--peso-serif); font-style: italic; font-size: var(--fs-3); line-height: 1.15; }
+.voz blockquote p { margin: 0; }
+.voz .traducao { font-size: var(--fs-0); color: var(--taupe-tinta); margin: -0.4rem 0 1rem; }
+.voz .contexto { font-size: 1.05rem; line-height: 1.55; margin: 0 0 1rem; }
+.voz b { font-weight: 500; display: block; }
+.voz figcaption span { font-size: var(--fs-0); color: var(--taupe-tinta); display: block; }
+.voz figcaption a { font-size: var(--fs-0); font-weight: 500; display: inline-block; margin-top: 0.6rem; }
+@media (max-width: 900px) { .vozes-grid { grid-template-columns: 1fr; } }
+
+/* ---------- O desabafo ---------- */
+.desabafo { padding-block: clamp(64px, 10vw, 140px); margin-bottom: clamp(48px, 7vw, 88px); }
+.desabafo-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: var(--gutter); align-items: start; }
+.desabafo-foto { grid-column: 2 / span 3; position: sticky; top: 120px; margin-top: 60px; }
+.desabafo-texto { grid-column: 6 / span 6; }
+.desabafo h2 { font-size: clamp(var(--fs-5), 8vw, var(--fs-7)); font-style: italic; color: var(--laranja); margin: 0.2em 0 0.5em; }
+.desabafo p:not(.kicker) { max-width: var(--medida); margin: 0 0 1.3em; }
+@media (max-width: 900px) {
+  .desabafo-foto { grid-column: 1 / span 6; position: relative; top: 0; max-width: 200px; }
+  .desabafo-texto { grid-column: 1 / -1; }
+}
+
+.pendente { background: rgba(224, 102, 47, 0.18); color: inherit; padding: 0.1em 0.4em; border-left: 3px solid var(--laranja); }
+
+/* ---------- Fim: pergunta, FAQ e fontes ---------- */
+.pergunta { font-family: var(--serif); font-weight: var(--peso-serif); font-size: var(--fs-4); line-height: 1.12; margin: 0.6em 0 0.4em !important; }
+.fim { padding-block: 0 clamp(56px, 8vw, 110px); }
+.faq h2, .fontes h2 { font-size: var(--fs-3); margin: 1.6em 0 0.8em; }
+.faq details { border-top: 1px solid var(--pedra); padding: 1rem 0; }
+.faq details:last-of-type { border-bottom: 1px solid var(--pedra); }
+.faq summary { cursor: pointer; font-weight: 500; list-style: none; display: flex; justify-content: space-between; gap: 1rem; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: '+'; font-family: var(--serif); font-size: 1.6em; line-height: 0.8; color: var(--laranja-tinta); transition: transform 0.3s; }
+.faq details[open] summary::after { transform: rotate(45deg); }
+.faq details p { margin: 0.8rem 0 0; }
+.fontes ol { padding-left: 1.4rem; font-size: var(--fs-0); color: var(--taupe-tinta); }
+.fontes li { margin-bottom: 0.5rem; scroll-margin-top: 30px; }
+.fontes li:target { color: var(--carvao); }
+.fontes .pendente { font-size: inherit; }

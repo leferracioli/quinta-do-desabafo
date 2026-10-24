@@ -1,0 +1,14 @@
+---
+// "O desabafo": a parte pessoal da Letícia, em carvão, com a foto no arco.
+import Retrato from '../Retrato.astro';
+---
+<section class="cheia desabafo escuro" aria-labelledby="desabafo">
+  <div class="wrap desabafo-grid">
+    <Retrato decorativo sizes="(max-width: 900px) 200px, 300px" class="desabafo-foto" />
+    <div class="desabafo-texto">
+      <p class="kicker">O que eu vejo na prática</p>
+      <h2 id="desabafo">O desabafo</h2>
+      <slot />
+    </div>
+  </div>
+</section>

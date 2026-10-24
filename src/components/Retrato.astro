@@ -1,0 +1,48 @@
+---
+// Foto da Letícia dentro do arco, com a cabeça "vazando" por cima.
+// Os lados e a base ficam presos ao arco; o recorte acima da curva é mais largo.
+import { Picture } from 'astro:assets';
+import recorte from '../assets/leticia-recorte.webp';
+
+interface Props {
+  /** true na capa (acima da dobra): carrega na hora, com prioridade */
+  prioridade?: boolean;
+  /** true quando a foto é só decorativa (alt vazio) */
+  decorativo?: boolean;
+  /** valor do atributo sizes */
+  sizes?: string;
+  class?: string;
+}
+const { prioridade = false, decorativo = false, sizes = '(max-width: 900px) 72vw, 480px', class: classe } = Astro.props;
+---
+<figure class:list={['retrato', classe]} aria-hidden={decorativo ? 'true' : undefined}>
+  <div class="retrato-fundo"></div>
+  <div class="retrato-clip">
+    <Picture
+      src={recorte}
+      formats={['avif', 'webp']}
+      widths={[240, 360, 480, 640, 800]}
+      sizes={sizes}
+      alt={decorativo ? '' : 'Letícia Ferracioli'}
+      loading={prioridade ? 'eager' : 'lazy'}
+      fetchpriority={prioridade ? 'high' : 'auto'}
+    />
+  </div>
+</figure>
+
+<style>
+  .retrato { position: relative; aspect-ratio: 3 / 4; margin: 0; }
+  .retrato-fundo {
+    position: absolute; inset: 0;
+    border-radius: 999px 999px 0 0;
+    background: linear-gradient(165deg, var(--pedra), var(--taupe));
+  }
+  .retrato-clip {
+    position: absolute; left: 0; right: 0; bottom: 0; top: -30%;
+    /* acima da linha onde a curva do arco termina (52%), o recorte é mais largo: o cabelo pode vazar */
+    clip-path: polygon(-15% 0, 115% 0, 115% 52%, 100% 52%, 100% 100%, 0 100%, 0 52%, -15% 52%);
+  }
+  .retrato-clip :global(img) {
+    position: absolute; width: 104%; max-width: none; height: auto; left: -2%; top: 10.6%;
+  }
+</style>

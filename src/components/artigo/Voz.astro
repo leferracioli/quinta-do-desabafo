@@ -1,0 +1,23 @@
+---
+// Uma voz externa: só pessoas reais, com cargo/instituição e a fonte numerada.
+// Citação em inglês: idioma padrão "en" + tradução. Em português: idioma="pt-BR".
+interface Props {
+  citacao: string;
+  traducao?: string;
+  nome: string;
+  cargo: string;
+  fonte: number;
+  idioma?: string;
+}
+const { citacao, traducao, nome, cargo, fonte, idioma = 'en' } = Astro.props;
+---
+<figure class="voz">
+  <blockquote lang={idioma}><p>“{citacao}”</p></blockquote>
+  {traducao && <p class="traducao">{traducao}</p>}
+  <p class="contexto"><slot /></p>
+  <figcaption>
+    <b>{nome}</b>
+    <span>{cargo}</span>
+    <a class="link" href={`#fonte-${fonte}`}>Ver fonte {fonte} ↓</a>
+  </figcaption>
+</figure>

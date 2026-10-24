@@ -1,0 +1,64 @@
+/* Base global: reset, tipografia e utilitários */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--areia);
+  color: var(--carvao);
+  font-family: var(--sans);
+  font-size: var(--fs-1);
+  line-height: 1.65;
+  overflow-x: hidden;
+}
+@media (max-width: 900px) { body { font-size: 1.1875rem; } }
+
+img, picture { max-width: 100%; display: block; }
+a { color: inherit; }
+h1, h2, h3 {
+  font-family: var(--serif);
+  font-weight: var(--peso-serif);
+  font-optical-sizing: auto;
+  line-height: 1.05;
+  margin: 0;
+}
+:focus-visible { outline: 2px solid var(--laranja); outline-offset: 3px; }
+
+/* Seções escuras (carvão) */
+.escuro { background: var(--carvao); color: var(--areia); }
+
+/* Palavra de destaque do título: Fraunces itálico laranja */
+.destaque { font-style: italic; color: var(--laranja-tinta); }
+.escuro .destaque { color: var(--laranja); }
+
+.kicker {
+  font-family: var(--sans);
+  font-weight: 500;
+  font-size: var(--fs-0);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--taupe-tinta);
+  margin: 0;
+}
+.escuro .kicker { color: var(--taupe); }
+
+/* Sublinhado laranja que cresce no hover */
+.link {
+  text-decoration: none;
+  background: linear-gradient(var(--laranja), var(--laranja)) 0 100% / 0 2px no-repeat;
+  transition: background-size 0.35s ease;
+  padding-bottom: 2px;
+}
+.link:hover, .link:focus-visible { background-size: 100% 2px; }
+
+.wrap { max-width: var(--largura); margin: 0 auto; padding: 0 var(--gutter); }
+
+/* Acessibilidade: link para pular o menu */
+.pular {
+  position: absolute; left: 16px; top: -100px; z-index: 100;
+  background: var(--areia); color: var(--carvao); padding: 0.6em 1em;
+}
+.pular:focus { top: 16px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}

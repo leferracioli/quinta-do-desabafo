@@ -1,0 +1,21 @@
+---
+import { SITE } from '../lib/site';
+---
+<footer class="rodape escuro">
+  <div class="wrap">
+    <span>{SITE.nome} · {SITE.autora} · {new Date().getFullYear()}</span>
+    <span class="redes">
+      <a class="link" href={SITE.instagram} rel="me">Instagram</a>
+      <a class="link" href={SITE.linkedin} rel="me">LinkedIn</a>
+    </span>
+  </div>
+</footer>
+
+<style>
+  .rodape { border-top: 1px solid var(--linha-escura); }
+  .wrap {
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+    padding-block: 1.6rem; font-size: var(--fs-0); color: var(--taupe);
+  }
+  .redes { display: flex; gap: 1.4rem; }
+</style>

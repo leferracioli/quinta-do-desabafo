@@ -1,0 +1,38 @@
+/* Tokens da identidade visual (os mesmos dos posts do Instagram) */
+:root {
+  /* Cores */
+  --carvao: #2a2a2c;
+  --areia: #efeae3;
+  --laranja: #e0662f;   /* destaque único: palavra do título, progresso, links ativos */
+  --taupe: #a89f94;
+  --pedra: #cfc7bc;
+  --branco: #ffffff;
+
+  /* Derivados só para TEXTO sobre fundo claro (contraste WCAG AA).
+     O laranja original sobre areia dá ~2,9:1 e o taupe ~2,2:1: não passam. */
+  --laranja-tinta: #b4481a; /* ~4,5:1 sobre areia */
+  --taupe-tinta: #6e665d;   /* ~4,6:1 sobre areia */
+  --linha-escura: #46464a;  /* fios sobre carvão */
+
+  /* Tipografia: Fraunces = voz editorial; Jost = leitura */
+  --serif: 'Fraunces Variable', Georgia, serif;
+  --sans: 'Jost', system-ui, sans-serif;
+
+  /* Escala 1.333 (quarta perfeita), base 20px */
+  --fs-0: 0.9375rem; /* 15px  metadados, kicker */
+  --fs-1: 1.25rem;   /* 20px  corpo */
+  --fs-2: 1.666rem;  /* 27px  lead */
+  --fs-3: 2.22rem;   /* 36px  H2 */
+  --fs-4: 2.96rem;   /* 47px */
+  --fs-5: 3.95rem;   /* 63px */
+  --fs-6: 5.26rem;   /* 84px */
+  --fs-7: 7.01rem;   /* 112px título do artigo */
+  --fs-8: 9.35rem;   /* 150px número da edição */
+
+  --peso-serif: 500;
+
+  /* Medidas */
+  --medida: 66ch;
+  --gutter: clamp(16px, 4vw, 56px);
+  --largura: 1320px;
+}

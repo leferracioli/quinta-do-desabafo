@@ -1,0 +1,6 @@
+---
+// Nota de margem: no computador fica ao lado do parágrafo anterior; no celular, logo abaixo dele.
+interface Props { n: number }
+const { n } = Astro.props;
+---
+<aside class="nota"><b>{n}.</b> <slot /></aside>

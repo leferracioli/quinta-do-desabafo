@@ -1,0 +1,14 @@
+---
+// Título com a palavra de destaque (palavraDestaque) em Fraunces itálico laranja.
+interface Props {
+  titulo: string;
+  destaque: string;
+  tag?: 'h1' | 'h2' | 'p';
+  class?: string;
+}
+const { titulo, destaque, tag: Tag = 'h1', class: classe } = Astro.props;
+const i = titulo.indexOf(destaque);
+const antes = i >= 0 ? titulo.slice(0, i) : titulo;
+const depois = i >= 0 ? titulo.slice(i + destaque.length) : '';
+---
+<Tag class={classe}>{antes}{i >= 0 && <span class="destaque">{destaque}</span>}{depois}</Tag>

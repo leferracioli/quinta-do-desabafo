@@ -1,0 +1,37 @@
+---
+import { SITE } from '../lib/site';
+const atual = Astro.url.pathname;
+const ativo = (href: string) => (atual.startsWith(href) ? 'page' : undefined);
+---
+<header class="topo escuro">
+  <div class="wrap">
+    <a class="marca" href="/">Quinta do <em>Desabafo</em></a>
+    <nav aria-label="Principal">
+      <a class="link" href="/desabafos" aria-current={ativo('/desabafos')}>Arquivo</a>
+      <a class="link" href="/sobre" aria-current={ativo('/sobre')}>Sobre</a>
+      <a class="link instagram" href={SITE.instagram} rel="me">Instagram</a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .topo .wrap {
+    display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+    padding-block: 22px;
+    font-size: var(--fs-0); letter-spacing: 0.16em; text-transform: uppercase;
+  }
+  .marca {
+    font-family: var(--serif); font-weight: var(--peso-serif);
+    font-size: 1.45rem; letter-spacing: 0; text-transform: none;
+    text-decoration: none; white-space: nowrap;
+  }
+  .marca em { color: var(--laranja); }
+  nav { display: flex; gap: 1.8rem; }
+  nav a { text-decoration: none; }
+  nav a[aria-current='page'] { background-size: 100% 2px; }
+  @media (max-width: 900px) {
+    .marca { font-size: 1.2rem; }
+    nav { gap: 1rem; }
+    .instagram { display: none; }
+  }
+</style>

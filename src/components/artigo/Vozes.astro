@@ -1,0 +1,13 @@
+---
+// Seção "O que outras pessoas estão dizendo?" (largura total). Dentro, use <Voz>.
+interface Props { intro?: string; titulo?: string }
+const { intro, titulo = 'O que outras pessoas estão dizendo?' } = Astro.props;
+---
+<section class="cheia vozes" aria-labelledby="vozes">
+  <div class="wrap">
+    <p class="kicker">Outras vozes</p>
+    <h2 id="vozes">{titulo}</h2>
+    {intro && <p class="vozes-intro">{intro}</p>}
+    <div class="vozes-grid"><slot /></div>
+  </div>
+</section>

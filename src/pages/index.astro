@@ -1,0 +1,26 @@
+---
+// Home provisória: a "edição da semana" com sumário entra na Etapa 3.
+import Base from '../layouts/Base.astro';
+import { getArtigos, numeroEdicao } from '../lib/artigos';
+const artigos = await getArtigos();
+---
+<Base title="Quinta do Desabafo · Letícia Ferracioli" description="Toda quinta, um desabafo sobre vendas, gestão comercial, IA em vendas e marketing digital, por Letícia Ferracioli.">
+  <section class="wrap provisoria">
+    <p class="kicker">Home provisória · Etapa 1</p>
+    <h1>Desabafos</h1>
+    <ol>
+      {artigos.map((a) => (
+        <li>
+          <a class="link" href={`/desabafos/${a.data.slug}`}>Nº {numeroEdicao(a.data.edicao)} · {a.data.title}</a>
+          {a.data.draft && <span class="kicker"> (rascunho, só aparece no dev)</span>}
+        </li>
+      ))}
+    </ol>
+  </section>
+</Base>
+
+<style>
+  .provisoria { padding-block: 80px 120px; }
+  h1 { font-size: var(--fs-5); margin: 0.3em 0 0.6em; }
+  ol { padding-left: 1.2rem; }
+</style>

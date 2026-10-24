@@ -1,0 +1,6 @@
+---
+// Chamada numérica de fonte no texto: <Ref n={1} /> leva até a fonte nº 1.
+interface Props { n: number }
+const { n } = Astro.props;
+---
+<sup class="ref"><a href={`#fonte-${n}`} aria-label={`Fonte ${n}`}>{n}</a></sup>

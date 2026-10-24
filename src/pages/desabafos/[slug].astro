@@ -1,0 +1,83 @@
+---
+import { Image } from 'astro:assets';
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import TituloDestaque from '../../components/TituloDestaque.astro';
+import { getArtigos, tempoLeitura, dataLonga, numeroEdicao, type Artigo } from '../../lib/artigos';
+import foto from '../../assets/leticia.webp';
+import '../../styles/artigo.css';
+
+// Componentes que o MDX pode usar sem import
+import Ref from '../../components/artigo/Ref.astro';
+import Nota from '../../components/artigo/Nota.astro';
+import Dado from '../../components/artigo/Dado.astro';
+import Citacao from '../../components/artigo/Citacao.astro';
+import Vozes from '../../components/artigo/Vozes.astro';
+import Voz from '../../components/artigo/Voz.astro';
+import Desabafo from '../../components/artigo/Desabafo.astro';
+import Pendente from '../../components/artigo/Pendente.astro';
+import Pergunta from '../../components/artigo/Pergunta.astro';
+
+export async function getStaticPaths() {
+  const artigos = await getArtigos();
+  return artigos.map((artigo) => ({ params: { slug: artigo.data.slug }, props: { artigo } }));
+}
+
+const { artigo } = Astro.props as { artigo: Artigo };
+const d = artigo.data;
+const { Content } = await render(artigo);
+const minutos = tempoLeitura(artigo);
+---
+<Base title={d.title} description={d.description}>
+  <article>
+    <header class="abertura escuro">
+      <div class="wrap abertura-grid">
+        <p class="kicker">{d.tema} · Desabafo Nº {numeroEdicao(d.edicao)} · {minutos} min de leitura</p>
+        <TituloDestaque titulo={d.title} destaque={d.palavraDestaque} />
+        <p class="lead">{d.resumoDireto}</p>
+        <div class="autora">
+          <Image src={foto} alt="" width={104} densities={[1]} />
+          <div>
+            <b><a href="/sobre">Letícia Ferracioli</a></b>
+            <span>
+              <time datetime={d.publishedAt.toISOString().slice(0, 10)}>{dataLonga(d.publishedAt)}</time>
+              {d.updatedAt && <> · atualizado em <time datetime={d.updatedAt.toISOString().slice(0, 10)}>{dataLonga(d.updatedAt)}</time></>}
+            </span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="corpo">
+      <Content components={{ Ref, Nota, Dado, Citacao, Vozes, Voz, Desabafo, Pendente, Pergunta }} />
+    </div>
+
+    <div class="corpo fim">
+      {d.faq.length > 0 && (
+        <section class="faq" aria-labelledby="faq">
+          <h2 id="faq">Perguntas frequentes</h2>
+          {d.faq.map((f) => (
+            <details>
+              <summary>{f.pergunta}</summary>
+              <p>{f.resposta}</p>
+            </details>
+          ))}
+        </section>
+      )}
+
+      {d.fontes.length > 0 && (
+        <section class="fontes" aria-labelledby="fontes">
+          <h2 id="fontes">Fontes</h2>
+          <ol>
+            {d.fontes.map((f, i) => (
+              <li id={`fonte-${i + 1}`}>
+                {f.titulo}{' '}
+                {f.url ? <a class="link" href={f.url} rel="noopener">link ↗</a> : <mark class="pendente">[ link pendente ]</mark>}
+              </li>
+            ))}
+          </ol>
+        </section>
+      )}
+    </div>
+  </article>
+</Base>
