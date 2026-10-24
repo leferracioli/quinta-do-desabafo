@@ -24,33 +24,74 @@
   .lead { font-size: 1.35rem; }
 }
 
-/* ---------- Corpo: grid com coluna de texto, coluna de notas e linhas "cheias" ---------- */
+/* ---------- Leitura: índice lateral + corpo ----------
+   Larguras:
+   - < 1180px: uma coluna; notas abaixo do parágrafo; índice recolhível no topo do texto
+   - 1180–1439px: texto centralizado; notas abaixo do parágrafo; índice lateral à esquerda
+   - ≥ 1440px: texto + coluna de notas à direita; índice lateral à esquerda */
+.leitura { position: relative; --nota-gap: 0px; --nota-largura: 0px; }
+@media (min-width: 1440px) { .leitura { --nota-gap: 48px; --nota-largura: 200px; } }
+
+/* O índice ocupa a margem esquerda, colado à coluna de texto; o nav "gruda" no topo */
+.indice {
+  position: absolute; top: 0; bottom: 0; z-index: 1; width: 180px;
+  left: calc((100% - var(--medida) - var(--nota-gap) - var(--nota-largura)) / 2 - 180px - 32px);
+  padding-top: clamp(48px, 7vw, 88px);
+}
+.indice nav { position: sticky; top: 40px; font-size: var(--fs-0); line-height: 1.4; }
+.indice .kicker { margin-bottom: 0.8rem; }
+.indice ol { list-style: none; margin: 0; padding: 0; border-left: 1px solid var(--pedra); }
+.indice a {
+  display: block; padding: 0.42rem 0 0.42rem 1rem; margin-left: -1px;
+  border-left: 2px solid transparent; text-decoration: none; color: var(--taupe-tinta);
+  transition: color 0.2s, border-color 0.2s;
+}
+.indice a:hover { color: var(--carvao); }
+.indice a[aria-current] { color: var(--carvao); border-left-color: var(--laranja); font-weight: 500; }
+@media (max-width: 1179px) { .indice { display: none; } }
+
+/* Telas menores: "Neste artigo" recolhível */
+.indice-movel { border-top: 1px solid var(--carvao); border-bottom: 1px solid var(--pedra); padding: 0.9rem 0; margin-bottom: 2.4rem; font-size: var(--fs-0); }
+.indice-movel summary { cursor: pointer; list-style: none; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; display: flex; justify-content: space-between; }
+.indice-movel summary::-webkit-details-marker { display: none; }
+.indice-movel summary::after { content: '+'; font-family: var(--serif); font-size: 1.5em; line-height: 0.7; color: var(--laranja-tinta); transition: transform 0.3s; }
+.indice-movel[open] summary::after { transform: rotate(45deg); }
+.indice-movel ol { margin: 0.8rem 0 0; padding-left: 1.2rem; line-height: 1.45; }
+.indice-movel li { margin: 0.45rem 0; }
+.indice-movel a { color: var(--carvao); text-underline-offset: 3px; text-decoration-color: var(--pedra); }
+@media (min-width: 1180px) { .indice-movel { display: none; } }
+
+/* Corpo: coluna de texto, coluna de notas (só ≥1440px) e linhas "cheias" de ponta a ponta */
 .corpo {
   display: grid;
   grid-template-columns:
     [cheia-start] minmax(var(--gutter), 1fr)
-    [texto-start] minmax(0, var(--medida)) [texto-end]
-    clamp(24px, 4vw, 64px)
-    [nota-start] 240px [nota-end]
+    [texto-start nota-start] minmax(0, var(--medida)) [texto-end nota-end]
     minmax(var(--gutter), 1fr) [cheia-end];
   padding-block: clamp(48px, 7vw, 88px);
 }
-.corpo > * { grid-column: texto; }
-.corpo > .cheia { grid-column: cheia; }
-.corpo > .nota { grid-column: nota; grid-row-end: span 3; align-self: start; }
-@media (max-width: 1100px) {
+@media (min-width: 1440px) {
   .corpo {
     grid-template-columns:
-      [cheia-start] var(--gutter)
-      [texto-start nota-start] minmax(0, 1fr) [texto-end nota-end]
-      var(--gutter) [cheia-end];
+      [cheia-start] minmax(var(--gutter), 1fr)
+      [texto-start] var(--medida) [texto-end]
+      var(--nota-gap)
+      [nota-start] var(--nota-largura) [nota-end]
+      minmax(var(--gutter), 1fr) [cheia-end];
   }
-  .corpo > .nota { grid-row-end: auto; margin: -0.6rem 0 1.4rem; }
+}
+.corpo > * { grid-column: texto; }
+/* Seções de largura total cobrem o índice lateral, como uma virada de página */
+.corpo > .cheia { grid-column: cheia; position: relative; z-index: 2; background: var(--areia); }
+.corpo > .cheia.escuro { background: var(--carvao); }
+.corpo > .nota { grid-column: nota; margin: -0.6rem 0 1.4rem; }
+@media (min-width: 1440px) {
+  .corpo > .nota { grid-row-end: span 3; align-self: start; margin: 1.3rem 0 0; }
 }
 
 .corpo > p, .corpo > ul, .corpo > blockquote { margin: 0 0 1.3em; }
 .corpo > h2 { font-size: var(--fs-3); margin: 1.8em 0 0.6em; scroll-margin-top: 30px; }
-.corpo > h2:first-child { margin-top: 0; }
+.corpo > h2:first-child, .corpo > .indice-movel + h2 { margin-top: 0; }
 
 /* Capitular no primeiro parágrafo */
 .corpo > p:first-of-type::first-letter {
@@ -153,3 +194,15 @@
 .fontes li { margin-bottom: 0.5rem; scroll-margin-top: 30px; }
 .fontes li:target { color: var(--carvao); }
 .fontes .pendente { font-size: inherit; }
+
+/* ---------- Revelação suave (só para quem não pediu movimento reduzido) ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .revela {
+      animation: revela both ease-out;
+      animation-timeline: view();
+      animation-range: entry 0% cover 30%;
+    }
+    @keyframes revela { from { opacity: 0; transform: translateY(28px); } }
+  }
+}

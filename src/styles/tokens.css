@@ -32,7 +32,7 @@
   --peso-serif: 500;
 
   /* Medidas */
-  --medida: 66ch;
+  --medida: 42.5rem; /* 680px: ~68 caracteres por linha em Jost 20px */
   --gutter: clamp(16px, 4vw, 56px);
   --largura: 1320px;
 }

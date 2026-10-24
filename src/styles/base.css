@@ -59,6 +59,12 @@ h1, h2, h3 {
 }
 .pular:focus { top: 16px; }
 
+/* Movimento reduzido: sem transições. As animações de revelação só existem
+   em prefers-reduced-motion: no-preference (ver artigo.css); a barra de
+   progresso segue o scroll e não é afetada. */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { transition: none !important; animation: none !important; }
+  *, *::before, *::after { transition: none !important; scroll-behavior: auto !important; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
 }

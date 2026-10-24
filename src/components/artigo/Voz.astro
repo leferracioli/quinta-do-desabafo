@@ -11,7 +11,7 @@ interface Props {
 }
 const { citacao, traducao, nome, cargo, fonte, idioma = 'en' } = Astro.props;
 ---
-<figure class="voz">
+<figure class="voz revela">
   <blockquote lang={idioma}><p>“{citacao}”</p></blockquote>
   {traducao && <p class="traducao">{traducao}</p>}
   <p class="contexto"><slot /></p>

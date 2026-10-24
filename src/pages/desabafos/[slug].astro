@@ -3,6 +3,9 @@ import { Image } from 'astro:assets';
 import { render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import TituloDestaque from '../../components/TituloDestaque.astro';
+import Progresso from '../../components/artigo/Progresso.astro';
+import Indice, { type ItemIndice } from '../../components/artigo/Indice.astro';
+import ProximoDesabafo from '../../components/artigo/ProximoDesabafo.astro';
 import { getArtigos, tempoLeitura, dataLonga, numeroEdicao, type Artigo } from '../../lib/artigos';
 import foto from '../../assets/leticia.webp';
 import '../../styles/artigo.css';
@@ -20,15 +23,28 @@ import Pergunta from '../../components/artigo/Pergunta.astro';
 
 export async function getStaticPaths() {
   const artigos = await getArtigos();
-  return artigos.map((artigo) => ({ params: { slug: artigo.data.slug }, props: { artigo } }));
+  return artigos.map((artigo) => ({ params: { slug: artigo.data.slug }, props: { artigo, artigos } }));
 }
 
-const { artigo } = Astro.props as { artigo: Artigo };
+const { artigo, artigos } = Astro.props as { artigo: Artigo; artigos: Artigo[] };
 const d = artigo.data;
-const { Content } = await render(artigo);
+const { Content, headings } = await render(artigo);
 const minutos = tempoLeitura(artigo);
+
+// Índice: os H2 do texto + as seções de componente (vozes, desabafo), na ordem em que aparecem
+const corpo = artigo.body ?? '';
+const itens: (ItemIndice & { pos: number })[] = headings
+  .filter((h) => h.depth === 2)
+  .map((h) => ({ id: h.slug, texto: h.text, pos: corpo.indexOf(`## ${h.text}`) }));
+for (const [tag, id, texto] of [['<Vozes', 'vozes', 'O que outras pessoas estão dizendo?'], ['<Desabafo', 'desabafo', 'O desabafo']]) {
+  const pos = corpo.indexOf(tag);
+  if (pos >= 0) itens.push({ id, texto, pos });
+}
+itens.sort((a, b) => a.pos - b.pos);
+if (d.faq.length) itens.push({ id: 'faq', texto: 'Perguntas frequentes', pos: Infinity });
 ---
 <Base title={d.title} description={d.description}>
+  <Progresso />
   <article>
     <header class="abertura escuro">
       <div class="wrap abertura-grid">
@@ -48,36 +64,43 @@ const minutos = tempoLeitura(artigo);
       </div>
     </header>
 
-    <div class="corpo">
-      <Content components={{ Ref, Nota, Dado, Citacao, Vozes, Voz, Desabafo, Pendente, Pergunta }} />
-    </div>
+    <div class="leitura">
+      <Indice itens={itens} variante="lateral" />
 
-    <div class="corpo fim">
-      {d.faq.length > 0 && (
-        <section class="faq" aria-labelledby="faq">
-          <h2 id="faq">Perguntas frequentes</h2>
-          {d.faq.map((f) => (
-            <details>
-              <summary>{f.pergunta}</summary>
-              <p>{f.resposta}</p>
-            </details>
-          ))}
-        </section>
-      )}
+      <div class="corpo">
+        <Indice itens={itens} variante="movel" />
+        <Content components={{ Ref, Nota, Dado, Citacao, Vozes, Voz, Desabafo, Pendente, Pergunta }} />
+      </div>
 
-      {d.fontes.length > 0 && (
-        <section class="fontes" aria-labelledby="fontes">
-          <h2 id="fontes">Fontes</h2>
-          <ol>
-            {d.fontes.map((f, i) => (
-              <li id={`fonte-${i + 1}`}>
-                {f.titulo}{' '}
-                {f.url ? <a class="link" href={f.url} rel="noopener">link ↗</a> : <mark class="pendente">[ link pendente ]</mark>}
-              </li>
+      <div class="corpo fim">
+        {d.faq.length > 0 && (
+          <section class="faq" aria-labelledby="faq">
+            <h2 id="faq">Perguntas frequentes</h2>
+            {d.faq.map((f) => (
+              <details>
+                <summary>{f.pergunta}</summary>
+                <p>{f.resposta}</p>
+              </details>
             ))}
-          </ol>
-        </section>
-      )}
+          </section>
+        )}
+
+        {d.fontes.length > 0 && (
+          <section class="fontes" aria-labelledby="fontes">
+            <h2 id="fontes">Fontes</h2>
+            <ol>
+              {d.fontes.map((f, i) => (
+                <li id={`fonte-${i + 1}`}>
+                  {f.titulo}{' '}
+                  {f.url ? <a class="link" href={f.url} rel="noopener">link ↗</a> : <mark class="pendente">[ link pendente ]</mark>}
+                </li>
+              ))}
+            </ol>
+          </section>
+        )}
+      </div>
     </div>
+
+    <ProximoDesabafo atual={artigo} artigos={artigos} />
   </article>
 </Base>

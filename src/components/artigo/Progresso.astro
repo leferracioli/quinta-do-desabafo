@@ -1,0 +1,32 @@
+---
+// Barra de progresso fina laranja no topo.
+// Navegadores modernos: só CSS (animation-timeline). Os demais: um script mínimo.
+---
+<div class="progresso" aria-hidden="true"></div>
+
+<style>
+  .progresso {
+    position: fixed; inset: 0 0 auto 0; z-index: 60;
+    height: 3px; background: var(--laranja);
+    transform-origin: 0 50%; transform: scaleX(var(--progresso, 0));
+  }
+  @supports (animation-timeline: scroll()) {
+    .progresso { animation: progresso linear both; animation-timeline: scroll(root); }
+    @keyframes progresso { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  }
+</style>
+
+<script>
+  // Plano B para navegadores sem animation-timeline
+  if (!CSS.supports('animation-timeline: scroll()')) {
+    const barra = document.querySelector<HTMLElement>('.progresso');
+    let pendente = false;
+    const atualizar = () => {
+      const max = document.documentElement.scrollHeight - innerHeight;
+      barra?.style.setProperty('--progresso', String(max > 0 ? scrollY / max : 0));
+      pendente = false;
+    };
+    addEventListener('scroll', () => { if (!pendente) { pendente = true; requestAnimationFrame(atualizar); } }, { passive: true });
+    atualizar();
+  }
+</script>

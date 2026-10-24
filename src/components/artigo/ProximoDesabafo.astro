@@ -1,0 +1,52 @@
+---
+// Fim que puxa o próximo: o desabafo mais novo que este; se este for o mais
+// novo, o anterior; se for o primeiro de todos, o aviso da próxima quinta.
+import TituloDestaque from '../TituloDestaque.astro';
+import { SITE } from '../../lib/site';
+import { numeroEdicao, type Artigo } from '../../lib/artigos';
+
+interface Props { atual: Artigo; artigos: Artigo[] } // artigos: do mais novo ao mais antigo
+const { atual, artigos } = Astro.props;
+const i = artigos.findIndex((a) => a.id === atual.id);
+const maisNovo = i > 0 ? artigos[i - 1] : undefined;
+const anterior = artigos[i + 1];
+const alvo = maisNovo ?? anterior;
+const rotulo = maisNovo ? 'Próximo desabafo' : 'Desabafo anterior';
+---
+<section class="proximo escuro" aria-label={alvo ? rotulo : 'Próximo desabafo'}>
+  <div class="wrap">
+    <p class="kicker">{alvo ? rotulo : 'Próximo desabafo'}</p>
+    {alvo ? (
+      <a class="bloco" href={`/desabafos/${alvo.data.slug}`}>
+        <span class="num" aria-hidden="true">{numeroEdicao(alvo.data.edicao)}</span>
+        <TituloDestaque tag="p" class="titulo" titulo={alvo.data.title} destaque={alvo.data.palavraDestaque} />
+      </a>
+    ) : (
+      <div class="bloco">
+        <span class="num" aria-hidden="true">{numeroEdicao(atual.data.edicao + 1)}</span>
+        <p class="titulo">Sai na próxima <span class="destaque">quinta</span></p>
+      </div>
+    )}
+    <div class="ig">
+      <span>Toda quinta tem desabafo novo.</span>
+      <a class="link" href={SITE.instagram} rel="me">Primeiro eu cutuco no Instagram, depois eu explico aqui → @leferracioli</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .proximo { padding-block: clamp(64px, 10vw, 140px); }
+  .bloco { display: grid; grid-template-columns: auto 1fr; gap: var(--gutter); align-items: end; text-decoration: none; }
+  .num { font-family: var(--serif); font-weight: var(--peso-serif); font-size: clamp(5rem, 12vw, var(--fs-8)); line-height: 0.8; }
+  .titulo {
+    font-family: var(--serif); font-weight: var(--peso-serif);
+    font-size: clamp(var(--fs-3), 5vw, var(--fs-5)); line-height: 1.05; max-width: 18ch; margin: 0.4em 0 0;
+  }
+  a.bloco .titulo {
+    background: linear-gradient(var(--laranja), var(--laranja)) 0 100% / 0 3px no-repeat;
+    transition: background-size 0.45s ease; display: inline;
+  }
+  a.bloco:hover .titulo, a.bloco:focus-visible .titulo { background-size: 100% 3px; }
+  .ig { margin-top: 2.6rem; font-size: var(--fs-0); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem; color: var(--taupe); }
+  @media (max-width: 600px) { .bloco { grid-template-columns: 1fr; gap: 0.4rem; } }
+</style>

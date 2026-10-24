@@ -1,0 +1,50 @@
+---
+// Índice do artigo.
+// Computador (≥1280px): lateral, fixo enquanto rola, com a seção atual em laranja.
+// Celular/tablet: um "Neste artigo" recolhível no topo do texto (o MDX não precisa saber disso).
+export interface ItemIndice { id: string; texto: string }
+interface Props { itens: ItemIndice[]; variante: 'lateral' | 'movel' }
+const { itens, variante } = Astro.props;
+---
+{variante === 'lateral' ? (
+  <aside class="indice">
+    <nav aria-label="Neste artigo">
+      <p class="kicker">Neste artigo</p>
+      <ol>
+        {itens.map((i) => <li><a href={`#${i.id}`}>{i.texto}</a></li>)}
+      </ol>
+    </nav>
+  </aside>
+) : (
+  <details class="indice-movel">
+    <summary>Neste artigo</summary>
+    <ol>
+      {itens.map((i) => <li><a href={`#${i.id}`}>{i.texto}</a></li>)}
+    </ol>
+  </details>
+)}
+
+<script>
+  // Marca no índice lateral a seção que está sendo lida
+  const links = [...document.querySelectorAll<HTMLAnchorElement>('.indice a')];
+  const alvos = links
+    .map((l) => document.getElementById(decodeURIComponent(l.hash.slice(1))))
+    .filter((el): el is HTMLElement => !!el);
+
+  const marcar = (id: string) =>
+    links.forEach((l) => l.toggleAttribute('aria-current', l.hash === `#${id}`));
+
+  if (links.length) {
+    // A seção atual é a última cujo título já passou do terço superior da tela
+    let pendente = false;
+    const atualizar = () => {
+      const linha = innerHeight * 0.33;
+      let atual = alvos[0]?.id;
+      for (const el of alvos) if (el.getBoundingClientRect().top <= linha) atual = el.id;
+      if (atual) marcar(atual);
+      pendente = false;
+    };
+    addEventListener('scroll', () => { if (!pendente) { pendente = true; requestAnimationFrame(atualizar); } }, { passive: true });
+    atualizar();
+  }
+</script>
