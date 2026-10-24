@@ -1,5 +1,5 @@
 ---
-// Layout base de todas as páginas: <head>, fontes, header e rodapé.
+// Layout base de todas as páginas: <head> com SEO, fontes, header e rodapé.
 import '@fontsource-variable/fraunces/opsz.css';
 import '@fontsource-variable/fraunces/opsz-italic.css';
 import '@fontsource/jost/latin-400.css';
@@ -14,13 +14,32 @@ import jost400 from '@fontsource/jost/files/jost-latin-400-normal.woff2?url';
 
 import Topo from '../components/Topo.astro';
 import Rodape from '../components/Rodape.astro';
+import { SITE } from '../lib/site';
 
 interface Props {
   title: string;
   description: string;
+  /** Caminho da imagem de compartilhamento (padrão: imagem geral do site) */
+  imagem?: string;
+  tipo?: 'website' | 'article' | 'profile';
+  publicadoEm?: Date;
+  atualizadoEm?: Date;
+  /** true em rascunhos: a página não deve ser indexada */
+  naoIndexar?: boolean;
+  /** Objetos JSON-LD desta página (entram num único @graph) */
+  jsonLd?: object[];
 }
-const { title, description } = Astro.props;
-const canonical = new URL(Astro.url.pathname, Astro.site);
+const {
+  title, description, imagem = '/og/site.png', tipo = 'website',
+  publicadoEm, atualizadoEm, naoIndexar = false, jsonLd = [],
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const imagemAbs = new URL(imagem, Astro.site).href;
+// "<" escapado para nenhum texto conseguir fechar a tag <script>
+const grafo = jsonLd.length
+  ? JSON.stringify({ '@context': 'https://schema.org', '@graph': jsonLd }).replace(/</g, '\\u003c')
+  : null;
 ---
 <!doctype html>
 <html lang="pt-BR">
@@ -30,11 +49,39 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
+    {naoIndexar && <meta name="robots" content="noindex, nofollow" />}
+    <meta name="author" content={SITE.autora} />
     <meta name="theme-color" content="#2a2a2c" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate" type="application/rss+xml" title={SITE.nome} href="/rss.xml" />
+
+    <!-- Fontes acima da dobra -->
     <link rel="preload" href={frauncesNormal} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={frauncesItalico} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={jost400} as="font" type="font/woff2" crossorigin />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content={tipo} />
+    <meta property="og:site_name" content={SITE.nome} />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={imagemAbs} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={title} />
+    {publicadoEm && <meta property="article:published_time" content={publicadoEm.toISOString()} />}
+    {(atualizadoEm ?? publicadoEm) && <meta property="article:modified_time" content={(atualizadoEm ?? publicadoEm)!.toISOString()} />}
+    {tipo === 'article' && <meta property="article:author" content={new URL('/sobre', Astro.site).href} />}
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={imagemAbs} />
+
+    {grafo && <script type="application/ld+json" set:html={grafo} />}
     <slot name="head" />
   </head>
   <body>

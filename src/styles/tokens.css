@@ -13,6 +13,8 @@
   --laranja-tinta: #b4481a; /* ~4,5:1 sobre areia */
   --taupe-tinta: #6e665d;   /* ~4,6:1 sobre areia */
   --linha-escura: #46464a;  /* fios sobre carvão */
+  --laranja-luz: #ea7440;   /* laranja para texto PEQUENO sobre carvão (~4,8:1); o original dá 4,2:1 */
+  --taupe-pedra: #55504a;   /* texto pequeno sobre fundo pedra (~4,8:1) */
 
   /* Tipografia: Fraunces = voz editorial; Jost = leitura */
   --serif: 'Fraunces Variable', Georgia, serif;

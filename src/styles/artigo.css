@@ -135,7 +135,7 @@
   font-size: clamp(var(--fs-6), 10vw, var(--fs-7)); line-height: 0.85; white-space: nowrap;
 }
 .dado-txt { font-size: var(--fs-1); line-height: 1.4; border-left: 3px solid var(--laranja); padding: 0 0 0.4rem 1rem; }
-.dado-fonte { grid-column: 1 / -1; font-size: var(--fs-0); color: var(--taupe-tinta); margin-top: 1rem; }
+.dado-fonte { grid-column: 1 / -1; font-size: var(--fs-0); color: var(--taupe-pedra); margin-top: 1rem; }
 @media (max-width: 900px) {
   .dado { grid-template-columns: 1fr; }
   .dado-txt { margin-top: 1rem; }
@@ -193,7 +193,7 @@
 .fontes ol { padding-left: 1.4rem; font-size: var(--fs-0); color: var(--taupe-tinta); }
 .fontes li { margin-bottom: 0.5rem; scroll-margin-top: 30px; }
 .fontes li:target { color: var(--carvao); }
-.fontes .pendente { font-size: inherit; }
+.fontes .pendente { font-size: inherit; color: var(--carvao); }
 
 /* ---------- Revelação suave (só para quem não pediu movimento reduzido) ---------- */
 @media (prefers-reduced-motion: no-preference) {

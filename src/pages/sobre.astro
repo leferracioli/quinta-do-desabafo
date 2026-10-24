@@ -6,8 +6,26 @@ import Retrato from '../components/Retrato.astro';
 import Pendente from '../components/artigo/Pendente.astro';
 import { Content as Texto } from '../paginas/sobre.mdx';
 import { SITE } from '../lib/site';
+import { pessoaCompleta, migalhas } from '../lib/seo';
+import { getImage } from 'astro:assets';
+import foto from '../assets/leticia.webp';
+
+const site = Astro.site!;
+// Foto da autora para os dados estruturados (Person.image)
+const fotoPessoa = await getImage({ src: foto, width: 600, format: 'jpg' });
+const jsonLd = [
+  {
+    '@type': 'ProfilePage',
+    url: new URL('/sobre', site).href,
+    inLanguage: 'pt-BR',
+    mainEntity: pessoaCompleta(site, new URL(fotoPessoa.src, site).href),
+  },
+  migalhas(site, [{ nome: 'Início', caminho: '/' }, { nome: 'Sobre', caminho: '/sobre' }]),
+];
 ---
 <Base
+  tipo="profile"
+  jsonLd={jsonLd}
   title="Sobre Letícia Ferracioli · Quinta do Desabafo"
   description="Letícia Ferracioli é supervisora comercial, com mais de 8 anos em marketing digital e liderança de times de vendas. Conheça a autora da Quinta do Desabafo."
 >

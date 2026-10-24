@@ -8,6 +8,7 @@ import Indice, { type ItemIndice } from '../../components/artigo/Indice.astro';
 import ProximoDesabafo from '../../components/artigo/ProximoDesabafo.astro';
 import { getArtigos, tempoLeitura, dataLonga, numeroEdicao, type Artigo } from '../../lib/artigos';
 import foto from '../../assets/leticia.webp';
+import { grafoArtigo } from '../../lib/seo';
 import '../../styles/artigo.css';
 
 // Componentes que o MDX pode usar sem import
@@ -42,8 +43,20 @@ for (const [tag, id, texto] of [['<Vozes', 'vozes', 'O que outras pessoas estão
 }
 itens.sort((a, b) => a.pos - b.pos);
 if (d.faq.length) itens.push({ id: 'faq', texto: 'Perguntas frequentes', pos: Infinity });
+
+const imagemOg = `/og/${d.slug}.png`;
+const jsonLd = grafoArtigo(artigo, Astro.site!, new URL(imagemOg, Astro.site).href);
 ---
-<Base title={d.title} description={d.description}>
+<Base
+  title={d.title}
+  description={d.description}
+  imagem={imagemOg}
+  tipo="article"
+  publicadoEm={d.publishedAt}
+  atualizadoEm={d.updatedAt}
+  naoIndexar={d.draft}
+  jsonLd={jsonLd}
+>
   <Progresso />
   <article>
     <header class="abertura escuro">

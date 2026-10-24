@@ -5,6 +5,7 @@ import Base from '../layouts/Base.astro';
 import ListaEdicoes from './ListaEdicoes.astro';
 import { TEMAS, type Tema } from '../lib/temas';
 import { temaSlug, type Artigo } from '../lib/artigos';
+import { migalhas } from '../lib/seo';
 
 interface Props { artigos: Artigo[]; tema?: Tema }
 const { artigos, tema } = Astro.props;
@@ -15,8 +16,17 @@ const titulo = tema ? `Desabafos sobre ${tema}` : 'Todos os Desabafos';
 const descricao = tema
   ? `Todos os artigos da Quinta do Desabafo sobre ${tema}, por Letícia Ferracioli.`
   : 'O arquivo completo da Quinta do Desabafo: artigos semanais sobre vendas, gestão comercial, IA em vendas e marketing digital.';
+const caminho = tema ? `/desabafos/tema/${temaSlug(tema)}` : '/desabafos';
+const jsonLd = [
+  { '@type': 'CollectionPage', name: titulo, url: new URL(caminho, Astro.site).href, inLanguage: 'pt-BR' },
+  migalhas(Astro.site!, [
+    { nome: 'Início', caminho: '/' },
+    { nome: 'Desabafos', caminho: '/desabafos' },
+    ...(tema ? [{ nome: tema, caminho }] : []),
+  ]),
+];
 ---
-<Base title={`${titulo} · Quinta do Desabafo`} description={descricao}>
+<Base title={`${titulo} · Quinta do Desabafo`} description={descricao} jsonLd={jsonLd}>
   <header class="topo-arquivo escuro">
     <div class="wrap">
       <p class="kicker">Arquivo</p>

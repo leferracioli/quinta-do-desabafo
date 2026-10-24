@@ -5,10 +5,13 @@ import Retrato from '../components/Retrato.astro';
 import TituloDestaque from '../components/TituloDestaque.astro';
 import ListaEdicoes from '../components/ListaEdicoes.astro';
 import { getArtigos, numeroEdicao, dataCurta, primeirasFrases } from '../lib/artigos';
+import { siteWeb, pessoaRef } from '../lib/seo';
 
 const [atual, ...anteriores] = await getArtigos();
+const jsonLd = [siteWeb(Astro.site!), pessoaRef(Astro.site!)];
 ---
 <Base
+  jsonLd={jsonLd}
   title="Quinta do Desabafo · Letícia Ferracioli"
   description="Toda quinta, um desabafo sobre vendas, gestão comercial, IA em vendas e marketing digital: a notícia da semana, os dados e a visão de quem lidera time comercial."
 >

@@ -2,9 +2,12 @@ import { getCollection, type CollectionEntry } from 'astro:content';
 
 export type Artigo = CollectionEntry<'artigos'>;
 
+// INCLUIR_RASCUNHOS=1 gera os rascunhos também no build (só para testar local; eles saem com noindex)
+const incluirRascunhos = import.meta.env.DEV || process.env.INCLUIR_RASCUNHOS === '1';
+
 /** Todos os artigos, da edição mais nova para a mais antiga. Rascunhos só aparecem no dev. */
 export async function getArtigos(): Promise<Artigo[]> {
-  const todos = await getCollection('artigos', ({ data }) => import.meta.env.DEV || !data.draft);
+  const todos = await getCollection('artigos', ({ data }) => incluirRascunhos || !data.draft);
 
   // Duas edições com o mesmo número quebram o build
   const vistos = new Map<number, string>();
