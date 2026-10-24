@@ -1,5 +1,5 @@
 ---
-import { Image } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
 import { render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import TituloDestaque from '../../components/TituloDestaque.astro';
@@ -44,13 +44,17 @@ for (const [tag, id, texto] of [['<Vozes', 'vozes', 'O que outras pessoas estão
 itens.sort((a, b) => a.pos - b.pos);
 if (d.faq.length) itens.push({ id: 'faq', texto: 'Perguntas frequentes', pos: Infinity });
 
-const imagemOg = `/og/${d.slug}.png`;
+// Imagem de compartilhamento: a capa (se houver), recortada em 1200×630; senão, a gerada automaticamente
+const imagemOg = d.capa
+  ? (await getImage({ src: d.capa, width: 1200, height: 630, fit: 'cover', format: 'jpg' })).src
+  : `/og/${d.slug}.png`;
 const jsonLd = grafoArtigo(artigo, Astro.site!, new URL(imagemOg, Astro.site).href);
 ---
 <Base
   title={d.title}
   description={d.description}
   imagem={imagemOg}
+  imagemAlt={d.capaAlt}
   tipo="article"
   publicadoEm={d.publishedAt}
   atualizadoEm={d.updatedAt}

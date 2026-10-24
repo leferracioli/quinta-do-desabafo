@@ -1,4 +1,15 @@
 ---
-// Campo que a Letícia ainda precisa preencher. Aparece em amarelo no rascunho.
+// Campo que a Letícia ainda precisa preencher. Aparece destacado no dev e em rascunhos.
+// No build de produção, um campo pendente numa página publicada PARA o build,
+// para nada ir ao ar com "[ ... ]". Rascunhos não entram no build, então não travam.
+// Para gerar mesmo assim (ex.: uma prévia), rode com PERMITIR_PENDENTES=1.
+const liberado =
+  import.meta.env.DEV || process.env.PERMITIR_PENDENTES === '1' || process.env.INCLUIR_RASCUNHOS === '1';
+if (!liberado) {
+  throw new Error(
+    `Há um campo pendente [ ... ] em ${Astro.url.pathname}. Preencha antes de publicar ` +
+      `(ou rode com PERMITIR_PENDENTES=1 para uma prévia).`
+  );
+}
 ---
 <mark class="pendente">[ <slot /> ]</mark>

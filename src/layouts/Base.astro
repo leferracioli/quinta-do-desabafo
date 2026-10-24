@@ -21,6 +21,8 @@ interface Props {
   description: string;
   /** Caminho da imagem de compartilhamento (padrão: imagem geral do site) */
   imagem?: string;
+  /** Texto alternativo da imagem de compartilhamento (padrão: o título) */
+  imagemAlt?: string;
   tipo?: 'website' | 'article' | 'profile';
   publicadoEm?: Date;
   atualizadoEm?: Date;
@@ -30,7 +32,7 @@ interface Props {
   jsonLd?: object[];
 }
 const {
-  title, description, imagem = '/og/site.png', tipo = 'website',
+  title, description, imagem = '/og/site.png', imagemAlt, tipo = 'website',
   publicadoEm, atualizadoEm, naoIndexar = false, jsonLd = [],
 } = Astro.props;
 
@@ -70,7 +72,7 @@ const grafo = jsonLd.length
     <meta property="og:image" content={imagemAbs} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content={title} />
+    <meta property="og:image:alt" content={imagemAlt ?? title} />
     {publicadoEm && <meta property="article:published_time" content={publicadoEm.toISOString()} />}
     {(atualizadoEm ?? publicadoEm) && <meta property="article:modified_time" content={(atualizadoEm ?? publicadoEm)!.toISOString()} />}
     {tipo === 'article' && <meta property="article:author" content={new URL('/sobre', Astro.site).href} />}

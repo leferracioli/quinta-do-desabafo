@@ -1,0 +1,84 @@
+---
+# ============================================================
+# MODELO DE ARTIGO — copie este arquivo para src/content/artigos/
+# com o nome NN-slug.mdx (ex.: 02-meta-batida-time-esgotado.mdx)
+# e troque tudo que está entre [colchetes].
+# ============================================================
+
+title: "[Título com a palavra-chave perene, em forma de pergunta]"
+description: "[Meta description: até 155 caracteres, com a palavra-chave]"
+slug: [endereco-do-artigo]          # só minúsculas, números e hífen; vira /desabafos/endereco-do-artigo
+publishedAt: 2026-10-29             # data da quinta em que vai ao ar (AAAA-MM-DD)
+# updatedAt: 2026-11-05             # tire o # se atualizar o artigo depois
+edicao: 2                           # número do Desabafo (sequencial, não pode repetir)
+palavraChave: "[palavra-chave principal]"
+variacoes:
+  - "[variação 1]"
+  - "[variação 2]"
+tema: vendas                        # vendas | gestão comercial | IA em vendas | marketing digital
+palavraDestaque: "[uma palavra que aparece no title]"   # fica em itálico laranja
+resumoDireto: "[A resposta direta em 2 ou 3 frases, literal, sem ironia. É o trecho que as IAs citam.]"
+
+# Capa (opcional). Coloque a imagem em src/assets/capas/ e aponte para ela.
+# Ela vira a imagem de compartilhamento; sem capa, o site gera uma automaticamente.
+# capa: ../../assets/capas/[nome-da-imagem].jpg
+# capaAlt: "[descrição da imagem para quem não enxerga]"
+
+faq:
+  - pergunta: "[Pergunta 1?]"
+    resposta: "[Resposta objetiva.]"
+  - pergunta: "[Pergunta 2?]"
+    resposta: "[Resposta objetiva.]"
+
+fontes:                             # a ordem define o número de cada fonte (1, 2, 3...)
+  - titulo: "[Instituição. Título do estudo, data.]"
+    url: "https://..."
+  - titulo: "[Veículo. Título da notícia, data.]"
+    url: "https://..."
+
+draft: true                         # true = rascunho (só aparece no npm run dev). Mude para false para publicar.
+---
+
+## O que aconteceu?
+
+Primeiro parágrafo (ganha a letra capitular automaticamente). Para citar a fonte nº 1, coloque a chamada logo depois da frase.<Ref n={1} />
+
+<Nota n={1}>Instituição, *Título do estudo*, data.</Nota>
+
+Listas comuns funcionam:
+
+- item
+- item
+
+> Uma ressalva curta (sai em letra menor, com fio à esquerda).
+
+<Dado numero="00%" fonte="Instituição, ano · detalhe da pesquisa">o que o número significa, em uma frase.</Dado>
+
+## Por que isso importa?
+
+Texto.
+
+<Citacao>Uma frase do próprio artigo para destacar.</Citacao>
+
+## [Outra pergunta que as pessoas buscam?]
+
+Texto.
+
+<Vozes intro="Uma frase que resume o que essas pessoas têm em comum.">
+  <Voz citacao="Citação original, curta." traducao="Tradução, se for em inglês." nome="Nome Sobrenome" cargo="Cargo · Instituição · onde disse" fonte={2}>Contexto em uma frase.</Voz>
+  <Voz citacao="Citação em português." idioma="pt-BR" nome="Nome Sobrenome" cargo="Cargo · Instituição" fonte={2}>Contexto em uma frase.</Voz>
+</Vozes>
+
+<Desabafo>
+
+A sua visão, em primeira pessoa. Parágrafos normais.
+
+Quando faltar algo, marque assim: <Pendente>o que falta</Pendente>. Um artigo publicado com campo pendente não passa no build.
+
+</Desabafo>
+
+## Reflexão final
+
+Texto.
+
+<Pergunta>A pergunta final para o leitor, com uma <span class="destaque">palavra</span> em destaque?</Pergunta>
