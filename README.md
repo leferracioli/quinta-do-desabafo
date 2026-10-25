@@ -259,7 +259,7 @@ https://www.leticiaferracioli.com.br/desabafos/ia-vai-substituir-sdr/?utm_source
 | `generate_lead` | formulário de contato enviado com sucesso |
 | `sugestao_tema` | sugestão de tema enviada com sucesso |
 
-- **Configuração do Tag Manager:** o arquivo [`gtm/container-leticiaferracioli.json`](gtm/container-leticiaferracioli.json) traz a tag do GA4 (`G-M4ZNQFQ3S4`) e os três eventos. Para importar: **Administrador → Importar contêiner → escolha o arquivo → espaço de trabalho existente → Mesclar → Substituir tags conflitantes → Confirmar**, e depois **Enviar → Publicar**.
+- **Configuração do Tag Manager:** o arquivo [`gtm/container-leticiaferracioli.json`](gtm/container-leticiaferracioli.json) traz a tag do GA4 (`G-M4ZNQFQ3S4`) e os três eventos, mais o **Meta Pixel** (`969932873472116`): `PageView` em todas as páginas, `Lead` no formulário enviado e `Contact` no clique do WhatsApp. Para importar: **Administrador → Importar contêiner → escolha o arquivo → espaço de trabalho existente → Mesclar → Substituir tags conflitantes → Confirmar**, e depois **Enviar → Publicar**.
 - **No Google Analytics:**
   - marque `generate_lead` e `clique_whatsapp` como **eventos principais** (Administrador → Eventos);
   - crie o canal **IA** em Administrador → Exibição de dados → Grupos de canais, com a origem da sessão correspondendo à expressão `chatgpt|openai|perplexity|gemini|copilot|claude|bard`.

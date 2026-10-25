@@ -1,5 +1,6 @@
 ---
 // Banner de cookies (LGPD) + carregamento do Google Tag Manager SÓ depois do aceite.
+// Dentro do GTM: Google Analytics 4 e Meta Pixel.
 // Sem aceite, nenhum script de terceiros é carregado.
 // A escolha fica no navegador; o link "Preferências de cookies" (rodapé) reabre o banner.
 import { SITE } from '../lib/site';
@@ -7,7 +8,7 @@ const gtmId = SITE.gtm;
 ---
 <div id="cookies" class="cookies" role="region" aria-label="Aviso de cookies" hidden>
   <p>
-    Uso cookies do Google Analytics para entender como as pessoas chegam e navegam pelo site, e assim melhorar o conteúdo.
+    Uso cookies do Google Analytics e do Meta (Facebook e Instagram) para entender como as pessoas chegam e navegam pelo site e para mostrar meu conteúdo a quem já visitou.
     Eles só são ativados se você aceitar. <a href="/privacidade/#7-cookies-e-tecnologias-semelhantes">Saiba mais</a>
   </p>
   <div class="botoes">
@@ -18,7 +19,8 @@ const gtmId = SITE.gtm;
 
 <script is:inline define:vars={{ gtmId }}>
   (function () {
-    var CHAVE = 'consentimento-cookies';
+    // v2: o Meta Pixel entrou depois; quem aceitou só o Analytics recebe a pergunta de novo
+    var CHAVE = 'consentimento-cookies-v2';
     window.dataLayer = window.dataLayer || [];
     function gtag() { window.dataLayer.push(arguments); }
 
@@ -37,11 +39,11 @@ const gtmId = SITE.gtm;
       document.head.appendChild(s);
     }
 
-    // Recusou depois de ter aceitado: apaga os cookies do Google Analytics
-    function apagarCookiesGA() {
+    // Recusou depois de ter aceitado: apaga os cookies do Google Analytics e do Meta
+    function apagarCookies() {
       document.cookie.split(';').forEach(function (c) {
         var nome = c.split('=')[0].trim();
-        if (/^_ga/.test(nome)) {
+        if (/^(_ga|_fbp|_fbc)/.test(nome)) {
           var dominio = location.hostname.replace(/^www\./, '');
           ['', '; domain=.' + dominio, '; domain=' + location.hostname].forEach(function (d) {
             document.cookie = nome + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/' + d;
@@ -71,7 +73,7 @@ const gtmId = SITE.gtm;
       var nova = botao.getAttribute('data-escolha');
       try { localStorage.setItem(CHAVE, nova); } catch (e2) {}
       banner.hidden = true;
-      if (nova === 'recusado' && window.__gtmCarregado) { apagarCookiesGA(); location.reload(); return; }
+      if (nova === 'recusado' && window.__gtmCarregado) { apagarCookies(); location.reload(); return; }
       aplicar(nova);
     });
 
