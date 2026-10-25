@@ -22,7 +22,10 @@ import { SITE } from '../lib/site';
   </div>
   <div class="wrap base">
     <span>© {new Date().getFullYear()} {SITE.autora}</span>
-    <a class="link" href="/privacidade/">Política de privacidade e cookies</a>
+    <span class="legal">
+      <a class="link" href="/privacidade/">Política de privacidade e cookies</a>
+      <button type="button" class="link preferencias" data-preferencias-cookies>Preferências de cookies</button>
+    </span>
   </div>
 </footer>
 
@@ -36,5 +39,7 @@ import { SITE } from '../lib/site';
   nav a { color: var(--areia); text-decoration: none; justify-self: start; }
   .base { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem; border-top: 1px solid var(--linha-escura); padding-block: 1.2rem 1.6rem; }
   .base a { text-decoration: none; }
+  .legal { display: flex; flex-wrap: wrap; gap: 0.4rem 1.6rem; }
+  .preferencias { background: none; border: 0; padding: 0 0 2px; font: inherit; color: inherit; cursor: pointer; }
   @media (max-width: 760px) { .grade { grid-template-columns: 1fr 1fr; } .grade > div { grid-column: 1 / -1; } }
 </style>

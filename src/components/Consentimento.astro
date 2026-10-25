@@ -1,0 +1,103 @@
+---
+// Banner de cookies (LGPD) + carregamento do Google Tag Manager SÓ depois do aceite.
+// Sem aceite, nenhum script de terceiros é carregado.
+// A escolha fica no navegador; o link "Preferências de cookies" (rodapé) reabre o banner.
+import { SITE } from '../lib/site';
+const gtmId = SITE.gtm;
+---
+<div id="cookies" class="cookies" role="region" aria-label="Aviso de cookies" hidden>
+  <p>
+    Uso cookies do Google Analytics para entender como as pessoas chegam e navegam pelo site, e assim melhorar o conteúdo.
+    Eles só são ativados se você aceitar. <a href="/privacidade/#7-cookies-e-tecnologias-semelhantes">Saiba mais</a>
+  </p>
+  <div class="botoes">
+    <button type="button" data-escolha="recusado" class="recusar">Recusar</button>
+    <button type="button" data-escolha="aceito" class="aceitar">Aceitar</button>
+  </div>
+</div>
+
+<script is:inline define:vars={{ gtmId }}>
+  (function () {
+    var CHAVE = 'consentimento-cookies';
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { window.dataLayer.push(arguments); }
+
+    // Consent Mode: tudo negado até a pessoa aceitar
+    gtag('consent', 'default', {
+      analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied',
+    });
+
+    function carregarGTM() {
+      if (window.__gtmCarregado) return;
+      window.__gtmCarregado = true;
+      window.dataLayer.push({ 'gtm.start': Date.now(), event: 'gtm.js' });
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtm.js?id=' + gtmId;
+      document.head.appendChild(s);
+    }
+
+    // Recusou depois de ter aceitado: apaga os cookies do Google Analytics
+    function apagarCookiesGA() {
+      document.cookie.split(';').forEach(function (c) {
+        var nome = c.split('=')[0].trim();
+        if (/^_ga/.test(nome)) {
+          var dominio = location.hostname.replace(/^www\./, '');
+          ['', '; domain=.' + dominio, '; domain=' + location.hostname].forEach(function (d) {
+            document.cookie = nome + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/' + d;
+          });
+        }
+      });
+    }
+
+    function aplicar(escolha) {
+      if (escolha === 'aceito') {
+        gtag('consent', 'update', {
+          analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted',
+        });
+        carregarGTM();
+      }
+    }
+
+    var banner = document.getElementById('cookies');
+    var escolha = null;
+    try { escolha = localStorage.getItem(CHAVE); } catch (e) { /* armazenamento bloqueado */ }
+    if (escolha) aplicar(escolha);
+    else banner.hidden = false;
+
+    banner.addEventListener('click', function (e) {
+      var botao = e.target.closest('[data-escolha]');
+      if (!botao) return;
+      var nova = botao.getAttribute('data-escolha');
+      try { localStorage.setItem(CHAVE, nova); } catch (e2) {}
+      banner.hidden = true;
+      if (nova === 'recusado' && window.__gtmCarregado) { apagarCookiesGA(); location.reload(); return; }
+      aplicar(nova);
+    });
+
+    // Link "Preferências de cookies" do rodapé
+    document.addEventListener('click', function (e) {
+      if (e.target.closest('[data-preferencias-cookies]')) { e.preventDefault(); banner.hidden = false; }
+    });
+  })();
+</script>
+
+<style>
+  .cookies {
+    position: fixed; z-index: 80; left: 16px; right: 16px; bottom: 16px; margin: 0 auto; max-width: 760px;
+    display: flex; gap: 1rem 1.6rem; align-items: center; flex-wrap: wrap;
+    background: var(--carvao); color: var(--areia); padding: 1rem 1.2rem;
+    border-top: 3px solid var(--laranja); box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+    font-size: var(--fs-0); line-height: 1.5;
+  }
+  .cookies[hidden] { display: none; }
+  .cookies p { margin: 0; flex: 1 1 320px; }
+  .cookies a { color: var(--areia); }
+  .botoes { display: flex; gap: 0.6rem; }
+  button {
+    font: 500 0.8rem var(--sans); letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer;
+    padding: 0.75rem 1.2rem; border: 1px solid var(--areia);
+  }
+  .recusar { background: transparent; color: var(--areia); }
+  .aceitar { background: var(--areia); color: var(--carvao); }
+</style>

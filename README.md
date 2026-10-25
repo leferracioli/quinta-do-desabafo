@@ -11,6 +11,7 @@ Feito com [Astro](https://astro.build). As páginas são estáticas e cada artig
 3. [Como fazer o deploy e conectar o domínio](#3-como-fazer-o-deploy-e-conectar-o-domínio)
 4. [Onde fica cada coisa](#4-onde-fica-cada-coisa)
 5. [Planilha de leads e temas](#5-planilha-de-leads-e-temas)
+6. [Medição: banner de cookies, Tag Manager e Analytics](#6-medição-banner-de-cookies-tag-manager-e-analytics)
 
 ---
 
@@ -241,6 +242,24 @@ A pessoa vai para uma página que oferece o WhatsApp como alternativa, e o erro 
 Para saber qual post trouxe cada lead, use links assim na bio e nos stories:
 
 ```
-https://leticiaferracioli.com.br/desabafos/?utm_source=instagram&utm_medium=bio&utm_campaign=quinta-desabafo
-https://leticiaferracioli.com.br/desabafos/ia-vai-substituir-sdr/?utm_source=instagram&utm_medium=stories&utm_campaign=desabafo-01
+https://www.leticiaferracioli.com.br/desabafos/?utm_source=instagram&utm_medium=bio&utm_campaign=quinta-desabafo
+https://www.leticiaferracioli.com.br/desabafos/ia-vai-substituir-sdr/?utm_source=instagram&utm_medium=stories&utm_campaign=desabafo-01
 ```
+
+---
+
+## 6. Medição: banner de cookies, Tag Manager e Analytics
+
+- **Banner de cookies** (`src/components/Consentimento.astro`): o Google Tag Manager (`GTM-WN7GRKNK`) só carrega depois que a pessoa clica em **Aceitar**. O link **Preferências de cookies** no rodapé reabre o banner.
+- **Eventos enviados ao Tag Manager** (`src/components/Eventos.astro`):
+
+| Evento | Quando acontece |
+|---|---|
+| `clique_whatsapp` | clique em qualquer botão ou link do WhatsApp |
+| `generate_lead` | formulário de contato enviado com sucesso |
+| `sugestao_tema` | sugestão de tema enviada com sucesso |
+
+- **Configuração do Tag Manager:** o arquivo [`gtm/container-leticiaferracioli.json`](gtm/container-leticiaferracioli.json) traz a tag do GA4 (`G-M4ZNQFQ3S4`) e os três eventos. Para importar: **Administrador → Importar contêiner → escolha o arquivo → espaço de trabalho existente → Mesclar → Substituir tags conflitantes → Confirmar**, e depois **Enviar → Publicar**.
+- **No Google Analytics:**
+  - marque `generate_lead` e `clique_whatsapp` como **eventos principais** (Administrador → Eventos);
+  - crie o canal **IA** em Administrador → Exibição de dados → Grupos de canais, com a origem da sessão correspondendo à expressão `chatgpt|openai|perplexity|gemini|copilot|claude|bard`.
