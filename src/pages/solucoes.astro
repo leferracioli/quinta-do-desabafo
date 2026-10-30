@@ -1,11 +1,11 @@
 ---
-// Soluções: mentoria e consultoria comercial, com chamada para o WhatsApp.
-// Os textos ficam em src/lib/solucoes.ts.
+// Soluções: uma escada do gratuito ao acompanhamento (diagnóstico → e-book → sessão → mentoria → consultoria).
+// Os textos ficam em src/lib/solucoes.ts (e a sessão, em src/lib/diagnostico.ts).
 import Base from '../layouts/Base.astro';
 import TituloDestaque from '../components/TituloDestaque.astro';
 import BotaoWhatsapp from '../components/BotaoWhatsapp.astro';
-import ChamadaDiagnostico from '../components/ChamadaDiagnostico.astro';
-import { SOLUCOES } from '../lib/solucoes';
+import Pendente from '../components/artigo/Pendente.astro';
+import { DEGRAUS, EBOOK } from '../lib/solucoes';
 import { numeroEdicao } from '../lib/artigos';
 import { servicos, migalhas } from '../lib/seo';
 
@@ -13,67 +13,134 @@ const jsonLd = [
   ...servicos(Astro.site!),
   migalhas(Astro.site!, [{ nome: 'Início', caminho: '/' }, { nome: 'Soluções', caminho: '/solucoes/' }]),
 ];
+// Campos do e-book que ainda faltam (aparecem como pendentes e travam a publicação)
+const faltaEbook = (campo: keyof typeof EBOOK) => EBOOK[campo] === null || (Array.isArray(EBOOK[campo]) && EBOOK[campo].length === 0);
 ---
 <Base
-  title="Mentoria e consultoria comercial · Letícia Ferracioli"
-  description="Mentoria para quem lidera times de vendas e consultoria para organizar a operação comercial: processos, indicadores, CRM e automações. Fale com a Letícia."
+  title="Soluções comerciais · Letícia Ferracioli"
+  description="Do diagnóstico gratuito à consultoria: e-book, sessão de direcionamento, mentoria para quem lidera e consultoria para organizar a operação comercial."
   imagem="/og/inicio.png"
   jsonLd={jsonLd}
 >
   <header class="topo-pagina escuro">
     <div class="wrap">
       <p class="kicker">Soluções</p>
-      <h1>Mentoria e consultoria <span class="destaque">comercial</span></h1>
-      <p class="lead">Vendas não acontecem isoladas. Tem muita coisa antes, durante e depois de uma venda, e é aí que mora boa parte dos problemas que a gente tenta resolver só cobrando mais resultado do time.</p>
+      <h1>Por onde você quer <span class="destaque">começar</span>?</h1>
+      <p class="lead">Cada operação está num momento. Tem quem precise só de um mapa para enxergar onde a venda escapa, e tem quem precise de alguém dentro da operação, organizando junto. Escolha o degrau que faz sentido agora.</p>
+      <ol class="escada" aria-label="As soluções, do gratuito ao acompanhamento">
+        {DEGRAUS.map((d, i) => (
+          <li>
+            <a href={`#${d.id}`}>
+              <span class="e-num">{numeroEdicao(i + 1)}</span>
+              <span class="e-nome">{d.id === 'ebook' && faltaEbook('nome') ? 'E-book' : d.nome}</span>
+              <span class="e-etapa">{d.etapa}</span>
+            </a>
+          </li>
+        ))}
+      </ol>
     </div>
   </header>
 
   <div class="wrap corpo">
-    {SOLUCOES.map((s, i) => (
-      <section class="solucao" id={s.id}>
-        <span class="num" aria-hidden="true">{numeroEdicao(i + 1)}</span>
-        <div>
-          <TituloDestaque tag="h2" titulo={s.nome} destaque={s.destaque} class="titulo" />
-          <p class="para-quem">{s.paraQuem}</p>
-          <p>{s.resumo}</p>
-          <h3>O que costuma entrar na conversa</h3>
-          <ul>{s.temas.map((t) => <li>{t}</li>)}</ul>
-        </div>
-      </section>
-    ))}
+    {DEGRAUS.map((d, i) => {
+      const ebook = d.id === 'ebook';
+      return (
+        <section class="degrau" id={d.id}>
+          <span class="num" aria-hidden="true">{numeroEdicao(i + 1)}</span>
+          <div>
+            <p class="etapa">{d.etapa}</p>
+            {ebook && faltaEbook('nome')
+              ? <h2 class="titulo"><Pendente>nome do e-book</Pendente></h2>
+              : <TituloDestaque tag="h2" titulo={d.nome} destaque={d.destaque} class="titulo" />}
+            <p class="para-quem">{ebook && faltaEbook('paraQuem') ? <Pendente>para quem é o e-book</Pendente> : d.paraQuem}</p>
+            <p class="promessa">{d.promessa}</p>
+            {ebook && faltaEbook('resumo') ? <p><Pendente>o que a pessoa aprende, em 1 ou 2 frases</Pendente></p> : d.resumo && <p>{d.resumo}</p>}
+            <h3>{d.tituloEntregas}</h3>
+            {ebook && faltaEbook('conteudo')
+              ? <p><Pendente>3 a 5 itens do que tem dentro</Pendente></p>
+              : <ul>{d.entregas.map((t) => <li>{t}</li>)}</ul>}
+            {d.bonus && (
+              <div class="bonus">
+                <p class="bonus-titulo">{d.bonus.titulo}</p>
+                <p>{d.bonus.texto}</p>
+              </div>
+            )}
+            <p class="formato">{d.formato}{ebook && faltaEbook('preco') && <> <Pendente>preço</Pendente></>}</p>
+            {ebook && faltaEbook('link')
+              ? <p><Pendente>link de compra</Pendente></p>
+              : <a class="botao" href={d.cta.href} target={d.cta.externo ? '_blank' : undefined} rel={d.cta.externo ? 'noopener' : undefined}>{d.cta.texto} →</a>}
+          </div>
+        </section>
+      );
+    })}
 
-    <section class="como" aria-labelledby="como-funciona">
-      <h2 id="como-funciona">Como começa</h2>
-      <p>Tudo começa com uma conversa para entender o seu momento: o que está acontecendo no time, no processo ou na sua liderança. A partir dela, a gente define juntos qual formato faz sentido.</p>
-      <BotaoWhatsapp texto="Tenho interesse: chamar no WhatsApp" />
-      <p class="alternativa">Prefere que eu te chame? <a class="link" href="/contato/">Deixe seus dados aqui →</a></p>
+    <section class="duvida" aria-labelledby="duvida">
+      <h2 id="duvida">Não sabe por qual <span class="destaque">começar</span>?</h2>
+      <p>Comece pelo diagnóstico. É gratuito, leva 4 minutos e mostra onde a sua operação trava. Com o resultado na mão, fica claro qual degrau faz sentido agora.</p>
+      <div class="acoes">
+        <a class="botao" href="/diagnostico/">Fazer o diagnóstico →</a>
+        <BotaoWhatsapp variante="claro" texto="Ou me chama no WhatsApp" />
+      </div>
     </section>
   </div>
-  <ChamadaDiagnostico />
 </Base>
 
 <style>
-  .topo-pagina { padding-block: clamp(56px, 8vw, 110px); }
+  .topo-pagina { padding-block: clamp(56px, 8vw, 110px) clamp(48px, 6vw, 80px); }
   h1 { font-size: clamp(var(--fs-4), 7vw, var(--fs-7)); letter-spacing: -0.02em; margin: 0.3em 0 0.4em; max-width: 14ch; }
-  .lead { font-size: var(--fs-2); line-height: 1.45; max-width: 40ch; margin: 0; }
+  .lead { font-size: var(--fs-2); line-height: 1.45; max-width: 40ch; margin: 0 0 clamp(40px, 6vw, 72px); }
+
+  /* A escada: os 5 degraus em sequência, cada um um pouco mais alto */
+  .escada { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.75rem; align-items: end; }
+  .escada li:nth-child(1) a { min-height: 7rem; }
+  .escada li:nth-child(2) a { min-height: 8.5rem; }
+  .escada li:nth-child(3) a { min-height: 10rem; }
+  .escada li:nth-child(4) a { min-height: 11.5rem; }
+  .escada li:nth-child(5) a { min-height: 13rem; }
+  .escada a {
+    display: flex; flex-direction: column; justify-content: flex-end; gap: 0.3rem; text-decoration: none;
+    border-top: 2px solid var(--laranja); background: rgba(239, 234, 227, 0.05); padding: 1rem; transition: background 0.2s;
+  }
+  .escada a:hover { background: rgba(239, 234, 227, 0.1); }
+  .e-num { font-family: var(--serif); font-size: var(--fs-3); line-height: 1; color: var(--laranja-luz); }
+  .e-nome { font-weight: 500; line-height: 1.25; }
+  .e-etapa { font-size: var(--fs-0); color: var(--taupe); line-height: 1.35; }
+
   .corpo { padding-block: clamp(56px, 8vw, 110px); max-width: 1000px; }
-  .solucao { display: grid; grid-template-columns: 7rem 1fr; gap: var(--gutter); border-top: 1px solid var(--carvao); padding: 2rem 0 clamp(48px, 7vw, 88px); scroll-margin-top: 20px; }
+  .degrau { display: grid; grid-template-columns: 7rem 1fr; gap: var(--gutter); border-top: 1px solid var(--carvao); padding: 2rem 0 clamp(48px, 7vw, 88px); scroll-margin-top: 20px; }
   .num { font-family: var(--serif); font-weight: var(--peso-serif); font-size: var(--fs-6); line-height: 0.9; color: var(--taupe-tinta); }
-  .solucao :global(.titulo) { font-size: var(--fs-4); margin: 0 0 0.4em; }
-  .para-quem { font-size: var(--fs-2); line-height: 1.4; margin: 0 0 0.8em; }
-  .solucao p { max-width: var(--medida); }
+  .etapa { font-size: var(--fs-0); font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--laranja-tinta); margin: 0 0 0.6rem; }
+  .degrau :global(.titulo) { font-size: var(--fs-4); margin: 0 0 0.4em; }
+  .para-quem { font-size: var(--fs-1); color: var(--taupe-tinta); margin: 0 0 0.6em; max-width: var(--medida); }
+  .promessa { font-family: var(--serif); font-weight: var(--peso-serif); font-size: clamp(1.7rem, 3.2vw, var(--fs-3)); line-height: 1.15; margin: 0 0 0.8em; max-width: 22ch; }
+  .degrau p { max-width: var(--medida); }
   h3 { font-family: var(--sans); font-size: var(--fs-0); font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--taupe-tinta); margin: 1.6em 0 0.6em; }
   ul { list-style: none; padding: 0; margin: 0; }
-  li { position: relative; padding-left: 1.5rem; margin-bottom: 0.5em; }
-  li::before { content: ''; position: absolute; left: 0; top: 0.8em; width: 0.75rem; height: 2px; background: var(--laranja); }
-  .como { background: var(--pedra); padding: clamp(32px, 5vw, 56px); margin-top: 1rem; }
-  .como h2 { font-size: var(--fs-4); margin: 0 0 0.4em; }
-  .como p { max-width: var(--medida); }
-  .alternativa { font-size: var(--fs-0); margin-top: 1.4rem; }
-  .alternativa .link { font-weight: 500; }
+  li { position: relative; }
+  .degrau li { padding-left: 1.5rem; margin-bottom: 0.5em; }
+  .degrau li::before { content: ''; position: absolute; left: 0; top: 0.8em; width: 0.75rem; height: 2px; background: var(--laranja); }
+  .bonus { border-left: 3px solid var(--laranja); background: var(--branco); padding: 1rem 1.2rem; margin-top: 1.4rem; max-width: var(--medida); }
+  .bonus p { margin: 0; }
+  .bonus-titulo { font-weight: 500; letter-spacing: 0.06em; margin-bottom: 0.3rem !important; }
+  .formato { font-size: var(--fs-0); color: var(--taupe-tinta); letter-spacing: 0.04em; margin: 1.4rem 0 1.4rem; }
+  .botao {
+    display: inline-flex; text-decoration: none; font: 500 var(--fs-0) var(--sans); letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 1.05rem 1.7rem; background: var(--carvao); color: var(--areia); box-shadow: inset 0 -3px 0 var(--laranja); transition: transform 0.2s;
+  }
+  .botao:hover { transform: translateY(-1px); }
+  .duvida { background: var(--pedra); padding: clamp(32px, 5vw, 56px); margin-top: 1rem; }
+  .duvida h2 { font-size: var(--fs-4); margin: 0 0 0.4em; }
+  .duvida p { max-width: var(--medida); }
+  .acoes { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; margin-top: 1.6rem; }
+
+  @media (max-width: 900px) {
+    .escada { grid-template-columns: 1fr; align-items: stretch; }
+    .escada li a { min-height: 0 !important; flex-direction: row; flex-wrap: wrap; align-items: baseline; gap: 0.2rem 0.8rem; }
+    .e-etapa { width: 100%; }
+  }
   @media (max-width: 700px) {
-    .solucao { grid-template-columns: 1fr; gap: 0.4rem; }
+    .degrau { grid-template-columns: 1fr; gap: 0.4rem; }
     .num { font-size: var(--fs-5); }
-    .lead, .para-quem { font-size: 1.3rem; }
+    .lead { font-size: 1.3rem; }
   }
 </style>

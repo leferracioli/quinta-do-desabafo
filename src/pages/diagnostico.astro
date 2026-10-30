@@ -164,6 +164,7 @@ const nomeOferta = OFERTA.nome.split(OFERTA.destaque);
 
 <script>
   import { CONTEXTO, EIXOS, OFERTA, TOTAL_PERGUNTAS, calcular, codificar, decodificar, radarSvg } from '../lib/diagnostico';
+  import { EBOOK } from '../lib/solucoes';
 
   type Estado = { respostas: (number | null)[]; passo: number; nome?: string; enviado?: boolean };
   const CHAVE = 'diagnostico-v1';
@@ -318,7 +319,7 @@ const nomeOferta = OFERTA.nome.split(OFERTA.destaque);
     $('[data-gargalos]').innerHTML = r.gargalos.map((g, i) => {
       const t = g.eixo.textos[g.faixa];
       return `<li class="gargalo"><p class="num">${String(i + 1).padStart(2, '0')}</p><div><h4>${g.eixo.nome}<span>${g.nota}/100</span></h4>${barra(g.nota)}
-        <dl><dt>O que provavelmente está acontecendo</dt><dd>${t.acontece}</dd><dt>O que isso costuma custar</dt><dd>${t.custo}</dd><dt>Um primeiro passo para esta semana</dt><dd>${t.passo}</dd></dl></div></li>`;
+        <dl><dt>O que provavelmente está acontecendo</dt><dd>${t.acontece}</dd><dt>O que isso costuma custar</dt><dd>${t.custo}</dd><dt>Um primeiro passo para esta semana</dt><dd>${t.passo}</dd></dl>${g.eixo.id === 'velocidade' && EBOOK.link ? `<p class="recomenda">Para ir além: o e-book <a href="${EBOOK.link}" target="_blank" rel="noopener">${EBOOK.nome}</a> traz uma cadência pronta do primeiro contato ao dia 30 e 28 mensagens por situação (${EBOOK.preco}).</p>` : ''}</div></li>`;
     }).join('');
 
     // Combinações
@@ -458,6 +459,8 @@ const nomeOferta = OFERTA.nome.split(OFERTA.destaque);
   .diag .gargalo dt:last-of-type { color: var(--laranja-tinta); }
   .diag .gargalo dd:last-of-type { font-weight: 500; }
   .diag .combinacao { margin-bottom: 1.2rem; }
+  .diag .recomenda { border-left: 3px solid var(--laranja); background: var(--branco); padding: 0.8rem 1rem; margin: 1.2rem 0 0; font-size: var(--fs-0); line-height: 1.55; }
+  .diag .recomenda a { color: var(--carvao); font-weight: 500; }
   .diag .mini-barra { display: block; height: 6px; background: var(--pedra); }
   .diag .mini-barra span { display: block; height: 100%; background: var(--carvao); }
   .diag .areas { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.9rem; }
