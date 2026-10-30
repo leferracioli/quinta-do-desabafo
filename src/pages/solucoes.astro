@@ -4,6 +4,7 @@
 import Base from '../layouts/Base.astro';
 import TituloDestaque from '../components/TituloDestaque.astro';
 import BotaoWhatsapp from '../components/BotaoWhatsapp.astro';
+import ChamadaDiagnostico from '../components/ChamadaDiagnostico.astro';
 import { SOLUCOES } from '../lib/solucoes';
 import { numeroEdicao } from '../lib/artigos';
 import { servicos, migalhas } from '../lib/seo';
@@ -48,6 +49,7 @@ const jsonLd = [
       <p class="alternativa">Prefere que eu te chame? <a class="link" href="/contato/">Deixe seus dados aqui →</a></p>
     </section>
   </div>
+  <ChamadaDiagnostico />
 </Base>
 
 <style>

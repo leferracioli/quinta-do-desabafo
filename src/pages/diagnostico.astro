@@ -1,0 +1,516 @@
+---
+// Diagnóstico comercial: isca de leads. Perguntas → contato → relatório com gráfico de teia → sessão paga.
+// Perguntas, cálculo e textos: src/lib/diagnostico.ts. Estrutura: diagnostico-comercial.md.
+import Base from '../layouts/Base.astro';
+import Retrato from '../components/Retrato.astro';
+import Origem from '../components/form/Origem.astro';
+import { EIXOS, OFERTA, TOTAL_PERGUNTAS, radarSvg } from '../lib/diagnostico';
+import { SITE } from '../lib/site';
+import { migalhas } from '../lib/seo';
+
+// Gráfico de exemplo na entrada (notas ilustrativas)
+const exemplo = radarSvg([55, 35, 70, 25, 45, 60, 40, 30], EIXOS.map((e) => e.curto), { titulo: 'Exemplo de gráfico de teia do diagnóstico' });
+const zap = SITE.whatsapp.split('?')[0];
+const minutos = Math.round(TOTAL_PERGUNTAS / 5);
+const jsonLd = [migalhas(Astro.site!, [{ nome: 'Início', caminho: '/' }, { nome: 'Diagnóstico comercial', caminho: '/diagnostico/' }])];
+const nomeOferta = OFERTA.nome.split(OFERTA.destaque);
+---
+<Base
+  title="Diagnóstico comercial gratuito · Letícia Ferracioli"
+  description={`Em ${minutos} minutos, descubra onde a sua operação comercial trava: um gráfico com os pontos fortes e fracos em 8 áreas e os primeiros passos para destravar.`}
+  jsonLd={jsonLd}
+>
+  <div class="diag" data-diagnostico data-zap={zap}>
+
+    <!-- 1 · Entrada -->
+    <section class="tela entrada escuro" data-tela="entrada">
+      <div class="wrap entrada-grade">
+        <div>
+          <p class="kicker">Diagnóstico comercial · gratuito</p>
+          <h1>Descubra onde a sua operação comercial <span class="destaque">trava</span>.</h1>
+          <p class="lead">{TOTAL_PERGUNTAS} perguntas rápidas, cerca de {minutos} minutos. No fim, você recebe um gráfico com os pontos fortes e fracos da sua operação em 8 áreas e os primeiros passos para destravar.</p>
+          <ul class="ganhos">
+            <li>Sua nota geral e o nível da operação</li>
+            <li>O gráfico de teia com as 8 áreas</li>
+            <li>Seus gargalos prioritários e um primeiro passo para cada um</li>
+          </ul>
+          <div class="acoes">
+            <button type="button" class="botao claro" data-comecar>Começar o diagnóstico</button>
+            <button type="button" class="link continuar" data-continuar hidden>Continuar de onde parei →</button>
+          </div>
+          <p class="assinatura">Criado por Letícia Ferracioli, com base no que eu vejo na gestão de operações comerciais.</p>
+        </div>
+        <figure class="exemplo">
+          <Fragment set:html={exemplo} />
+          <figcaption>Exemplo de resultado</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- 2 · Perguntas (uma por tela) -->
+    <section class="tela perguntas" data-tela="perguntas" hidden>
+      <div class="wrap estreito">
+        <div class="andamento">
+          <div class="barra" aria-hidden="true"><span data-barra></span></div>
+          <p class="kicker" data-etapa aria-live="polite"></p>
+        </div>
+        <h2 class="pergunta" data-pergunta tabindex="-1"></h2>
+        <div class="opcoes" data-opcoes role="group"></div>
+        <button type="button" class="voltar" data-voltar>← Voltar</button>
+      </div>
+    </section>
+
+    <!-- 3 · Contato (antes do resultado) -->
+    <section class="tela contato" data-tela="contato" hidden>
+      <div class="wrap estreito">
+        <p class="kicker">Tudo respondido</p>
+        <h2 class="titulo-tela">Seu diagnóstico está <span class="destaque">pronto</span>.</h2>
+        <p class="lead-claro">Para onde eu mando o seu relatório? Com esses dados, eu também consigo olhar o seu resultado se você quiser conversar depois.</p>
+        <form class="form-diag" data-form-diag data-origem novalidate>
+          <Origem />
+          <div class="linha">
+            <label><span>Nome *</span><input name="nome" required maxlength="120" autocomplete="name" /></label>
+            <label><span>WhatsApp *</span><input name="whatsapp" required maxlength="30" inputmode="tel" autocomplete="tel" placeholder="(00) 00000-0000" /></label>
+          </div>
+          <div class="linha">
+            <label><span>E-mail *</span><input name="email" type="email" required maxlength="160" autocomplete="email" /></label>
+            <label><span>Empresa <small>(opcional)</small></span><input name="empresa" maxlength="120" autocomplete="organization" /></label>
+          </div>
+          <label class="armadilha" aria-hidden="true">Site <input name="site" tabindex="-1" autocomplete="off" /></label>
+          <label class="consentimento">
+            <input type="checkbox" name="consentimento" value="sim" required />
+            <span>Concordo em receber o resultado e o contato da Letícia sobre ele, conforme a <a href="/privacidade/">política de privacidade</a>.</span>
+          </label>
+          <p class="erro-form" data-erro role="alert" hidden></p>
+          <button type="submit" class="botao">Ver meu diagnóstico</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- 4 · Relatório -->
+    <section class="tela relatorio" data-tela="relatorio" hidden>
+      <header class="rel-topo escuro">
+        <div class="wrap rel-grade">
+          <div>
+            <p class="kicker">Diagnóstico comercial<span data-nome></span></p>
+            <p class="geral"><span data-geral>0</span><small>/100</small></p>
+            <h2 class="nivel" data-nivel></h2>
+            <p class="nivel-texto" data-nivel-texto></p>
+          </div>
+          <figure class="rel-radar" data-radar></figure>
+        </div>
+      </header>
+
+      <div class="wrap rel-corpo">
+        <section class="bloco percepcao" data-percepcao aria-label="Percepção e diagnóstico"></section>
+
+        <section class="bloco" aria-labelledby="t-fortes">
+          <h3 id="t-fortes" data-titulo-fortes>O que já funciona</h3>
+          <div class="fortes" data-fortes></div>
+        </section>
+
+        <section class="bloco" aria-labelledby="t-gargalos">
+          <h3 id="t-gargalos">Seus gargalos prioritários</h3>
+          <ol class="gargalos" data-gargalos></ol>
+        </section>
+
+        <section class="bloco combinacoes" data-combinacoes hidden aria-labelledby="t-comb">
+          <h3 id="t-comb">Quando os gargalos se juntam</h3>
+          <div data-combinacoes-lista></div>
+        </section>
+
+        <section class="bloco" aria-labelledby="t-areas">
+          <h3 id="t-areas">Todas as áreas</h3>
+          <ul class="areas" data-areas></ul>
+        </section>
+      </div>
+
+      <section class="oferta escuro" aria-labelledby="t-oferta">
+        <div class="wrap oferta-grade">
+          <div>
+            <p class="kicker">O próximo passo</p>
+            <h2 id="t-oferta">Você já sabe <span class="destaque">onde</span> olhar.</h2>
+            <p class="oferta-intro">O diagnóstico mostra onde a operação trava. O que ele não mostra é <b>por que</b> trava, nem a <b>ordem certa</b> de mexer. E mexer na ordem errada costuma gerar muito trabalho e pouco resultado.</p>
+          </div>
+          <div class="oferta-caixa">
+            <h3>{nomeOferta[0]}<span class="destaque">{OFERTA.destaque}</span>{nomeOferta[1]}</h3>
+            <p>{OFERTA.resumo}</p>
+            <ul>{OFERTA.itens.map((i) => <li>{i}</li>)}</ul>
+            <p class="preco">{OFERTA.preco ?? 'Investimento e agenda pelo WhatsApp.'}</p>
+            <a class="botao claro zap-diag" data-whatsapp href={zap} target="_blank" rel="noopener">{OFERTA.botao} →</a>
+            <button type="button" class="link pdf" data-pdf>Baixar meu relatório em PDF</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="wrap quem" aria-labelledby="t-quem">
+        <div class="quem-foto"><Retrato decorativo sizes="160px" /></div>
+        <div>
+          <h3 id="t-quem">Quem faz o diagnóstico</h3>
+          <p>Letícia Ferracioli trabalha com marketing digital desde 2018 e hoje atua na gestão comercial: equipes, processos, indicadores, CRM e automações.</p>
+          <a class="link" href="/sobre/">Conheça a Letícia →</a>
+        </div>
+      </section>
+
+      <div class="wrap rodape-rel">
+        <p class="aviso">Autodiagnóstico baseado nas suas respostas. Ele mostra tendências e onde olhar; não substitui uma análise da operação.</p>
+        <button type="button" class="link" data-refazer>Refazer o diagnóstico</button>
+      </div>
+
+      <a class="zap-fixo" data-whatsapp href={zap} target="_blank" rel="noopener">{OFERTA.botao}</a>
+    </section>
+  </div>
+</Base>
+
+<script>
+  import { CONTEXTO, EIXOS, OFERTA, TOTAL_PERGUNTAS, calcular, codificar, decodificar, radarSvg } from '../lib/diagnostico';
+
+  type Estado = { respostas: (number | null)[]; passo: number; nome?: string; enviado?: boolean };
+  const CHAVE = 'diagnostico-v1';
+  const raiz = document.querySelector<HTMLElement>('[data-diagnostico]')!;
+  const $ = <T extends HTMLElement = HTMLElement>(s: string) => raiz.querySelector<T>(s)!;
+  const dl = ((window as unknown as { dataLayer: object[] }).dataLayer ||= []);
+  const evento = (e: object) => dl.push(e);
+
+  // As 21 perguntas em sequência: 5 de contexto + 2 por área
+  const perguntas = [
+    ...CONTEXTO.map((p, i) => ({ texto: p.texto, opcoes: p.opcoes, etapa: `Seu contexto · ${i + 1} de ${CONTEXTO.length}` })),
+    ...EIXOS.flatMap((e, ei) => e.perguntas.map((p) => ({ texto: p.texto, opcoes: p.opcoes, etapa: `Área ${ei + 1} de ${EIXOS.length} · ${e.nome}` }))),
+  ];
+
+  const novo = (): Estado => ({ respostas: Array(TOTAL_PERGUNTAS).fill(null), passo: 0 });
+  let estado: Estado = novo();
+  try { estado = { ...novo(), ...JSON.parse(localStorage.getItem(CHAVE) ?? 'null') }; } catch { /* sem armazenamento */ }
+  const salvar = () => { try { localStorage.setItem(CHAVE, JSON.stringify(estado)); } catch { /* navegação privada */ } };
+
+  const mostrar = (tela: string) => {
+    raiz.querySelectorAll<HTMLElement>('[data-tela]').forEach((t) => (t.hidden = t.dataset.tela !== tela));
+    raiz.dataset.telaAtual = tela;
+    scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+  };
+
+  // ---------- Perguntas ----------
+  const desenharPergunta = () => {
+    const p = perguntas[estado.passo];
+    $('[data-etapa]').textContent = p.etapa;
+    $('[data-barra]').style.width = `${(estado.passo / TOTAL_PERGUNTAS) * 100}%`;
+    const titulo = $('[data-pergunta]');
+    titulo.textContent = p.texto;
+    const caixa = $('[data-opcoes]');
+    caixa.setAttribute('aria-label', p.texto);
+    caixa.replaceChildren(...p.opcoes.map((texto, i) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'opcao';
+      b.textContent = texto;
+      b.setAttribute('aria-pressed', String(estado.respostas[estado.passo] === i));
+      b.addEventListener('click', () => responder(i));
+      return b;
+    }));
+    titulo.focus({ preventScroll: true });
+  };
+
+  let avancando = false;
+  const responder = (i: number) => {
+    if (avancando) return;
+    avancando = true;
+    estado.respostas[estado.passo] = i;
+    salvar();
+    raiz.querySelectorAll('.opcao').forEach((b, j) => b.setAttribute('aria-pressed', String(j === i)));
+    setTimeout(() => {
+      avancando = false;
+      if (estado.passo < TOTAL_PERGUNTAS - 1) { estado.passo++; salvar(); desenharPergunta(); }
+      else { estado.passo = TOTAL_PERGUNTAS; salvar(); evento({ event: 'diagnostico_respondido' }); fimDasPerguntas(); }
+    }, 220);
+  };
+
+  const fimDasPerguntas = () => {
+    if (estado.enviado) mostrarRelatorio(estado.respostas as number[], estado.nome);
+    else mostrar('contato');
+  };
+
+  $('[data-comecar]').addEventListener('click', () => {
+    estado = { ...novo(), nome: estado.nome, enviado: estado.enviado };
+    salvar();
+    evento({ event: 'diagnostico_inicio' });
+    mostrar('perguntas');
+    desenharPergunta();
+  });
+  $('[data-continuar]').addEventListener('click', () => {
+    if (estado.passo >= TOTAL_PERGUNTAS) return fimDasPerguntas();
+    mostrar('perguntas');
+    desenharPergunta();
+  });
+  $('[data-voltar]').addEventListener('click', () => {
+    if (estado.passo === 0) return mostrar('entrada');
+    estado.passo--; salvar(); desenharPergunta();
+  });
+
+  // ---------- Contato ----------
+  const form = $<HTMLFormElement>('[data-form-diag]');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const erro = $('[data-erro]');
+    const dados = new FormData(form);
+    const nome = String(dados.get('nome') ?? '').trim();
+    const whats = String(dados.get('whatsapp') ?? '').replace(/\D/g, '');
+    const email = String(dados.get('email') ?? '').trim();
+    const falta = !nome ? 'Preencha o seu nome.' : whats.length < 10 ? 'Confira o WhatsApp, com DDD.' : !/^\S+@\S+\.\S+$/.test(email) ? 'Confira o e-mail.' : dados.get('consentimento') !== 'sim' ? 'Marque a concordância para ver o resultado.' : '';
+    if (falta) { erro.textContent = falta; erro.hidden = false; return; }
+    erro.hidden = true;
+
+    const respostas = estado.respostas as number[];
+    const r = calcular(respostas);
+    const codigo = codificar(respostas);
+    dados.set('tipo', 'diagnostico');
+    dados.set('codigo', codigo);
+    dados.set('link', `${location.origin}/diagnostico/#r=${codigo}`);
+    dados.set('nota_geral', String(r.geral));
+    dados.set('nivel', r.nivel.nome);
+    dados.set('gargalos', r.gargalos.map((g) => g.eixo.nome).join(', '));
+    r.notas.forEach((n) => dados.set(`nota_${n.eixo.id}`, String(n.nota)));
+    CONTEXTO.forEach((p, i) => dados.set(p.id, p.opcoes[respostas[i]] ?? ''));
+
+    const botao = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+    botao.disabled = true;
+    botao.textContent = 'Gerando o seu relatório…';
+    try {
+      const resp = await fetch('/api/formulario', { method: 'POST', body: dados, headers: { Accept: 'application/json' } });
+      if (!resp.ok) throw new Error(String(resp.status));
+      evento({ event: 'generate_lead', tipo_lead: 'diagnostico', nota_geral: r.geral });
+    } catch (falha) {
+      // O relatório aparece mesmo se a gravação falhar: a pessoa não pode ficar sem o resultado
+      console.warn('Diagnóstico: não foi possível gravar o contato', falha);
+    }
+    estado.nome = nome.split(' ')[0];
+    estado.enviado = true;
+    salvar();
+    mostrarRelatorio(respostas, estado.nome);
+  });
+
+  // ---------- Relatório ----------
+  const destacar = (texto: string, palavra: string) => texto.replace(palavra, `<span class="destaque">${palavra}</span>`);
+  const barra = (nota: number) => `<span class="mini-barra" aria-hidden="true"><span style="width:${Math.max(nota, 2)}%"></span></span>`;
+
+  function mostrarRelatorio(respostas: number[], nome?: string) {
+    const r = calcular(respostas);
+    const codigo = codificar(respostas);
+    history.replaceState(null, '', `#r=${codigo}`);
+
+    $('[data-nome]').textContent = nome ? ` de ${nome}` : '';
+    $('[data-geral]').textContent = String(r.geral);
+    $('[data-nivel]').innerHTML = destacar(r.nivel.nome, r.nivel.destaque);
+    $('[data-nivel-texto]').textContent = r.nivel.texto;
+    $('[data-radar]').innerHTML = radarSvg(r.notas.map((n) => n.nota), r.notas.map((n) => n.eixo.curto), { comNotas: true, titulo: `Gráfico de teia: ${r.notas.map((n) => `${n.eixo.nome} ${n.nota}`).join(', ')}` });
+
+    // Percepção × diagnóstico
+    const pior = r.gargalos[0];
+    const notaPercebida = r.notas.find((n) => n.eixo.id === r.percebido.id)!.nota;
+    $('[data-percepcao]').innerHTML = r.percebido.id === pior.eixo.id
+      ? `<p class="kicker">Percepção × diagnóstico</p><p class="percepcao-frase">Você acertou: <b>${pior.eixo.nome}</b> é mesmo a área mais baixa da sua operação, com ${pior.nota}/100.</p>${r.gargalos[1] ? `<p>O que vale olhar agora é o quanto ela puxa junto <b>${r.gargalos[1].eixo.nome}</b> (${r.gargalos[1].nota}/100).</p>` : ''}`
+      : `<p class="kicker">Percepção × diagnóstico</p><p class="percepcao-frase">Você apontou <b>${r.percebido.nome}</b> como o maior problema. Pelas suas respostas, ela está em ${notaPercebida}/100, mas <b>${pior.eixo.nome}</b> aparece mais baixo, com ${pior.nota}/100.</p><p>Muitas vezes, o que a gente sente como problema é o sintoma. A causa está em outra área.</p>`;
+
+    // Pontos fortes
+    $('[data-titulo-fortes]').textContent = r.fortes[0].nota >= 70 ? 'O que já funciona' : 'Onde você está mais firme';
+    $('[data-fortes]').innerHTML = r.fortes.map((f) => `<div class="forte"><p class="area-nome">${f.eixo.nome}<span>${f.nota}/100</span></p><p>${f.eixo.textos[f.faixa].acontece}</p></div>`).join('');
+
+    // Gargalos prioritários
+    $('[data-gargalos]').innerHTML = r.gargalos.map((g, i) => {
+      const t = g.eixo.textos[g.faixa];
+      return `<li class="gargalo"><p class="num">${String(i + 1).padStart(2, '0')}</p><div><h4>${g.eixo.nome}<span>${g.nota}/100</span></h4>${barra(g.nota)}
+        <dl><dt>O que provavelmente está acontecendo</dt><dd>${t.acontece}</dd><dt>O que isso costuma custar</dt><dd>${t.custo}</dd><dt>Um primeiro passo para esta semana</dt><dd>${t.passo}</dd></dl></div></li>`;
+    }).join('');
+
+    // Combinações
+    $('[data-combinacoes]').hidden = r.combinacoes.length === 0;
+    $('[data-combinacoes-lista]').innerHTML = r.combinacoes.map((c) => `<div class="combinacao"><p class="area-nome">${c.titulo}</p><p>${c.texto}</p></div>`).join('');
+
+    // Todas as áreas
+    $('[data-areas]').innerHTML = r.notas.map((n) => `<li><span class="area-nome">${n.eixo.nome}</span>${barra(n.nota)}<span class="area-nota">${n.nota}</span></li>`).join('');
+
+    // WhatsApp com a mensagem pronta
+    const msg = `Oi, Letícia! Fiz o diagnóstico comercial: nota ${r.geral} (${r.nivel.nome}). Meus gargalos: ${r.gargalos.map((g) => g.eixo.nome).join(', ')}. Quero saber sobre a ${OFERTA.nome}. Meu relatório: ${location.origin}/diagnostico/#r=${codigo}`;
+    raiz.querySelectorAll<HTMLAnchorElement>('[data-whatsapp]').forEach((a) => (a.href = `${raiz.dataset.zap}?text=${encodeURIComponent(msg)}`));
+
+    mostrar('relatorio');
+    evento({ event: 'diagnostico_relatorio', nota_geral: r.geral, nivel: r.nivel.nome });
+  }
+
+  $('[data-pdf]').addEventListener('click', () => { evento({ event: 'diagnostico_pdf' }); print(); });
+  $('[data-refazer]').addEventListener('click', () => {
+    estado = { ...novo(), nome: estado.nome, enviado: estado.enviado };
+    salvar();
+    history.replaceState(null, '', location.pathname);
+    mostrar('entrada');
+    $('[data-continuar]').hidden = true;
+  });
+
+  // ---------- Início ----------
+  // Link do relatório (#r=código): abre direto o resultado. O nome só aparece para quem respondeu neste navegador.
+  const doLink = decodificar(new URLSearchParams(location.hash.slice(1)).get('r') ?? '');
+  const meuCodigo = estado.passo >= TOTAL_PERGUNTAS ? codificar(estado.respostas.map((v) => v ?? 0)) : '';
+  if (doLink) mostrarRelatorio(doLink, codificar(doLink) === meuCodigo ? estado.nome : undefined);
+  else if (estado.passo > 0) $('[data-continuar]').hidden = false;
+</script>
+
+<style is:global>
+  /* ---------- Diagnóstico: estrutura geral ---------- */
+  .diag .botao {
+    display: inline-flex; align-items: center; gap: 0.6rem; text-decoration: none; cursor: pointer; border: 0;
+    font: 500 var(--fs-0) var(--sans); letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 1.05rem 1.7rem; background: var(--carvao); color: var(--areia);
+    box-shadow: inset 0 -3px 0 var(--laranja); transition: transform 0.2s;
+  }
+  .diag .botao:hover { transform: translateY(-1px); }
+  .diag .botao.claro { background: var(--areia); color: var(--carvao); }
+  .diag .botao:disabled { opacity: 0.7; cursor: wait; }
+  .diag button.link { background: none; border: 0; font: inherit; cursor: pointer; padding: 0 0 2px; color: inherit; }
+  .diag .estreito { max-width: calc(var(--medida) + 2 * var(--gutter)); }
+
+  /* ---------- Entrada ---------- */
+  .diag .entrada { padding-block: clamp(56px, 8vw, 110px); }
+  .diag .entrada-grade { display: grid; grid-template-columns: 7fr 5fr; gap: clamp(32px, 6vw, 96px); align-items: center; }
+  .diag .entrada h1 { font-size: clamp(var(--fs-4), 6.4vw, var(--fs-6)); letter-spacing: -0.015em; margin: 0.4em 0 0.45em; }
+  .diag .entrada .lead { font-size: var(--fs-2); line-height: 1.45; max-width: 34ch; margin: 0 0 1.2em; }
+  .diag .ganhos { list-style: none; padding: 0; margin: 0 0 2rem; display: grid; gap: 0.5rem; }
+  .diag .ganhos li { position: relative; padding-left: 1.5rem; }
+  .diag .ganhos li::before { content: ''; position: absolute; left: 0; top: 0.8em; width: 0.75rem; height: 2px; background: var(--laranja); }
+  .diag .acoes { display: flex; flex-wrap: wrap; gap: 1.2rem 2rem; align-items: center; }
+  .diag .continuar { font-weight: 500; text-decoration: underline; text-decoration-color: var(--laranja); text-underline-offset: 4px; }
+  .diag .assinatura { font-size: var(--fs-0); color: var(--taupe); margin-top: 2rem; }
+  .diag .exemplo { margin: 0; }
+  .diag .exemplo figcaption { text-align: center; font-size: var(--fs-0); letter-spacing: 0.14em; text-transform: uppercase; color: var(--taupe); }
+
+  /* ---------- Gráfico de teia ---------- */
+  .diag .radar { width: 100%; height: auto; display: block; overflow: visible; }
+  .diag .radar-anel { fill: none; stroke: var(--linha-escura); stroke-width: 1; }
+  .diag .radar-eixo { stroke: var(--linha-escura); stroke-width: 1; }
+  .diag .radar-area { fill: var(--laranja); fill-opacity: 0.32; stroke: var(--laranja); stroke-width: 2.5; stroke-linejoin: round; }
+  .diag .radar-ponto { fill: var(--laranja); }
+  .diag .radar-rotulo { fill: var(--areia); font: 500 15px var(--sans); letter-spacing: 0.04em; }
+  .diag .radar-nota { fill: var(--laranja-luz); font-weight: 500; }
+
+  /* ---------- Perguntas ---------- */
+  .diag .perguntas { padding-block: clamp(40px, 6vw, 88px) clamp(64px, 9vw, 120px); min-height: 70svh; }
+  .diag .andamento { margin-bottom: clamp(28px, 4vw, 48px); }
+  .diag .barra { height: 3px; background: var(--pedra); margin-bottom: 1rem; }
+  .diag .barra span { display: block; height: 100%; background: var(--laranja); transition: width 0.3s ease; }
+  .diag .pergunta { font-size: clamp(2rem, 4vw, var(--fs-4)); line-height: 1.1; margin: 0 0 1.4em; outline: none; }
+  .diag .opcoes { display: grid; gap: 0.75rem; }
+  .diag .opcao {
+    text-align: left; font: 400 var(--fs-1) var(--sans); line-height: 1.4; color: var(--carvao); cursor: pointer;
+    background: var(--branco); border: 1px solid var(--pedra); padding: 1.05rem 1.25rem;
+    transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+  }
+  .diag .opcao:hover { border-color: var(--carvao); }
+  .diag .opcao[aria-pressed='true'] { border-color: var(--carvao); background: var(--carvao); color: var(--areia); box-shadow: inset 0 -3px 0 var(--laranja); }
+  .diag .voltar { margin-top: 2rem; background: none; border: 0; font: 500 var(--fs-0) var(--sans); letter-spacing: 0.12em; text-transform: uppercase; color: var(--taupe-tinta); cursor: pointer; padding: 0.5rem 0; }
+
+  /* ---------- Contato ---------- */
+  .diag .contato { padding-block: clamp(48px, 7vw, 100px); }
+  .diag .titulo-tela { font-size: clamp(2.4rem, 5vw, var(--fs-5)); margin: 0.3em 0 0.4em; }
+  .diag .lead-claro { font-size: var(--fs-1); max-width: 46ch; margin: 0 0 2rem; }
+  .diag .form-diag { display: grid; gap: 1.1rem; font-size: var(--fs-0); }
+  .diag .form-diag .linha { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; }
+  .diag .form-diag label > span { display: block; font-weight: 500; letter-spacing: 0.06em; margin-bottom: 0.35rem; }
+  .diag .form-diag small { font-weight: 400; color: var(--taupe-tinta); }
+  .diag .form-diag input:not([type='checkbox']) {
+    width: 100%; font: inherit; font-size: 1rem; color: var(--carvao);
+    background: var(--branco); border: 1px solid var(--pedra); border-radius: 2px; padding: 0.75rem 0.85rem;
+  }
+  .diag .form-diag input:focus { outline: 2px solid var(--laranja); outline-offset: 1px; border-color: var(--carvao); }
+  .diag .consentimento { display: flex; gap: 0.6rem; align-items: flex-start; line-height: 1.45; }
+  .diag .consentimento span { font-weight: 400 !important; letter-spacing: 0 !important; margin: 0 !important; }
+  .diag .consentimento input { margin-top: 0.2rem; accent-color: var(--carvao); }
+  .diag .consentimento a { color: var(--carvao); }
+  .diag .armadilha { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+  .diag .erro-form { color: var(--laranja-tinta); font-weight: 500; margin: 0; }
+  .diag .form-diag .botao { justify-self: start; }
+
+  /* ---------- Relatório ---------- */
+  .diag .rel-topo { padding-block: clamp(48px, 7vw, 96px); }
+  .diag .rel-grade { display: grid; grid-template-columns: 5fr 7fr; gap: clamp(32px, 5vw, 80px); align-items: center; }
+  .diag .geral { font-family: var(--serif); font-weight: var(--peso-serif); font-size: clamp(6rem, 14vw, 11rem); line-height: 0.9; margin: 0.2em 0 0.1em; }
+  .diag .geral small { font-size: 0.25em; color: var(--taupe); margin-left: 0.2em; }
+  .diag .nivel { font-size: clamp(2.2rem, 4.4vw, var(--fs-5)); margin: 0 0 0.4em; }
+  .diag .nivel-texto { font-size: var(--fs-1); line-height: 1.55; max-width: 40ch; color: var(--pedra); margin: 0; }
+  .diag .rel-radar { margin: 0; }
+
+  .diag .rel-corpo { max-width: calc(860px + 2 * var(--gutter)); padding-block: clamp(48px, 7vw, 96px) clamp(32px, 5vw, 64px); }
+  .diag .bloco { margin-bottom: clamp(48px, 7vw, 88px); }
+  .diag .bloco h3 { font-size: var(--fs-3); margin: 0 0 0.8em; }
+  .diag .percepcao { border-left: 3px solid var(--laranja); padding-left: clamp(16px, 3vw, 32px); }
+  .diag .percepcao-frase { font-family: var(--serif); font-weight: var(--peso-serif); font-size: clamp(1.6rem, 3vw, var(--fs-3)); line-height: 1.2; margin: 0.5em 0; }
+  .diag .percepcao b { font-weight: 600; }
+  .diag .area-nome { font-weight: 500; display: flex; justify-content: space-between; gap: 1rem; margin: 0 0 0.4rem; }
+  .diag .area-nome span { color: var(--taupe-tinta); font-weight: 400; }
+  .diag .fortes { display: grid; grid-template-columns: 1fr 1fr; gap: 0 var(--gutter); }
+  .diag .forte, .diag .combinacao { border-top: 1px solid var(--carvao); padding-top: 1rem; }
+  .diag .forte p:last-child, .diag .combinacao p:last-child { margin-top: 0; }
+  .diag .gargalos { list-style: none; padding: 0; margin: 0; }
+  .diag .gargalo { display: grid; grid-template-columns: 4.5rem 1fr; gap: 1rem; border-top: 1px solid var(--carvao); padding: 1.4rem 0 1rem; }
+  .diag .gargalo .num { font-family: var(--serif); font-size: var(--fs-4); line-height: 1; margin: 0; color: var(--laranja-tinta); }
+  .diag .gargalo h4 { font-family: var(--serif); font-weight: var(--peso-serif); font-size: var(--fs-2); margin: 0 0 0.6rem; display: flex; justify-content: space-between; gap: 1rem; }
+  .diag .gargalo h4 span { font-family: var(--sans); font-size: var(--fs-0); color: var(--taupe-tinta); font-weight: 400; }
+  .diag .gargalo dl { margin: 1rem 0 0; }
+  .diag .gargalo dt { font-size: var(--fs-0); font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--taupe-tinta); margin-top: 0.9rem; }
+  .diag .gargalo dd { margin: 0.25rem 0 0; }
+  .diag .gargalo dt:last-of-type { color: var(--laranja-tinta); }
+  .diag .gargalo dd:last-of-type { font-weight: 500; }
+  .diag .combinacao { margin-bottom: 1.2rem; }
+  .diag .mini-barra { display: block; height: 6px; background: var(--pedra); }
+  .diag .mini-barra span { display: block; height: 100%; background: var(--carvao); }
+  .diag .areas { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.9rem; }
+  .diag .areas li { display: grid; grid-template-columns: 14rem 1fr 2.5rem; gap: 1rem; align-items: center; }
+  .diag .areas .area-nome { margin: 0; font-weight: 400; }
+  .diag .areas .area-nota { text-align: right; font-weight: 500; }
+
+  .diag .oferta { padding-block: clamp(56px, 8vw, 110px); }
+  .diag .oferta-grade { display: grid; grid-template-columns: 5fr 6fr; gap: clamp(32px, 6vw, 96px); align-items: start; }
+  .diag .oferta h2 { font-size: clamp(var(--fs-4), 6vw, var(--fs-6)); margin: 0.3em 0 0.4em; }
+  .diag .oferta-intro { font-size: var(--fs-1); line-height: 1.6; color: var(--pedra); max-width: 40ch; }
+  .diag .oferta-intro b { color: var(--areia); font-weight: 500; }
+  .diag .oferta-caixa { border: 1px solid var(--linha-escura); padding: clamp(24px, 4vw, 44px); }
+  .diag .oferta-caixa h3 { font-size: var(--fs-3); margin: 0 0 0.5em; }
+  .diag .oferta-caixa ul { list-style: none; padding: 0; margin: 1.2rem 0; display: grid; gap: 0.7rem; }
+  .diag .oferta-caixa li { position: relative; padding-left: 1.5rem; }
+  .diag .oferta-caixa li::before { content: ''; position: absolute; left: 0; top: 0.8em; width: 0.75rem; height: 2px; background: var(--laranja); }
+  .diag .preco { color: var(--taupe); font-size: var(--fs-0); letter-spacing: 0.06em; margin: 1.4rem 0; }
+  .diag .zap-diag { margin-bottom: 1.2rem; }
+  .diag .pdf { display: block; font-size: var(--fs-0); letter-spacing: 0.06em; color: var(--pedra) !important; text-decoration: underline; text-underline-offset: 4px; }
+
+  .diag .quem { display: grid; grid-template-columns: 140px 1fr; gap: clamp(24px, 4vw, 48px); align-items: center; padding-block: clamp(48px, 7vw, 88px) 0; max-width: calc(860px + 2 * var(--gutter)); }
+  .diag .quem h3 { font-size: var(--fs-3); margin: 0 0 0.4em; }
+  .diag .quem .link { font-weight: 500; }
+  .diag .rodape-rel { max-width: calc(860px + 2 * var(--gutter)); padding-block: clamp(32px, 5vw, 56px) clamp(64px, 9vw, 110px); display: flex; justify-content: space-between; gap: 1.2rem; flex-wrap: wrap; align-items: center; }
+  .diag .aviso { font-size: var(--fs-0); color: var(--taupe-tinta); max-width: 52ch; margin: 0; }
+  .diag .rodape-rel .link { font-size: var(--fs-0); font-weight: 500; text-decoration: underline; text-underline-offset: 4px; }
+
+  .diag .zap-fixo { display: none; }
+  @media (max-width: 600px) { .diag .radar-rotulo { font-size: 18px; } }
+
+  @media (max-width: 900px) {
+    .diag .entrada-grade, .diag .rel-grade, .diag .oferta-grade { grid-template-columns: 1fr; }
+    .diag .exemplo { max-width: 460px; }
+    .diag .entrada .lead { font-size: 1.3rem; }
+    .diag .fortes { grid-template-columns: 1fr; }
+    .diag .areas li { grid-template-columns: 1fr 2.5rem; }
+    .diag .areas .mini-barra { grid-column: 1 / -1; grid-row: 2; }
+    .diag .form-diag .linha { grid-template-columns: 1fr; }
+    .diag .gargalo { grid-template-columns: 1fr; gap: 0.4rem; }
+    .diag[data-tela-atual='relatorio'] .zap-fixo {
+      display: block; position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; text-align: center; text-decoration: none;
+      background: var(--carvao); color: var(--areia); padding: 1rem; font: 500 var(--fs-0) var(--sans);
+      letter-spacing: 0.1em; text-transform: uppercase; box-shadow: inset 0 3px 0 var(--laranja);
+    }
+    .diag[data-tela-atual='relatorio'] .rodape-rel { padding-bottom: 6rem; }
+  }
+
+  /* ---------- PDF (imprimir) ---------- */
+  @media print {
+    body > :not(main) { display: none !important; }
+    .diag .tela:not(.relatorio), .diag .zap-fixo, .diag [data-pdf], .diag [data-refazer], .diag .zap-diag { display: none !important; }
+    .diag .relatorio { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .diag .bloco, .diag .gargalo, .diag .oferta { break-inside: avoid; }
+  }
+</style>

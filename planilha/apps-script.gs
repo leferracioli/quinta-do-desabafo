@@ -10,7 +10,7 @@
  *    - Quem pode acessar: Qualquer pessoa
  * 5. Copie o URL do app da Web e coloque na variável PLANILHA_URL na Vercel.
  *
- * As abas "Leads" e "Temas sugeridos" são criadas sozinhas no primeiro envio.
+ * As abas "Leads", "Temas sugeridos" e "Diagnósticos" são criadas sozinhas no primeiro envio.
  */
 
 const TOKEN = 'COLE-AQUI-O-CODIGO-SECRETO';
@@ -20,6 +20,17 @@ const ABAS = {
     nome: 'Leads',
     colunas: ['Data', 'Nome', 'WhatsApp', 'E-mail', 'Interesse', 'Mensagem', 'Página', 'Veio de (referrer)', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content'],
     linha: (d) => [d.nome, d.whatsapp, d.email, d.interesse, d.mensagem],
+  },
+  diagnostico: {
+    nome: 'Diagnósticos',
+    colunas: ['Data', 'Nome', 'WhatsApp', 'E-mail', 'Empresa', 'Papel', 'Tamanho do time', 'Vende para', 'Canal principal',
+      'Maior problema (na visão da pessoa)', 'Nota geral', 'Nível', 'Gargalos prioritários',
+      'Leads', 'Processo', 'Follow-up', 'CRM', 'Indicadores', 'Rotina', 'Pessoas', 'Automação', 'Link do relatório',
+      'Página', 'Veio de (referrer)', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content'],
+    linha: (d) => [d.nome, d.whatsapp, d.email, d.empresa, d.papel, d.time, d.modelo, d.canal, d.percepcao,
+      Number(d.nota_geral), d.nivel, d.gargalos,
+      Number(d.nota_leads), Number(d.nota_processo), Number(d.nota_velocidade), Number(d.nota_crm),
+      Number(d.nota_indicadores), Number(d.nota_rotina), Number(d.nota_pessoas), Number(d.nota_automacao), d.link],
   },
   tema: {
     nome: 'Temas sugeridos',

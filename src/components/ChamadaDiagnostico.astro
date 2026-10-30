@@ -1,0 +1,40 @@
+---
+// Chamada para o diagnóstico comercial gratuito (home, soluções e fim dos artigos).
+import { EIXOS, TOTAL_PERGUNTAS, radarSvg } from '../lib/diagnostico';
+interface Props { variante?: 'escuro' | 'claro' }
+const { variante = 'claro' } = Astro.props;
+const exemplo = radarSvg([60, 40, 75, 30, 50, 65, 45, 35], EIXOS.map((e) => e.curto), { titulo: 'Exemplo de gráfico do diagnóstico' });
+---
+<section class:list={['chamada-diag', variante === 'escuro' && 'escuro']} aria-labelledby="chamada-diag">
+  <div class="wrap grade">
+    <div>
+      <p class="kicker">Diagnóstico comercial · gratuito</p>
+      <h2 id="chamada-diag">Onde a sua operação comercial <span class="destaque">trava</span>?</h2>
+      <p>{TOTAL_PERGUNTAS} perguntas, cerca de {Math.round(TOTAL_PERGUNTAS / 5)} minutos. No fim, um gráfico com os pontos fortes e fracos da sua operação em 8 áreas e um primeiro passo para cada gargalo.</p>
+      <a class="botao" href="/diagnostico/">Fazer o diagnóstico →</a>
+    </div>
+    <div class="mini" aria-hidden="true"><Fragment set:html={exemplo} /></div>
+  </div>
+</section>
+
+<style>
+  .chamada-diag { padding-block: clamp(56px, 8vw, 100px); border-top: 1px solid var(--pedra); }
+  .chamada-diag.escuro { border-top: 0; }
+  .grade { display: grid; grid-template-columns: 7fr 4fr; gap: clamp(32px, 6vw, 96px); align-items: center; }
+  h2 { font-size: clamp(var(--fs-3), 4.4vw, var(--fs-5)); margin: 0.35em 0 0.5em; max-width: 16ch; }
+  p:not(.kicker) { font-size: var(--fs-1); max-width: 44ch; margin: 0 0 1.8rem; }
+  .botao {
+    display: inline-flex; text-decoration: none; font: 500 var(--fs-0) var(--sans); letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 1.05rem 1.7rem; background: var(--carvao); color: var(--areia); box-shadow: inset 0 -3px 0 var(--laranja); transition: transform 0.2s;
+  }
+  .botao:hover { transform: translateY(-1px); }
+  .escuro .botao { background: var(--areia); color: var(--carvao); }
+  .mini :global(.radar) { width: 100%; height: auto; overflow: visible; }
+  .mini :global(.radar-anel), .mini :global(.radar-eixo) { fill: none; stroke: var(--pedra); }
+  .escuro .mini :global(.radar-anel), .escuro .mini :global(.radar-eixo) { stroke: var(--linha-escura); }
+  .mini :global(.radar-area) { fill: var(--laranja); fill-opacity: 0.3; stroke: var(--laranja); stroke-width: 2.5; }
+  .mini :global(.radar-ponto) { fill: var(--laranja); }
+  .mini :global(.radar-rotulo) { fill: var(--taupe-tinta); font: 500 15px var(--sans); }
+  .escuro .mini :global(.radar-rotulo) { fill: var(--taupe); }
+  @media (max-width: 900px) { .grade { grid-template-columns: 1fr; } .mini { max-width: 360px; } }
+</style>

@@ -7,6 +7,7 @@ import Progresso from '../../components/artigo/Progresso.astro';
 import Indice, { type ItemIndice } from '../../components/artigo/Indice.astro';
 import ProximoDesabafo from '../../components/artigo/ProximoDesabafo.astro';
 import FormTema from '../../components/form/FormTema.astro';
+import ChamadaDiagnostico from '../../components/ChamadaDiagnostico.astro';
 import { getArtigos, tempoLeitura, dataLonga, numeroEdicao, type Artigo } from '../../lib/artigos';
 import foto from '../../assets/leticia.webp';
 import { grafoArtigo } from '../../lib/seo';
@@ -120,6 +121,7 @@ const jsonLd = grafoArtigo(artigo, Astro.site!, new URL(imagemOg, Astro.site).hr
     </div>
 
     <FormTema />
+    <ChamadaDiagnostico />
     <ProximoDesabafo atual={artigo} artigos={artigos} />
   </article>
 </Base>

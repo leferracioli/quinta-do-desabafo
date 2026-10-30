@@ -1,4 +1,4 @@
-// Recebe os formulários do site (lead e sugestão de tema) e grava na planilha do Google.
+// Recebe os formulários do site (lead, sugestão de tema e diagnóstico comercial) e grava na planilha do Google.
 // É a única parte do site que roda no servidor (função da Vercel); o resto é estático.
 //
 // Variáveis de ambiente (configuradas na Vercel):
@@ -12,12 +12,17 @@ const campo = (f: FormData, nome: string, max: number) => String(f.get(nome) ?? 
 
 export const POST: APIRoute = async ({ request, redirect }) => {
   const f = await request.formData();
-  const tipo = f.get('tipo') === 'tema' ? 'tema' : 'lead';
+  const tipoRecebido = f.get('tipo');
+  const tipo = tipoRecebido === 'tema' ? 'tema' : tipoRecebido === 'diagnostico' ? 'diagnostico' : 'lead';
   const sucesso = tipo === 'tema' ? '/obrigado-tema/' : '/obrigado/';
-  const falhou = () => redirect('/envio-falhou/', 303);
+
+  // O diagnóstico envia por JavaScript e espera JSON; os outros formulários esperam redirecionamento
+  const querJson = (request.headers.get('accept') ?? '').includes('application/json');
+  const ok = () => (querJson ? Response.json({ ok: true }) : redirect(sucesso, 303));
+  const falhou = () => (querJson ? Response.json({ ok: false }, { status: 400 }) : redirect('/envio-falhou/', 303));
 
   // Armadilha para robôs: campo invisível que pessoas não preenchem
-  if (campo(f, 'site', 200)) return redirect(sucesso, 303);
+  if (campo(f, 'site', 200)) return ok();
   if (f.get('consentimento') !== 'sim') return falhou();
 
   const origem = {
@@ -30,7 +35,28 @@ export const POST: APIRoute = async ({ request, redirect }) => {
   };
 
   let dados: Record<string, string>;
-  if (tipo === 'lead') {
+  if (tipo === 'diagnostico') {
+    dados = {
+      nome: campo(f, 'nome', 120),
+      whatsapp: campo(f, 'whatsapp', 30),
+      email: campo(f, 'email', 160),
+      empresa: campo(f, 'empresa', 120),
+      papel: campo(f, 'papel', 60),
+      time: campo(f, 'time', 30),
+      modelo: campo(f, 'modelo', 40),
+      canal: campo(f, 'canal', 40),
+      percepcao: campo(f, 'percepcao', 120),
+      nota_geral: campo(f, 'nota_geral', 3),
+      nivel: campo(f, 'nivel', 40),
+      gargalos: campo(f, 'gargalos', 200),
+      link: campo(f, 'link', 200),
+      codigo: campo(f, 'codigo', 40),
+    };
+    for (const eixo of ['leads', 'processo', 'velocidade', 'crm', 'indicadores', 'rotina', 'pessoas', 'automacao']) {
+      dados[`nota_${eixo}`] = campo(f, `nota_${eixo}`, 3);
+    }
+    if (!dados.nome || dados.whatsapp.replace(/\D/g, '').length < 10) return falhou();
+  } else if (tipo === 'lead') {
     dados = {
       nome: campo(f, 'nome', 120),
       whatsapp: campo(f, 'whatsapp', 30),
@@ -68,5 +94,5 @@ export const POST: APIRoute = async ({ request, redirect }) => {
     return falhou();
   }
 
-  return redirect(sucesso, 303);
+  return ok();
 };

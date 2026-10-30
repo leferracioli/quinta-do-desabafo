@@ -5,6 +5,7 @@ import Retrato from '../components/Retrato.astro';
 import TituloDestaque from '../components/TituloDestaque.astro';
 import BotaoWhatsapp from '../components/BotaoWhatsapp.astro';
 import FormLead from '../components/form/FormLead.astro';
+import ChamadaDiagnostico from '../components/ChamadaDiagnostico.astro';
 import { getArtigos, numeroEdicao, primeirasFrases } from '../lib/artigos';
 import { SOLUCOES } from '../lib/solucoes';
 import { siteWeb, pessoaRef, servicos } from '../lib/seo';
@@ -50,6 +51,8 @@ const jsonLd = [siteWeb(Astro.site!), pessoaRef(Astro.site!), ...servicos(Astro.
       ))}
     </div>
   </section>
+
+  <ChamadaDiagnostico />
 
   <section class="quinta escuro" aria-labelledby="quinta">
     <div class="wrap quinta-grade">
