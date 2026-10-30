@@ -13,7 +13,8 @@ interface Props {
   sizes?: string;
   class?: string;
 }
-const { prioridade = false, decorativo = false, sizes = '(max-width: 900px) 72vw, 480px', class: classe } = Astro.props;
+// A foto ocupa 104% da largura do arco: o sizes considera isso para o navegador não ampliar a imagem
+const { prioridade = false, decorativo = false, sizes = '(max-width: 900px) 76vw, 520px', class: classe } = Astro.props;
 ---
 <figure class:list={['retrato', classe]} aria-hidden={decorativo ? 'true' : undefined}>
   <div class="retrato-fundo"></div>
@@ -21,7 +22,8 @@ const { prioridade = false, decorativo = false, sizes = '(max-width: 900px) 72vw
     <Picture
       src={recorte}
       formats={['avif', 'webp']}
-      widths={[240, 360, 480, 640, 800]}
+      widths={[240, 360, 480, 640, 800, 940]}
+      quality={88}
       sizes={sizes}
       alt={decorativo ? '' : 'Letícia Ferracioli'}
       loading={prioridade ? 'eager' : 'lazy'}
