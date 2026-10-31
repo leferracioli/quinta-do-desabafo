@@ -7,13 +7,15 @@ import Origem from './Origem.astro';
 interface Props { variante?: 'faixa' | 'simples'; titulo?: string }
 const { variante = 'faixa', titulo = 'Receba o desabafo de quinta no seu e-mail' } = Astro.props;
 const id = `newsletter-${Math.random().toString(36).slice(2, 7)}`;
+// "e-mail" não pode quebrar no hífen no fim da linha
+const partes = titulo.split('e-mail');
 ---
 {variante === 'faixa' ? (
   <section class="newsletter escuro" aria-labelledby={id}>
     <div class="wrap grade">
       <div class="chamada">
         <p class="kicker">Newsletter · toda quinta</p>
-        <h2 id={id}>{titulo}</h2>
+        <h2 id={id}>{partes.map((p, i) => <>{i > 0 && <span class="nobr">e-mail</span>}{p}</>)}</h2>
         <p>Um e-mail por semana com o artigo novo: a notícia, os dados e o meu desabafo. Sem spam, e você sai quando quiser.</p>
       </div>
       <form class="form" method="post" action="/api/formulario" data-origem>
@@ -50,6 +52,7 @@ const id = `newsletter-${Math.random().toString(36).slice(2, 7)}`;
 )}
 
 <style>
+  .nobr { white-space: nowrap; }
   .newsletter { padding-block: clamp(56px, 8vw, 100px); }
   .grade { display: grid; grid-template-columns: 5fr 7fr; gap: clamp(32px, 6vw, 96px); align-items: center; }
   h2 { font-size: var(--fs-4); margin: 0.3em 0 0.4em; max-width: 14ch; }
