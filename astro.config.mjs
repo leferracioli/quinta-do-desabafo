@@ -17,7 +17,7 @@ export default defineConfig({
     mdx(),
     sitemap({
       // Imagens OG, 404 e páginas de retorno dos formulários não entram no sitemap
-      filter: (pagina) => !/\/(og|404|obrigado|obrigado-tema|envio-falhou)(\/|$)/.test(new URL(pagina).pathname),
+      filter: (pagina) => !/\/(og|404|obrigado|obrigado-tema|envio-falhou|newsletter\/confirme|newsletter\/confirmada)(\/|$)/.test(new URL(pagina).pathname),
     }),
   ],
   // Recusa envio de formulário vindo de outro site

@@ -1,0 +1,36 @@
+---
+// Página própria da newsletter: link para a bio do Instagram e para divulgar.
+import Base from '../../layouts/Base.astro';
+import FormNewsletter from '../../components/form/FormNewsletter.astro';
+---
+<Base
+  title="Newsletter da Quinta do Desabafo · Letícia Ferracioli"
+  description="Receba toda quinta, no seu e-mail, o novo artigo da Quinta do Desabafo: vendas, gestão comercial, IA e marketing digital além da manchete."
+>
+  <section class="topo-news escuro">
+    <div class="wrap grade">
+      <div>
+        <p class="kicker">Newsletter · toda quinta</p>
+        <h1>A Quinta do Desabafo no seu <span class="destaque">e-mail</span></h1>
+      </div>
+      <div class="texto">
+        <p class="lead">Toda semana eu escolho uma notícia sobre vendas, gestão comercial, IA ou marketing digital e vou além da manchete: pesquiso, busco os dados, consulto as fontes e trago a minha visão de quem está na operação.</p>
+        <p>Assine e receba cada artigo novo na quinta-feira. Um e-mail por semana, sem spam, e você sai quando quiser.</p>
+      </div>
+    </div>
+  </section>
+  <section class="wrap formulario">
+    <FormNewsletter variante="simples" />
+  </section>
+</Base>
+
+<style>
+  .topo-news { padding-block: clamp(56px, 8vw, 110px); }
+  .grade { display: grid; grid-template-columns: 5fr 7fr; gap: clamp(32px, 6vw, 96px); align-items: end; }
+  h1 { font-size: clamp(var(--fs-4), 6vw, var(--fs-6)); letter-spacing: -0.02em; margin: 0.3em 0 0; max-width: 12ch; }
+  .lead { font-size: var(--fs-2); line-height: 1.45; margin-top: 0; }
+  .texto p { max-width: 44ch; }
+  .texto p:not(.lead) { color: var(--pedra); }
+  .formulario { max-width: calc(42.5rem + 2 * var(--gutter)); padding-block: clamp(48px, 7vw, 88px) clamp(72px, 10vw, 140px); }
+  @media (max-width: 900px) { .grade { grid-template-columns: 1fr; } .lead { font-size: 1.3rem; } }
+</style>

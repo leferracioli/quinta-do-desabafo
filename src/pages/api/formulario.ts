@@ -1,16 +1,18 @@
 // Recebe os formulários do site (lead, sugestão de tema e diagnóstico comercial) e grava na planilha do Google.
+// A inscrição na newsletter (tipo "newsletter") vai direto para o Brevo (ver src/lib/newsletter.ts).
 // É a única parte do site que roda no servidor (função da Vercel); o resto é estático.
 //
 // Variáveis de ambiente (configuradas na Vercel):
 //   PLANILHA_URL   → endereço do "app da Web" do Apps Script da planilha
 //   PLANILHA_TOKEN → código secreto, igual ao TOKEN colado no Apps Script
 import type { APIRoute } from 'astro';
+import { inscreverNewsletter } from '../../lib/newsletter';
 
 export const prerender = false;
 
 const campo = (f: FormData, nome: string, max: number) => String(f.get(nome) ?? '').trim().slice(0, max);
 
-export const POST: APIRoute = async ({ request, redirect }) => {
+export const POST: APIRoute = async ({ request, redirect, site }) => {
   const f = await request.formData();
   const tipoRecebido = f.get('tipo');
   const tipo = tipoRecebido === 'tema' ? 'tema' : tipoRecebido === 'diagnostico' ? 'diagnostico' : 'lead';
@@ -24,6 +26,17 @@ export const POST: APIRoute = async ({ request, redirect }) => {
   // Armadilha para robôs: campo invisível que pessoas não preenchem
   if (campo(f, 'site', 200)) return ok();
   if (f.get('consentimento') !== 'sim') return falhou();
+
+  // Newsletter: cadastra no Brevo (confirmação dupla) e manda para a página "confirme no seu e-mail"
+  if (tipoRecebido === 'newsletter') {
+    const email = campo(f, 'email', 160);
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return redirect('/envio-falhou/', 303);
+    const inscrito = await inscreverNewsletter(email, campo(f, 'nome', 120), site!).catch((erro) => {
+      console.error('Newsletter: falha ao chamar o Brevo', erro);
+      return false;
+    });
+    return redirect(inscrito ? '/newsletter/confirme/' : '/envio-falhou/', 303);
+  }
 
   const origem = {
     pagina: campo(f, 'pagina', 300),

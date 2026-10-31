@@ -1,0 +1,40 @@
+<!-- Moldura do e-mail SEMANAL (campanha RSS) da newsletter.
+     No Brevo, o conteúdo de cada artigo novo (título, resumo e link) entra pelo bloco de RSS
+     da campanha: ele vai no lugar marcado "BLOCO RSS". O resto (topo, assinatura e rodapé) é fixo.
+     {{ unsubscribe }} é trocado pelo Brevo pelo link de descadastro, obrigatório em todo envio. -->
+<!doctype html>
+<html lang="pt-BR">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Quinta do Desabafo</title></head>
+<body style="margin:0;padding:0;background:#efeae3;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#efeae3;">
+    <tr><td align="center" style="padding:32px 16px;">
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+        <!-- Topo carvão -->
+        <tr><td style="background:#2a2a2c;height:4px;font-size:0;line-height:0;border-top:4px solid #e0662f;">&nbsp;</td></tr>
+        <tr><td style="background:#2a2a2c;padding:28px 40px;font-family:Georgia,'Times New Roman',serif;font-size:24px;color:#efeae3;">
+          Quinta do <em style="color:#ea7440;">Desabafo</em>
+          <div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:#a89f94;margin-top:6px;">por Letícia Ferracioli · toda quinta</div>
+        </td></tr>
+
+        <!-- BLOCO RSS: no editor do Brevo, coloque aqui o bloco de RSS
+             (título do artigo em Georgia 30px #2a2a2c, resumo em Arial 17px, botão "Ler o desabafo") -->
+        <tr><td style="background:#ffffff;padding:36px 40px;font-family:Arial,Helvetica,sans-serif;font-size:17px;line-height:1.6;color:#2a2a2c;">
+          [ BLOCO RSS ]
+        </td></tr>
+
+        <!-- Assinatura -->
+        <tr><td style="background:#ffffff;padding:0 40px 32px;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:#55504a;border-top:1px solid #cfc7bc;">
+          <p style="margin:24px 0 0;">Responda este e-mail se quiser comentar ou sugerir o próximo tema. Eu leio todos.</p>
+          <p style="margin:12px 0 0;">Letícia · <a href="https://www.instagram.com/leferracioli/" style="color:#b4481a;">@leferracioli</a></p>
+        </td></tr>
+
+        <!-- Rodapé -->
+        <tr><td style="padding:24px 40px;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.6;color:#6e665d;text-align:center;">
+          Você recebe este e-mail porque assinou a newsletter em leticiaferracioli.com.br.<br>
+          <a href="{{ unsubscribe }}" style="color:#6e665d;">Descadastrar</a> · <a href="https://www.leticiaferracioli.com.br/privacidade/" style="color:#6e665d;">Política de privacidade</a>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>

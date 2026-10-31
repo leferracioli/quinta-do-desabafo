@@ -25,3 +25,7 @@ pnpm-debug.log*
 
 .vercel
 .env*
+
+# Chaves e segredos locais: nunca vão para o GitHub
+chave-*.txt
+*token*.txt

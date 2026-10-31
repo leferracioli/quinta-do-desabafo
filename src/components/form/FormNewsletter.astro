@@ -1,0 +1,81 @@
+---
+// Inscrição na newsletter da Quinta do Desabafo.
+// Envia para /api/formulario (tipo "newsletter"), que cadastra no Brevo com confirmação dupla:
+// a pessoa só entra na lista depois de clicar no link do e-mail de confirmação.
+// Variantes: "faixa" (seção inteira, carvão, fim do artigo e /desabafos) e "simples" (só o formulário).
+import Origem from './Origem.astro';
+interface Props { variante?: 'faixa' | 'simples'; titulo?: string }
+const { variante = 'faixa', titulo = 'Receba o desabafo de quinta no seu e-mail' } = Astro.props;
+const id = `newsletter-${Math.random().toString(36).slice(2, 7)}`;
+---
+{variante === 'faixa' ? (
+  <section class="newsletter escuro" aria-labelledby={id}>
+    <div class="wrap grade">
+      <div class="chamada">
+        <p class="kicker">Newsletter · toda quinta</p>
+        <h2 id={id}>{titulo}</h2>
+        <p>Um e-mail por semana com o artigo novo: a notícia, os dados e o meu desabafo. Sem spam, e você sai quando quiser.</p>
+      </div>
+      <form class="form" method="post" action="/api/formulario" data-origem>
+        <input type="hidden" name="tipo" value="newsletter" />
+        <Origem />
+        <div class="linha">
+          <label><span>E-mail *</span><input name="email" type="email" required maxlength="160" autocomplete="email" /></label>
+          <label><span>Nome <small>(opcional)</small></span><input name="nome" maxlength="120" autocomplete="given-name" /></label>
+        </div>
+        <label class="armadilha" aria-hidden="true">Site <input name="site" tabindex="-1" autocomplete="off" /></label>
+        <label class="consentimento">
+          <input type="checkbox" name="consentimento" value="sim" required />
+          <span>Quero receber a newsletter e concordo com a <a href="/privacidade/">política de privacidade</a>.</span>
+        </label>
+        <button type="submit">Quero receber</button>
+      </form>
+    </div>
+  </section>
+) : (
+  <form class="form simples" method="post" action="/api/formulario" data-origem aria-label="Inscrição na newsletter">
+    <input type="hidden" name="tipo" value="newsletter" />
+    <Origem />
+    <div class="linha">
+      <label><span>E-mail *</span><input name="email" type="email" required maxlength="160" autocomplete="email" /></label>
+      <label><span>Nome <small>(opcional)</small></span><input name="nome" maxlength="120" autocomplete="given-name" /></label>
+    </div>
+    <label class="armadilha" aria-hidden="true">Site <input name="site" tabindex="-1" autocomplete="off" /></label>
+    <label class="consentimento">
+      <input type="checkbox" name="consentimento" value="sim" required />
+      <span>Quero receber a newsletter e concordo com a <a href="/privacidade/">política de privacidade</a>.</span>
+    </label>
+    <button type="submit">Quero receber</button>
+  </form>
+)}
+
+<style>
+  .newsletter { padding-block: clamp(56px, 8vw, 100px); }
+  .grade { display: grid; grid-template-columns: 5fr 7fr; gap: clamp(32px, 6vw, 96px); align-items: center; }
+  h2 { font-size: var(--fs-4); margin: 0.3em 0 0.4em; max-width: 14ch; }
+  .chamada p:not(.kicker) { margin: 0; line-height: 1.55; color: var(--pedra); }
+  .form { display: grid; gap: 1.1rem; font-size: var(--fs-0); }
+  .linha { display: grid; grid-template-columns: 3fr 2fr; gap: 1.1rem; }
+  label > span { display: block; font-weight: 500; letter-spacing: 0.06em; margin-bottom: 0.35rem; }
+  small { font-weight: 400; }
+  .newsletter small { color: var(--taupe); }
+  .simples small { color: var(--taupe-tinta); }
+  input:not([type='checkbox']) {
+    width: 100%; font: inherit; font-size: 1rem; color: var(--carvao);
+    background: var(--branco); border: 1px solid var(--pedra); border-radius: 2px; padding: 0.75rem 0.85rem;
+  }
+  input:focus { outline: 2px solid var(--laranja); outline-offset: 1px; border-color: var(--carvao); }
+  .consentimento { display: flex; gap: 0.6rem; align-items: flex-start; line-height: 1.45; }
+  .consentimento span { font-weight: 400; letter-spacing: 0; margin: 0; }
+  .consentimento input { margin-top: 0.2rem; accent-color: var(--laranja); }
+  .consentimento a { color: inherit; }
+  .armadilha { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+  button {
+    justify-self: start; font: 500 var(--fs-0) var(--sans); letter-spacing: 0.14em; text-transform: uppercase;
+    border: 0; padding: 1rem 1.8rem; cursor: pointer; box-shadow: inset 0 -3px 0 var(--laranja); transition: transform 0.2s;
+  }
+  .newsletter button { background: var(--areia); color: var(--carvao); }
+  .simples button { background: var(--carvao); color: var(--areia); }
+  button:hover { transform: translateY(-1px); }
+  @media (max-width: 900px) { .grade, .linha { grid-template-columns: 1fr; } }
+</style>

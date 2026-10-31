@@ -4,6 +4,8 @@
 //   clique_whatsapp → clique em qualquer link do WhatsApp
 //   generate_lead   → formulário de contato enviado (página /obrigado/)
 //   sugestao_tema   → sugestão de tema enviada (página /obrigado-tema/)
+//   sign_up         → inscrição na newsletter enviada (página /newsletter/confirme/)
+//   newsletter_confirmada → pessoa clicou no link de confirmação (página /newsletter/confirmada/)
 ---
 <script>
   type Evento = Record<string, unknown>;
@@ -17,6 +19,8 @@
   });
 
   const caminho = location.pathname;
-  if (caminho.startsWith('/obrigado-tema')) enviar({ event: 'sugestao_tema' });
+  if (caminho.startsWith('/newsletter/confirme')) enviar({ event: 'sign_up', method: 'newsletter' });
+  else if (caminho.startsWith('/newsletter/confirmada')) enviar({ event: 'newsletter_confirmada' });
+  else if (caminho.startsWith('/obrigado-tema')) enviar({ event: 'sugestao_tema' });
   else if (caminho.startsWith('/obrigado')) enviar({ event: 'generate_lead', tipo_lead: 'formulario' });
 </script>

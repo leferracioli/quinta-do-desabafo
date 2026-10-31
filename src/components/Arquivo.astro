@@ -6,6 +6,7 @@ import ListaEdicoes from './ListaEdicoes.astro';
 import { TEMAS, type Tema } from '../lib/temas';
 import { temaSlug, type Artigo } from '../lib/artigos';
 import { migalhas } from '../lib/seo';
+import FormNewsletter from './form/FormNewsletter.astro';
 
 // inicio: true em /desabafos (abre com um resumo do que é a Quinta do Desabafo)
 interface Props { artigos: Artigo[]; tema?: Tema; inicio?: boolean }
@@ -75,6 +76,7 @@ const jsonLd = [
       </p>
     )}
   </div>
+  {inicio && <FormNewsletter />}
 </Base>
 
 <style>
