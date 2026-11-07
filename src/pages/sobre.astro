@@ -7,8 +7,9 @@ import Pendente from '../components/artigo/Pendente.astro';
 import { Content as Texto } from '../paginas/sobre.mdx';
 import { SITE } from '../lib/site';
 import { pessoaCompleta, migalhas } from '../lib/seo';
-import { getImage } from 'astro:assets';
+import { getImage, Image } from 'astro:assets';
 import foto from '../assets/leticia.webp';
+import { EMPRESAS } from '../lib/empresas';
 
 const site = Astro.site!;
 // Foto da autora para os dados estruturados (Person.image)
@@ -50,6 +51,31 @@ const jsonLd = [
       <li><a class="link" href={SITE.linkedin} rel="me">LinkedIn · Letícia Ferracioli</a></li>
     </ul>
   </div>
+
+  {/* Cartões no formato de perfil do Instagram, sem nenhum link para os perfis */}
+  <section class="empresas" aria-labelledby="empresas-titulo">
+    <div class="wrap">
+      <h2 id="empresas-titulo">Empresas em que já trabalhei</h2>
+      {/* tabindex: permite rolar a fileira pelo teclado */}
+      <ul class="perfis" tabindex="0" aria-labelledby="empresas-titulo">
+        {EMPRESAS.map((e) => (
+          <li class="perfil">
+            <Image class="avatar" src={e.foto} alt={`Foto de perfil de ${e.nome}`} width={150} height={150} format="webp" loading="lazy" />
+            <div class="dados">
+              <h3>{e.usuario}</h3>
+              <p class="nome">{e.nome}</p>
+              <p class="numeros">
+                <span><strong>{e.posts}</strong> posts</span>
+                <span><strong>{e.seguidores}</strong> seguidores</span>
+                <span><strong>{e.seguindo}</strong> seguindo</span>
+              </p>
+              <p class="bio">{e.bio.map((linha) => <span>{linha}</span>)}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
 </Base>
 
 <style>
@@ -70,6 +96,27 @@ const jsonLd = [
   .conteudo :global(li::before) { content: ''; position: absolute; left: 0; top: 0.8em; width: 0.75rem; height: 2px; background: var(--laranja); }
   .conteudo :global(.pendente) { background: rgba(224, 102, 47, 0.18); color: inherit; padding: 0.1em 0.4em; border-left: 3px solid var(--laranja); }
   .redes a { font-weight: 500; }
+
+  .empresas { background: var(--pedra); padding-block: clamp(56px, 8vw, 96px); }
+  .empresas h2 { font-size: var(--fs-3); margin: 0 0 clamp(28px, 4vw, 44px); }
+  /* Fileira rolável: encosta nas bordas da tela e o próximo card aparece cortado, indicando que há mais */
+  .perfis {
+    list-style: none; margin: 0 calc(-1 * var(--gutter)); padding: 0 var(--gutter) 18px;
+    display: flex; gap: clamp(14px, 2vw, 20px);
+    overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--gutter);
+    scrollbar-width: thin; scrollbar-color: var(--laranja-tinta) transparent;
+  }
+  .perfis:focus-visible { outline: 2px solid var(--laranja-tinta); outline-offset: 2px; }
+  .perfil { flex: 0 0 clamp(300px, 34vw, 430px); scroll-snap-align: start; background: var(--branco); padding: clamp(18px, 2vw, 24px); display: flex; gap: 16px; align-items: flex-start; }
+  .perfil :global(.avatar) { flex: none; width: clamp(64px, 7vw, 88px); height: auto; aspect-ratio: 1; border-radius: 50%; object-fit: cover; padding: 3px; border: 2px solid var(--laranja); }
+  .dados { min-width: 0; }
+  .perfil h3 { font-family: var(--sans); font-size: 1rem; font-weight: 600; line-height: 1.25; margin: 0; overflow-wrap: anywhere; }
+  .nome { font-size: var(--fs-0); line-height: 1.35; color: var(--taupe-tinta); margin: 0.15em 0 0.7em; }
+  .numeros { display: grid; grid-template-columns: repeat(3, auto); justify-content: start; gap: clamp(14px, 2vw, 24px); font-size: 0.8125rem; line-height: 1.3; margin: 0 0 0.9em; }
+  .numeros span { display: flex; flex-direction: column; }
+  .numeros strong { font-size: var(--fs-0); font-weight: 600; }
+  .bio { font-size: var(--fs-0); line-height: 1.45; margin: 0; }
+  .bio span { display: block; }
 
   @media (max-width: 900px) {
     .texto, .foto { grid-column: 1 / -1; }
