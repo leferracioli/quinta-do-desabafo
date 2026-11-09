@@ -11,6 +11,7 @@ import { migalhas } from '../lib/seo';
 // Gráfico de exemplo na entrada (notas ilustrativas)
 const exemplo = radarSvg([55, 35, 70, 25, 45, 60, 40, 30], EIXOS.map((e) => e.curto), { titulo: 'Exemplo de gráfico de teia do diagnóstico' });
 const zap = SITE.whatsapp.split('?')[0];
+const AGENDA = 'https://cal.com/leticiaferracioli/diagnostico';
 const minutos = Math.round(TOTAL_PERGUNTAS / 5);
 const jsonLd = [migalhas(Astro.site!, [{ nome: 'Início', caminho: '/' }, { nome: 'Diagnóstico comercial', caminho: '/diagnostico/' }])];
 const nomeOferta = OFERTA.nome.split(OFERTA.destaque);
@@ -136,8 +137,9 @@ const nomeOferta = OFERTA.nome.split(OFERTA.destaque);
             <h3>{nomeOferta[0]}<span class="destaque">{OFERTA.destaque}</span>{nomeOferta[1]}</h3>
             <p>{OFERTA.resumo}</p>
             <ul>{OFERTA.itens.map((i) => <li>{i}</li>)}</ul>
-            <p class="preco">{OFERTA.preco ?? 'Investimento e agenda pelo WhatsApp.'}</p>
-            <a class="botao claro zap-diag" data-whatsapp href={zap} target="_blank" rel="noopener">{OFERTA.botao} →</a>
+            {OFERTA.preco && <p class="preco">{OFERTA.preco}</p>}
+            <a class="botao claro zap-diag" data-agenda href={AGENDA} target="_blank" rel="noopener">Agendar a conversa →</a>
+            <a class="link whats-sec" data-whatsapp href={zap} target="_blank" rel="noopener">Prefere falar antes pelo WhatsApp?</a>
             <button type="button" class="link pdf" data-pdf>Baixar meu relatório em PDF</button>
           </div>
         </div>
@@ -157,7 +159,7 @@ const nomeOferta = OFERTA.nome.split(OFERTA.destaque);
         <button type="button" class="link" data-refazer>Refazer o diagnóstico</button>
       </div>
 
-      <a class="zap-fixo" data-whatsapp href={zap} target="_blank" rel="noopener">{OFERTA.botao}</a>
+      <a class="zap-fixo" data-agenda href={AGENDA} target="_blank" rel="noopener">Agendar a conversa</a>
     </section>
   </div>
 </Base>
@@ -166,7 +168,7 @@ const nomeOferta = OFERTA.nome.split(OFERTA.destaque);
   import { CONTEXTO, EIXOS, OFERTA, TOTAL_PERGUNTAS, calcular, codificar, decodificar, radarSvg } from '../lib/diagnostico';
   import { EBOOK } from '../lib/solucoes';
 
-  type Estado = { respostas: (number | null)[]; passo: number; nome?: string; enviado?: boolean };
+  type Estado = { respostas: (number | null)[]; passo: number; nome?: string; enviado?: boolean; contato?: { nome: string; email: string; whats: string } };
   const CHAVE = 'diagnostico-v1';
   const raiz = document.querySelector<HTMLElement>('[data-diagnostico]')!;
   const $ = <T extends HTMLElement = HTMLElement>(s: string) => raiz.querySelector<T>(s)!;
@@ -247,6 +249,11 @@ const nomeOferta = OFERTA.nome.split(OFERTA.destaque);
     estado.passo--; salvar(); desenharPergunta();
   });
 
+  // Código das respostas desta pessoa neste navegador (vazio se ainda não terminou)
+  function meuCodigo() {
+    return estado.passo >= TOTAL_PERGUNTAS ? codificar(estado.respostas.map((v) => v ?? 0)) : '';
+  }
+
   // ---------- Contato ----------
   const form = $<HTMLFormElement>('[data-form-diag]');
   form.addEventListener('submit', async (e) => {
@@ -273,21 +280,41 @@ const nomeOferta = OFERTA.nome.split(OFERTA.destaque);
     CONTEXTO.forEach((p, i) => dados.set(p.id, p.opcoes[respostas[i]] ?? ''));
 
     const botao = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+    const textoBotao = botao.textContent;
     botao.disabled = true;
-    botao.textContent = 'Gerando o seu relatório…';
+    botao.textContent = 'Enviando…';
     try {
       const resp = await fetch('/api/formulario', { method: 'POST', body: dados, headers: { Accept: 'application/json' } });
-      if (!resp.ok) throw new Error(String(resp.status));
-      evento({ event: 'generate_lead', tipo_lead: 'diagnostico', nota_geral: r.geral });
+      const corpo = await resp.json().catch(() => null);
+      if (!resp.ok || !corpo?.ok) throw new Error(String(resp.status));
     } catch (falha) {
-      // O relatório aparece mesmo se a gravação falhar: a pessoa não pode ficar sem o resultado
+      // Envio não salvo: mostra o erro e NÃO redireciona
       console.warn('Diagnóstico: não foi possível gravar o contato', falha);
+      erro.textContent = 'Não consegui enviar agora. Confira a sua conexão e tente de novo.';
+      erro.hidden = false;
+      botao.disabled = false;
+      botao.textContent = textoBotao;
+      return;
     }
+
+    evento({ event: 'generate_lead', tipo_lead: 'diagnostico', nota_geral: r.geral });
     estado.nome = nome.split(' ')[0];
     estado.enviado = true;
+    estado.contato = { nome, email, whats };
     salvar();
     mostrarRelatorio(respostas, estado.nome);
   });
+
+  // Agendamento: https://cal.com/leticiaferracioli/diagnostico?name=…&email=…&attendeePhoneNumber=+55DDDNUMERO
+  // Campo vazio não entra na URL.
+  function linkAgenda(nome: string, email: string, digitos: string) {
+    const telefone = digitos ? (digitos.startsWith('55') && digitos.length >= 12 ? `+${digitos}` : `+55${digitos}`) : '';
+    const params = [['name', nome], ['email', email], ['attendeePhoneNumber', telefone]]
+      .filter(([, valor]) => valor)
+      .map(([chave, valor]) => `${chave}=${encodeURIComponent(valor)}`)
+      .join('&');
+    return `https://cal.com/leticiaferracioli/diagnostico${params ? `?${params}` : ''}`;
+  }
 
   // ---------- Relatório ----------
   const destacar = (texto: string, palavra: string) => texto.replace(palavra, `<span class="destaque">${palavra}</span>`);
@@ -333,6 +360,11 @@ const nomeOferta = OFERTA.nome.split(OFERTA.destaque);
     const msg = `Oi, Letícia! Fiz o diagnóstico comercial: nota ${r.geral} (${r.nivel.nome}). Meus gargalos: ${r.gargalos.map((g) => g.eixo.nome).join(', ')}. Quero saber sobre a ${OFERTA.nome}. Meu relatório: ${location.origin}/diagnostico/#r=${codigo}`;
     raiz.querySelectorAll<HTMLAnchorElement>('[data-whatsapp]').forEach((a) => (a.href = `${raiz.dataset.zap}?text=${encodeURIComponent(msg)}`));
 
+    // Agendar no Cal.com com nome, e-mail e WhatsApp preenchidos (quando foi esta pessoa que respondeu)
+    const c = codigo === meuCodigo() ? estado.contato : undefined;
+    const agenda = linkAgenda(c?.nome ?? '', c?.email ?? '', c?.whats ?? '');
+    raiz.querySelectorAll<HTMLAnchorElement>('[data-agenda]').forEach((a) => (a.href = agenda));
+
     mostrar('relatorio');
     evento({ event: 'diagnostico_relatorio', nota_geral: r.geral, nivel: r.nivel.nome });
   }
@@ -349,8 +381,7 @@ const nomeOferta = OFERTA.nome.split(OFERTA.destaque);
   // ---------- Início ----------
   // Link do relatório (#r=código): abre direto o resultado. O nome só aparece para quem respondeu neste navegador.
   const doLink = decodificar(new URLSearchParams(location.hash.slice(1)).get('r') ?? '');
-  const meuCodigo = estado.passo >= TOTAL_PERGUNTAS ? codificar(estado.respostas.map((v) => v ?? 0)) : '';
-  if (doLink) mostrarRelatorio(doLink, codificar(doLink) === meuCodigo ? estado.nome : undefined);
+  if (doLink) mostrarRelatorio(doLink, codificar(doLink) === meuCodigo() ? estado.nome : undefined);
   else if (estado.passo > 0) $('[data-continuar]').hidden = false;
 </script>
 
@@ -426,6 +457,7 @@ const nomeOferta = OFERTA.nome.split(OFERTA.destaque);
   .diag .consentimento a { color: var(--carvao); }
   .diag .armadilha { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
   .diag .erro-form { color: var(--laranja-tinta); font-weight: 500; margin: 0; }
+
   .diag .form-diag .botao { justify-self: start; }
 
   /* ---------- Relatório ---------- */
@@ -480,6 +512,7 @@ const nomeOferta = OFERTA.nome.split(OFERTA.destaque);
   .diag .oferta-caixa li::before { content: ''; position: absolute; left: 0; top: 0.8em; width: 0.75rem; height: 2px; background: var(--laranja); }
   .diag .preco { color: var(--taupe); font-size: var(--fs-0); letter-spacing: 0.06em; margin: 1.4rem 0; }
   .diag .zap-diag { margin-bottom: 1.2rem; }
+  .diag .whats-sec { display: block; font-size: var(--fs-0); color: var(--areia); text-decoration: underline; text-underline-offset: 4px; margin-bottom: 1rem; }
   .diag .pdf { display: block; font-size: var(--fs-0); letter-spacing: 0.06em; color: var(--pedra) !important; text-decoration: underline; text-underline-offset: 4px; }
 
   .diag .quem { display: grid; grid-template-columns: 140px 1fr; gap: clamp(24px, 4vw, 48px); align-items: center; padding-block: clamp(48px, 7vw, 88px) 0; max-width: calc(860px + 2 * var(--gutter)); }
@@ -512,7 +545,7 @@ const nomeOferta = OFERTA.nome.split(OFERTA.destaque);
   /* ---------- PDF (imprimir) ---------- */
   @media print {
     body > :not(main) { display: none !important; }
-    .diag .tela:not(.relatorio), .diag .zap-fixo, .diag [data-pdf], .diag [data-refazer], .diag .zap-diag { display: none !important; }
+    .diag .tela:not(.relatorio), .diag .zap-fixo, .diag [data-pdf], .diag [data-refazer], .diag .zap-diag, .diag .whats-sec { display: none !important; }
     .diag .relatorio { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     .diag .bloco, .diag .gargalo, .diag .oferta { break-inside: avoid; }
   }
