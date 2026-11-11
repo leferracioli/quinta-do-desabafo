@@ -15,5 +15,5 @@ export const SITE = {
   // Google Analytics 4 (configurado dentro do GTM)
   ga4: 'G-M4ZNQFQ3S4',
   // Meta Pixel (configurado dentro do GTM)
-  metaPixel: '969932873472116',
+  metaPixel: '1129923356445188',
 };
