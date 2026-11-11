@@ -54,6 +54,8 @@ const grafo = jsonLd.length
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     {naoIndexar && <meta name="robots" content="noindex, nofollow" />}
+    {/* Verificação do domínio na Meta (Business > Segurança da marca > Domínios). Não remover. */}
+    <meta name="facebook-domain-verification" content="05cotyb9wguded85503qfd3ljdjym7" />
     <meta name="author" content={SITE.autora} />
     <meta name="theme-color" content="#2a2a2c" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
