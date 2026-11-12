@@ -144,13 +144,13 @@ export const FAQ: [string, string][] = [
 
 // `contexto` (opcional): uma linha sobre o que foi feito lá. Com contexto, o item vira cartão.
 export const EMPRESAS: { nome: string; contexto?: string }[] = [
-  { nome: 'FAMESP | Faculdade Método de São Paulo' },
-  { nome: 'Flávio Lettieri' },
-  { nome: 'Luisa Nunes' },
-  { nome: 'Camila Brunetta' },
-  { nome: 'Gabriela Braitt' },
+  { nome: 'FAMESP | Faculdade Método de São Paulo', contexto: 'Supervisão comercial e gestão do time de vendas' },
+  { nome: 'Camila Brunetta', contexto: 'Reestruturação comercial e treinamento de closers e SDRs · R$ 500 mil em vendas' },
+  { nome: 'Luisa Nunes', contexto: 'Supervisão comercial · R$ 500 mil em vendas · time responsável por 75% das vendas dos lançamentos' },
+  { nome: 'Gabriela Braitt', contexto: 'Reestruturação comercial, contratação e treinamento de closers, SDRs e social selling · R$ 150 mil em vendas' },
+  { nome: 'Flávio Lettieri', contexto: 'Gestão de tráfego pago: o lado que gera o lead, antes de ele chegar ao comercial' },
+  { nome: 'Pratinho Colorido | Introdução Alimentar BLW', contexto: 'Coprodução, estratégia e tráfego pago de lançamentos' },
   { nome: 'Leonardo Ames' },
   { nome: 'Dr. Irineu Neto' },
   { nome: 'DRONENG | Aerofotogrametria com Drones' },
-  { nome: 'Pratinho Colorido | Introdução Alimentar BLW' },
 ];
