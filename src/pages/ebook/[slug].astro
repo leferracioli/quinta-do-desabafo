@@ -20,7 +20,7 @@ const og = await getImage({ src: e.capa, width: 600, format: 'jpg' });
       <p class="lead">{e.subtitulo}</p>
       <p class="hook">{e.gancho}</p>
       {e.filtro && <p class="filtro">{e.filtro}</p>}
-      <a class="btn" href={e.checkout} data-checkout data-ebook={e.slug} data-preco={e.preco}>Quero o e-book por R$ {e.preco}</a>
+      <a class="btn" href={e.checkout} data-checkout data-botao="topo" data-ebook={e.slug} data-preco={e.preco}>Quero o e-book por R$ {e.preco}</a>
       <p class="small">Acesso imediato · Planilha e painel inclusos · 7 dias de garantia</p>
     </div>
     <Image class="cover" src={e.capa} alt={`Capa do e-book ${e.nome}`} width={420} loading="eager" />
@@ -52,7 +52,7 @@ const og = await getImage({ src: e.capa, width: 600, format: 'jpg' });
   <section><div class="wrap">
     <h2>Com o e-book, você vai</h2>
     <ul class="check">{e.resultados.map((r) => <li>{r}</li>)}</ul>
-    <a class="btn" href={e.checkout} data-checkout data-ebook={e.slug} data-preco={e.preco}>Quero o e-book por R$ {e.preco}</a>
+    <a class="btn" href={e.checkout} data-checkout data-botao="meio" data-ebook={e.slug} data-preco={e.preco}>Quero o e-book por R$ {e.preco}</a>
   </div></section>
 
   <section><div class="wrap">
@@ -121,7 +121,7 @@ const og = await getImage({ src: e.capa, width: 600, format: 'jpg' });
         <li>Bônus 1: planilha de medição antes e depois</li>
         <li>Bônus 2: painel de acompanhamento do time</li>
       </ul>
-      <a class="btn" href={e.checkout} data-checkout data-ebook={e.slug} data-preco={e.preco}>Comprar agora por R$ {e.preco}</a>
+      <a class="btn" href={e.checkout} data-checkout data-botao="final" data-ebook={e.slug} data-preco={e.preco}>Comprar agora por R$ {e.preco}</a>
       <p class="garantia">7 dias de garantia pela Hotmart. Não serviu, você pede o reembolso.</p>
     </div>
   </div></section>

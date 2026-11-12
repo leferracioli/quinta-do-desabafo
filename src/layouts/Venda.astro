@@ -51,35 +51,91 @@ const imagemAbs = new URL(imagem, Astro.site).href;
     <Consentimento />
     <Eventos />
     <script>
-      // Clique em qualquer botão de compra → evento begin_checkout no GTM (vira InitiateCheckout no Meta Pixel)
+      // Rastreamento dos botões de compra.
+      // 1) Cada clique vira begin_checkout no GTM (InitiateCheckout no Meta Pixel, evento no GA4),
+      //    com funil, posição do botão e origem.
+      // 2) O link da Hotmart recebe as UTMs do anúncio e os campos src/sck, que aparecem no
+      //    relatório de vendas da Hotmart. Assim dá para ver qual funil, botão, campanha,
+      //    conjunto e anúncio venderam.
       type Evento = Record<string, unknown>;
       const w = window as unknown as { dataLayer: Evento[] };
       w.dataLayer = w.dataLayer || [];
+
+      const FUNIL: Record<string, string> = {
+        'follow-up-em-numeros': 'A',
+        'playbook-do-retorno': 'B',
+        'quem-ficou-sem-resposta': 'C',
+      };
+      const CHAVES = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'utm_id', 'fbclid'];
+      const ARMAZEM = 'origem-ebook';
+
+      // Origem: UTMs da URL. Sem UTM, tenta a origem guardada nesta sessão (a pessoa recarregou
+      // ou voltou para a página); sem nada disso, deduz pelo site de onde veio.
+      function lerOrigem(): Record<string, string> {
+        const q = new URLSearchParams(location.search);
+        const atual: Record<string, string> = {};
+        CHAVES.forEach((k) => { const v = q.get(k); if (v) atual[k] = v; });
+        if (Object.keys(atual).length) {
+          try { sessionStorage.setItem(ARMAZEM, JSON.stringify(atual)); } catch (e) {}
+          return atual;
+        }
+        try {
+          const salvo = sessionStorage.getItem(ARMAZEM);
+          if (salvo) return JSON.parse(salvo);
+        } catch (e) {}
+        let ref = '';
+        try { ref = document.referrer ? new URL(document.referrer).hostname : ''; } catch (e) {}
+        if (!ref || ref.endsWith(location.hostname.replace(/^www\./, ''))) return { utm_source: 'direto' };
+        const nome = /instagram/.test(ref) ? 'instagram' : /facebook|fb\.com/.test(ref) ? 'facebook'
+          : /google/.test(ref) ? 'google' : /whatsapp|wa\.me/.test(ref) ? 'whatsapp'
+          : /linkedin|lnkd/.test(ref) ? 'linkedin' : ref.replace(/^www\./, '');
+        return { utm_source: nome, utm_medium: 'organico' };
+      }
+      const origem = lerOrigem();
+
+      // Hotmart: campos curtos e sem caracteres estranhos
+      const limpar = (v = '', max = 40) => v.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^\w.-]+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '').slice(0, max);
+
+      function montarLink(a: HTMLAnchorElement): string {
+        const base = a.dataset.base || a.href;
+        a.dataset.base = base;
+        if (!base.startsWith('https://pay.hotmart.com/')) return base;
+        const url = new URL(base);
+        Object.entries(origem).forEach(([k, v]) => url.searchParams.set(k, v));
+        url.searchParams.set('src', limpar(origem.utm_source || 'direto'));
+        // sck = funil.botao.campanha.conjunto.anuncio (ex.: A.topo.teste-nome.publico-gestores.estatico-3)
+        const sck = [
+          FUNIL[a.dataset.ebook || ''] || a.dataset.ebook,
+          a.dataset.botao,
+          limpar(origem.utm_campaign, 30),
+          limpar(origem.utm_term, 30),
+          limpar(origem.utm_content, 30),
+        ].filter(Boolean).join('.');
+        url.searchParams.set('sck', sck);
+        return url.toString();
+      }
+
+      const botoes = document.querySelectorAll<HTMLAnchorElement>('a[data-checkout]');
+      botoes.forEach((a) => { a.href = montarLink(a); });
+
       document.addEventListener('click', (e) => {
-        const botao = (e.target as Element).closest<HTMLAnchorElement>('a[data-checkout]');
-        if (botao) w.dataLayer.push({
+        const a = (e.target as Element).closest<HTMLAnchorElement>('a[data-checkout]');
+        if (!a) return;
+        a.href = montarLink(a);
+        w.dataLayer.push({
           event: 'begin_checkout',
-          ebook: botao.dataset.ebook,
-          value: Number(botao.dataset.preco),
+          ebook: a.dataset.ebook,
+          funil: FUNIL[a.dataset.ebook || ''],
+          botao: a.dataset.botao,
+          value: Number(a.dataset.preco),
           currency: 'BRL',
+          origem: origem.utm_source,
+          campanha: origem.utm_campaign,
+          conjunto: origem.utm_term,
+          anuncio: origem.utm_content,
         });
       });
-
-      // Repassa as UTMs do anúncio para o checkout da Hotmart, para saber qual anúncio vendeu.
-      // utm_source/utm_campaign viram src/sck, que aparecem no relatório de vendas da Hotmart.
-      const params = new URLSearchParams(location.search);
-      if ([...params.keys()].length) {
-        document.querySelectorAll<HTMLAnchorElement>('a[data-checkout]').forEach((a) => {
-          if (!a.href.startsWith('https://pay.hotmart.com/')) return;
-          const url = new URL(a.href);
-          params.forEach((v, k) => { if (/^utm_|^fbclid$/.test(k)) url.searchParams.set(k, v); });
-          const src = params.get('utm_source');
-          const sck = [params.get('utm_campaign'), params.get('utm_content')].filter(Boolean).join('_');
-          if (src) url.searchParams.set('src', src);
-          if (sck) url.searchParams.set('sck', sck);
-          a.href = url.toString();
-        });
-      }
     </script>
   </body>
 </html>
