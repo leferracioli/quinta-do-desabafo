@@ -149,7 +149,7 @@ export const EMPRESAS: { nome: string; contexto?: string }[] = [
   { nome: 'Luisa Nunes', contexto: 'Supervisão comercial · R$ 500 mil em vendas · time responsável por 75% das vendas dos lançamentos' },
   { nome: 'Gabriela Braitt', contexto: 'Reestruturação comercial, contratação e treinamento de closers, SDRs e social selling · R$ 150 mil em vendas' },
   { nome: 'Flávio Lettieri', contexto: 'Gestão de tráfego pago: o lado que gera o lead, antes de ele chegar ao comercial' },
-  { nome: 'Pratinho Colorido | Introdução Alimentar BLW', contexto: 'Coprodução, estratégia e tráfego pago de lançamentos' },
+  { nome: 'Pratinho Colorido | Introdução Alimentar BLW', contexto: 'Coprodução, estratégia e tráfego pago de lançamentos · R$ 40 mil em vendas vindas do tráfego' },
   { nome: 'Leonardo Ames' },
   { nome: 'Dr. Irineu Neto' },
   { nome: 'DRONENG | Aerofotogrametria com Drones' },
