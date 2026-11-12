@@ -1,0 +1,69 @@
+---
+// Layout das páginas de venda dos e-books: sem o topo e o rodapé do blog,
+// mas com o mesmo banner de cookies (LGPD) e o GTM, que carrega GA4 e Meta Pixel só depois do aceite.
+// Sempre noindex: as páginas só são acessadas pelos anúncios.
+import '../styles/tokens.css';
+import '@fontsource/jost/latin-400.css';
+import '@fontsource/jost/latin-500.css';
+import '@fontsource/jost/latin-600.css';
+import '@fontsource/jost/latin-700.css';
+import '@fontsource/jost/latin-800.css';
+import jost400 from '@fontsource/jost/files/jost-latin-400-normal.woff2?url';
+import jost700 from '@fontsource/jost/files/jost-latin-700-normal.woff2?url';
+import Consentimento from '../components/Consentimento.astro';
+import Eventos from '../components/Eventos.astro';
+import { SITE } from '../lib/site';
+
+interface Props {
+  title: string;
+  description: string;
+  /** URL absoluta ou caminho da imagem de compartilhamento */
+  imagem: string;
+}
+const { title, description, imagem } = Astro.props;
+const imagemAbs = new URL(imagem, Astro.site).href;
+---
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content="noindex, nofollow" />
+    {/* Verificação do domínio na Meta. Não remover. */}
+    <meta name="facebook-domain-verification" content="05cotyb9wguded85503qfd3ljdjym7" />
+    <meta name="author" content={SITE.autora} />
+    <meta name="theme-color" content="#121010" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin />
+    <link rel="preload" href={jost400} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={jost700} as="font" type="font/woff2" crossorigin />
+    <meta property="og:type" content="product" />
+    <meta property="og:site_name" content={SITE.nome} />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={imagemAbs} />
+  </head>
+  <body class="venda">
+    <slot />
+    <Consentimento />
+    <Eventos />
+    <script>
+      // Clique em qualquer botão de compra → evento begin_checkout no GTM (vira InitiateCheckout no Meta Pixel)
+      type Evento = Record<string, unknown>;
+      const w = window as unknown as { dataLayer: Evento[] };
+      w.dataLayer = w.dataLayer || [];
+      document.addEventListener('click', (e) => {
+        const botao = (e.target as Element).closest<HTMLAnchorElement>('a[data-checkout]');
+        if (botao) w.dataLayer.push({
+          event: 'begin_checkout',
+          ebook: botao.dataset.ebook,
+          value: Number(botao.dataset.preco),
+          currency: 'BRL',
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -16,8 +16,8 @@ export default defineConfig({
   integrations: [
     mdx(),
     sitemap({
-      // Imagens OG, 404 e páginas de retorno dos formulários não entram no sitemap
-      filter: (pagina) => !/\/(og|404|obrigado|obrigado-tema|envio-falhou|newsletter\/confirme|newsletter\/confirmada)(\/|$)/.test(new URL(pagina).pathname),
+      // Imagens OG, 404, páginas de retorno dos formulários e páginas de venda dos e-books não entram no sitemap
+      filter: (pagina) => !/\/(og|404|obrigado|obrigado-tema|envio-falhou|newsletter\/confirme|newsletter\/confirmada|ebook)(\/|$)/.test(new URL(pagina).pathname),
     }),
   ],
   // Recusa envio de formulário vindo de outro site
