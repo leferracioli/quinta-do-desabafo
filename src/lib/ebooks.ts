@@ -117,8 +117,8 @@ export const EBOOKS: Ebook[] = [
 ];
 
 export const DADOS: [string, string, string][] = [
-  ['7x', 'mais chance de falar com quem decide quando o contato acontece na primeira hora', 'Harvard Business Review, 2011'],
-  ['42h', 'é o tempo médio que as empresas levam para responder um lead', 'Harvard Business Review, 2011'],
+  ['7x', 'mais chance, quase, de falar com quem decide quando o contato acontece na primeira hora', 'Harvard Business Review, 2011'],
+  ['42h', 'é o tempo médio que as empresas levam para responder um lead (entre as que respondem em até 30 dias)', 'Harvard Business Review, 2011'],
   ['100x', 'mais chance de contato ligando em 5 minutos em vez de 30', 'MIT / InsideSales'],
   ['+65,8%', 'de respostas com um único follow-up a mais', 'Backlinko e Pitchbox, 12 milhões de e-mails'],
 ];
