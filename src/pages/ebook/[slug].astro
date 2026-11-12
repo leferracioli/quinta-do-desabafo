@@ -99,12 +99,12 @@ const og = await getImage({ src: e.capa, width: 600, format: 'jpg' });
       </div>
     </div>
     <div class="stats">
-      <div><b>+R$ 20 mi</b><span>em vendas organizadas nas operações que estruturou</span></div>
+      <div><b>+R$ 20 mi</b><span>em vendas organizadas ao longo da carreira, nas operações comerciais que estruturou</span></div>
       <div><b>8 anos</b><span>entre marketing digital e gestão comercial</span></div>
       <div><b>10</b><span>vendedoras na maior equipe que liderou</span></div>
     </div>
     <div class="marcas">
-      <div class="eyebrow">Empresas e marcas em que já trabalhou</div>
+      <div class="eyebrow">Algumas das empresas e marcas em que já trabalhou</div>
       <div class="cartoes">{EMPRESAS.filter((e) => e.contexto).map((e) => <div><b>{e.nome}</b><span>{e.contexto}</span></div>)}</div>
       <ul>{EMPRESAS.filter((e) => !e.contexto).map((e) => <li>{e.nome}</li>)}</ul>
     </div>
