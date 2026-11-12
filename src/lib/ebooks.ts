@@ -142,7 +142,15 @@ export const FAQ: [string, string][] = [
   ['E se não servir para mim?', 'Você tem 7 dias de garantia. Se não fizer sentido, pede o reembolso pela própria Hotmart, sem precisar explicar o motivo.'],
 ];
 
-export const EMPRESAS = [
-  'FAMESP', 'Flávio Lettieri', 'Luisa Nunes', 'Camila Brunetta', 'Gabriela Braitt',
-  'Leonardo Ames', 'Dr. Irineu Neto', 'Aerofotogrametria com Drones', 'Pratinho Colorido',
+// `contexto` (opcional): uma linha sobre o que foi feito lá. Com contexto, o item vira cartão.
+export const EMPRESAS: { nome: string; contexto?: string }[] = [
+  { nome: 'FAMESP | Faculdade Método de São Paulo' },
+  { nome: 'Flávio Lettieri' },
+  { nome: 'Luisa Nunes' },
+  { nome: 'Camila Brunetta' },
+  { nome: 'Gabriela Braitt' },
+  { nome: 'Leonardo Ames' },
+  { nome: 'Dr. Irineu Neto' },
+  { nome: 'DRONENG | Aerofotogrametria com Drones' },
+  { nome: 'Pratinho Colorido | Introdução Alimentar BLW' },
 ];
