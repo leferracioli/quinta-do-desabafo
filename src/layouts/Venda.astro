@@ -64,6 +64,22 @@ const imagemAbs = new URL(imagem, Astro.site).href;
           currency: 'BRL',
         });
       });
+
+      // Repassa as UTMs do anúncio para o checkout da Hotmart, para saber qual anúncio vendeu.
+      // utm_source/utm_campaign viram src/sck, que aparecem no relatório de vendas da Hotmart.
+      const params = new URLSearchParams(location.search);
+      if ([...params.keys()].length) {
+        document.querySelectorAll<HTMLAnchorElement>('a[data-checkout]').forEach((a) => {
+          if (!a.href.startsWith('https://pay.hotmart.com/')) return;
+          const url = new URL(a.href);
+          params.forEach((v, k) => { if (/^utm_|^fbclid$/.test(k)) url.searchParams.set(k, v); });
+          const src = params.get('utm_source');
+          const sck = [params.get('utm_campaign'), params.get('utm_content')].filter(Boolean).join('_');
+          if (src) url.searchParams.set('src', src);
+          if (sck) url.searchParams.set('sck', sck);
+          a.href = url.toString();
+        });
+      }
     </script>
   </body>
 </html>

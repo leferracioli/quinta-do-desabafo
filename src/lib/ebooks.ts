@@ -35,7 +35,7 @@ export const EBOOKS: Ebook[] = [
     subtitulo: 'Indicadores de vendas pra gestor saber quem retorna, quando e quanto isso vale.',
     gancho: 'Seu time diz que faz follow-up. Você consegue provar?',
     preco: '47',
-    checkout: '#checkout',
+    checkout: 'https://pay.hotmart.com/W108468567L',
     dorTitulo: 'Gestão no achismo custa venda todo mês',
     dor: [
       'Na reunião, todo mundo “chamou o cliente”. No fim do mês a meta não fecha, e ninguém sabe dizer onde a venda parou.',
@@ -64,7 +64,7 @@ export const EBOOKS: Ebook[] = [
     subtitulo: 'O playbook de follow-up de vendas pra padronizar o retorno da sua equipe.',
     gancho: 'Cada vendedor faz follow-up do seu jeito. Por isso o resultado também é de cada um.',
     preco: '47',
-    checkout: '#checkout',
+    checkout: 'https://pay.hotmart.com/I108468614R',
     dorTitulo: 'Quando o retorno depende da memória, a venda depende da sorte',
     dor: [
       'Um vendedor volta no dia seguinte, outro em uma semana, outro nunca. Um manda áudio de dois minutos, outro manda “e aí, conseguiu ver?”.',
@@ -93,7 +93,7 @@ export const EBOOKS: Ebook[] = [
     subtitulo: 'O cliente não responde, e o seu time não volta. Descubra quantas vendas estão paradas na sua equipe.',
     gancho: 'Quantas vendas estão paradas agora no WhatsApp do seu time?',
     preco: '47',
-    checkout: '#checkout',
+    checkout: 'https://pay.hotmart.com/V108468653X',
     dorTitulo: 'A venda não se perde no “não”. Se perde no silêncio.',
     dor: [
       'O cliente pediu informação, pareceu interessado, disse que ia pensar... e sumiu. E o vendedor, com medo de parecer chato, sumiu junto.',
