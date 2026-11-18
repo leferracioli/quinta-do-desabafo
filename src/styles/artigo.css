@@ -206,3 +206,21 @@
     @keyframes revela { from { opacity: 0; transform: translateY(28px); } }
   }
 }
+
+/* ---------- Tabelas do texto (ex.: mapa de tarefas) ---------- */
+.corpo > table {
+  width: 100%; border-collapse: collapse; margin: 0.4em 0 1.8em;
+  font-size: var(--fs-0); line-height: 1.45;
+}
+.corpo > table th {
+  text-align: left; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--taupe-tinta); border-bottom: 1px solid var(--carvao); padding: 0.6rem 0.8rem 0.6rem 0;
+}
+.corpo > table td { border-bottom: 1px solid var(--pedra); padding: 0.75rem 0.8rem 0.75rem 0; vertical-align: top; }
+.corpo > table td:first-child { font-weight: 500; white-space: nowrap; }
+@media (max-width: 700px) {
+  /* No celular, a tabela rola de lado sem empurrar a página */
+  .corpo > table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .corpo > table td:first-child { white-space: normal; min-width: 7rem; }
+  .corpo > table td, .corpo > table th { min-width: 9rem; }
+}
