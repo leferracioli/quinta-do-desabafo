@@ -1,67 +1,144 @@
 ---
-// Home: quem é a Letícia, as soluções, o Desabafo da semana e o contato.
+// Home: a tese (gestão comercial + dados + sistemas), o problema, o método, projetos,
+// as duas frentes de soluções, o Desabafo da semana e o contato.
 import Base from '../layouts/Base.astro';
 import Retrato from '../components/Retrato.astro';
 import TituloDestaque from '../components/TituloDestaque.astro';
 import BotaoWhatsapp from '../components/BotaoWhatsapp.astro';
 import FormLead from '../components/form/FormLead.astro';
-import ChamadaDiagnostico from '../components/ChamadaDiagnostico.astro';
+import RadarSimulado from '../components/RadarSimulado.astro';
+import Ilustracao from '../components/Ilustracao.astro';
+import Movimento from '../components/Movimento.astro';
 import { getArtigos, numeroEdicao, primeirasFrases } from '../lib/artigos';
-import { SOLUCOES } from '../lib/solucoes';
+import { PROJETOS } from '../lib/projetos';
 import { siteWeb, pessoaRef, servicos } from '../lib/seo';
 
 const [atual] = await getArtigos();
+const destaques = PROJETOS.filter((p) => p.destaqueHome);
 const jsonLd = [siteWeb(Astro.site!), pessoaRef(Astro.site!), ...servicos(Astro.site!)];
+
+const SINTOMAS = [
+  'A reunião de segunda-feira discute a meta, não o funil.',
+  'O vendedor bom não sabe explicar por que é bom. E o time não consegue copiar.',
+  'O lead que esfriou só aparece no relatório do mês seguinte, quando já não dá para fazer nada.',
+];
+const PASSOS = [
+  { titulo: 'Investigar', texto: 'Entender como o lead chega, como o time atende, onde a venda escapa e o que já está registrado sem ninguém usar.' },
+  { titulo: 'Medir', texto: 'Transformar o que está espalhado em números comparáveis. E testar se o indicador explica alguma coisa ou só parece explicar.' },
+  { titulo: 'Construir', texto: 'Painel, radar, análise com IA, régua de mensagens: a ferramenta certa para a pergunta certa. Nada de sistema genérico.' },
+  { titulo: 'Acompanhar', texto: 'Ferramenta que ninguém abre não serve para nada. Ajustar com o time até virar rotina de gestão.' },
+];
 ---
 <Base
-  title="Letícia Ferracioli · Mentoria e consultoria comercial"
-  description="Mentoria e consultoria comercial com Letícia Ferracioli: equipes, processos, indicadores, CRM e automações. E toda quinta, a Quinta do Desabafo."
+  title="Letícia Ferracioli · Gestão e inteligência comercial"
+  description="Gestão comercial, dados e sistemas com IA: painéis, radares de oportunidade e análise de atendimento, construídos por quem já liderou time de vendas."
   imagem="/og/inicio.png"
   jsonLd={jsonLd}
 >
-  <section class="hero escuro">
-    <div class="wrap hero-grade">
-      <div class="hero-texto">
-        <p class="kicker">Mentoria e consultoria comercial</p>
-        <h1>Vendas e gestão comercial, sem fórmula <span class="destaque">mágica</span>.</h1>
-        <p class="lead">Sou a Letícia Ferracioli. Trabalho com marketing digital desde 2018 e hoje atuo na gestão comercial: equipes, processos, indicadores, CRM e automações.</p>
-        <div class="acoes">
-          <BotaoWhatsapp variante="claro" />
-          <a class="link" href="/solucoes/">Conheça as soluções →</a>
+  <section class="hero escuro pontos">
+    <div class="wrap">
+      <p class="kicker">Gestão comercial · Inteligência de dados · Sistemas com IA</p>
+      <h1>Eu entendo a operação comercial por dentro. E <span class="destaque">construo</span> as ferramentas que ela ainda não tem.</h1>
+      <div class="hero-base">
+        <div>
+          <p class="lead">Painéis de desempenho, radares de oportunidade e análise de atendimento com IA, desenhados por quem já liderou time de vendas, a partir do que o seu CRM já registra e ninguém está olhando.</p>
+          <div class="acoes">
+            <BotaoWhatsapp variante="claro" />
+            <a class="link" href="/projetos/">Ver o que eu já construí →</a>
+          </div>
+        </div>
+        <div class="assinatura">
+          <div class="foto"><Retrato prioridade sizes="160px" /></div>
+          <p><strong>Letícia Ferracioli</strong>Gestão comercial e inteligência de dados. Comecei como vendedora e fui para a liderança.</p>
         </div>
       </div>
-      <div class="hero-foto"><Retrato prioridade sizes="(max-width: 900px) 64vw, 420px" /></div>
+      <RadarSimulado />
     </div>
   </section>
 
-  <section class="wrap solucoes" aria-labelledby="como-ajudo">
-    <div class="cabeca">
-      <p class="kicker">Soluções</p>
-      <h2 id="como-ajudo">Como eu posso ajudar</h2>
+  <section class="dobra secao problema" aria-labelledby="problema">
+    <div class="wrap">
+      <p class="kicker revela">O problema</p>
+      <h2 id="problema" class="revela">Quase toda operação comercial tem os dados. Pouca consegue <span class="destaque">ler</span>.</h2>
+      <ul class="sintomas">
+        {SINTOMAS.map((s, i) => <li class="revela"><span class="rotulo">Sintoma {i + 1}</span><p>{s}</p></li>)}
+      </ul>
+      <p class="fecho revela">O problema raramente é falta de esforço do time. É falta de instrumento. A gestão está pilotando sem painel, e o painel que existe mostra o que já aconteceu, não o que está acontecendo.</p>
     </div>
-    <div class="lista">
-      {SOLUCOES.map((s, i) => (
-        <article class="solucao">
-          <span class="num" aria-hidden="true">{numeroEdicao(i + 1)}</span>
-          <TituloDestaque tag="h3" titulo={s.nome} destaque={s.destaque} />
-          <p class="para-quem">{s.paraQuem}</p>
-          <p>{s.resumo}</p>
-          <a class="link" href={`/solucoes/#${s.id}`}>Saber mais sobre a {s.nome.toLowerCase()} →</a>
-        </article>
+  </section>
+
+  <section class="dobra secao metodo" aria-labelledby="metodo">
+    <div class="wrap metodo-grade">
+      <div class="revela"><p class="kicker">Como eu trabalho</p><h2 id="metodo">Do incômodo à ferramenta que o time <span class="destaque">usa</span>.</h2></div>
+      <ol class="passos">
+        {PASSOS.map((p, i) => (
+          <li class="passo revela">
+            <span class="n">{numeroEdicao(i + 1)}</span>
+            <div><h3>{p.titulo}</h3><p>{p.texto}</p></div>
+            <svg class="anima" viewBox="0 0 120 64" aria-hidden="true">
+              {i === 0 && <><g fill="#a89f94"><circle cx="12" cy="40" r="3"/><circle cx="30" cy="18" r="3"/><circle cx="44" cy="50" r="3"/><circle cx="78" cy="44" r="3"/><circle cx="96" cy="14" r="3"/><circle cx="108" cy="36" r="3"/></g><circle cx="60" cy="26" r="5" fill="none" stroke="#e0662f" stroke-width="1.5"/></>}
+              {i === 1 && <><g fill="#a89f94"><rect x="6" y="34" width="14" height="26"/><rect x="28" y="22" width="14" height="38"/><rect x="50" y="40" width="14" height="20"/></g><rect x="72" y="12" width="14" height="48" fill="#e0662f"/><rect x="94" y="28" width="14" height="32" fill="#a89f94"/><line x1="0" y1="60" x2="120" y2="60" stroke="#55504a"/></>}
+              {i === 2 && <><g fill="none" stroke="#6e665d"><rect x="2" y="4" width="116" height="56"/><line x1="2" y1="18" x2="118" y2="18"/><polyline points="50,48 64,40 78,44 92,30 110,28"/></g><rect x="10" y="26" width="30" height="26" fill="#a89f94"/><circle cx="92" cy="30" r="3" fill="#e0662f"/></>}
+              {i === 3 && <><path d="M20 32 a40 22 0 1 1 0 .1" fill="none" stroke="#6e665d"/><path d="M60 10 l6 -4 l-1 7" fill="none" stroke="#e0662f" stroke-width="1.5"/><circle cx="60" cy="10" r="2.5" fill="#e0662f"/></>}
+            </svg>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="dobra secao projetos" aria-labelledby="projetos">
+    <div class="wrap">
+      <div class="cabeca revela">
+        <div><p class="kicker">Projetos</p><h2 id="projetos">Algumas coisas que eu já <span class="destaque">construí</span>.</h2></div>
+        <p class="sub">Os nomes das empresas ficam de fora. O raciocínio, não.</p>
+      </div>
+      {destaques.map((p) => (
+        <a class="caso revela" href={`/projetos/${p.slug}/`}>
+          <Ilustracao tipo={p.ilustracao} legenda={p.legenda} />
+          <div>
+            <div class="caso-topo"><span class:list={['selo', p.status === 'Estudo' && 'cinza']}>{p.status}</span><span class="rotulo">{p.contexto}</span></div>
+            <h3>{p.titulo}</h3>
+            <p>{p.resumo}</p>
+            <span class="link">Ler o caso →</span>
+          </div>
+        </a>
       ))}
+      <p class="mais revela"><a class="link" href="/projetos/">Ver todos os projetos →</a></p>
     </div>
   </section>
 
-  <ChamadaDiagnostico />
+  <section class="dobra secao solucoes" aria-labelledby="solucoes">
+    <div class="wrap">
+      <div class="cabeca revela"><div><p class="kicker">Soluções</p><h2 id="solucoes">Duas frentes, um mesmo <span class="destaque">olhar</span>.</h2></div></div>
+      <div class="frentes">
+        <div class="frente revela">
+          <span class="rotulo">Frente 1</span>
+          <h3>Gestão e liderança comercial</h3>
+          <p>Para quem precisa organizar a operação e o time.</p>
+          <dl><dt>Inclui</dt><dd>Processo, rotina de gestão, indicadores, liderança</dd><dt>Formatos</dt><dd>Sessão de direcionamento · Mentoria · Consultoria</dd></dl>
+          <a class="link" href="/solucoes/#direcionamento">Conhecer →</a>
+        </div>
+        <div class="frente escuro revela">
+          <span class="rotulo">Frente 2 · sob medida</span>
+          <h3>Inteligência comercial</h3>
+          <p>Para quem já tem dados e não consegue usar.</p>
+          <dl><dt>Inclui</dt><dd>Painéis, radares de oportunidade, análise de atendimento com IA, estudos</dd><dt>Formato</dt><dd>Dentro de uma consultoria ou como projeto à parte</dd></dl>
+          <a class="link" href="/solucoes/#inteligencia">Conhecer →</a>
+        </div>
+      </div>
+      <div class="diag revela"><p><strong>Não sabe por onde começar?</strong> O diagnóstico gratuito leva 4 minutos e mostra onde a sua operação trava.</p><a class="link" href="/diagnostico/">Fazer o diagnóstico →</a></div>
+    </div>
+  </section>
 
-  <section class="quinta escuro" aria-labelledby="quinta">
+  <section class="dobra quinta escuro" aria-labelledby="quinta">
     <div class="wrap quinta-grade">
-      <div>
+      <div class="revela">
         <p class="kicker">Toda quinta-feira</p>
         <h2 id="quinta">Quinta do <span class="destaque">Desabafo</span></h2>
-        <p class="sobre-quinta">Uma notícia da semana sobre vendas, gestão comercial, IA ou marketing digital, além da manchete: dados, outras vozes e o que eu vejo na prática.</p>
+        <p class="sobre-quinta">Uma notícia da semana sobre vendas, gestão comercial, IA ou marketing digital, além da manchete: dados, outras vozes e o que eu vejo na prática. É aqui que eu penso em voz alta.</p>
       </div>
-      <div class="edicao">
+      <div class="edicao revela">
         {atual ? (
           <>
             <p class="kicker">Nº {numeroEdicao(atual.data.edicao)} · {atual.data.tema}</p>
@@ -78,37 +155,85 @@ const jsonLd = [siteWeb(Astro.site!), pessoaRef(Astro.site!), ...servicos(Astro.
     </div>
   </section>
 
-  <section class="wrap contato" id="contato" aria-labelledby="conversar">
-    <div class="contato-texto">
+  <section class="dobra wrap contato" id="contato" aria-labelledby="conversar">
+    <div class="contato-texto revela">
       <p class="kicker">Contato</p>
       <h2 id="conversar">Vamos <span class="destaque">conversar</span>?</h2>
-      <p>Me conta o seu momento. A conversa começa entendendo o que está acontecendo na sua operação ou na sua liderança.</p>
+      <p>Me conta o que está acontecendo na sua operação, ou o que você gostaria de enxergar nela e hoje não consegue. A conversa começa pelo problema, não pela ferramenta.</p>
       <BotaoWhatsapp />
       <p class="ou">ou deixe seus dados que eu te chamo:</p>
     </div>
-    <FormLead />
+    <div class="revela"><FormLead /></div>
   </section>
+  <Movimento />
 </Base>
 
 <style>
-  .hero { padding-block: clamp(48px, 7vw, 100px) 0; overflow: hidden; }
-  .hero-grade { display: grid; grid-template-columns: repeat(12, 1fr); gap: var(--gutter); align-items: end; }
-  .hero-texto { grid-column: 1 / span 7; align-self: center; padding-bottom: clamp(48px, 7vw, 100px); }
-  h1 { font-size: clamp(var(--fs-4), 6.4vw, var(--fs-6)); letter-spacing: -0.015em; margin: 0.4em 0 0.45em; }
-  .lead { font-size: var(--fs-2); line-height: 1.45; max-width: 32ch; margin: 0 0 1.8em; }
+  .secao { padding-block: clamp(64px, 9vw, 120px); }
+
+  /* Abertura */
+  .pontos { background-image: radial-gradient(rgba(239, 234, 227, 0.07) 1px, transparent 1.2px); background-size: 22px 22px; }
+  .hero { padding-block: clamp(40px, 6vw, 88px) clamp(40px, 5vw, 64px); overflow: hidden; }
+  h1 { font-size: clamp(2.4rem, 6.4vw, var(--fs-7)); letter-spacing: -0.02em; max-width: 15ch; margin: 0.4em 0 0; }
+  .hero-base { display: grid; grid-template-columns: 7fr 5fr; gap: clamp(28px, 5vw, 80px); align-items: end; margin: clamp(28px, 4vw, 52px) 0 clamp(40px, 6vw, 72px); }
+  .lead { font-size: clamp(1.15rem, 1.7vw, 1.5rem); line-height: 1.5; max-width: 40ch; margin: 0 0 1.6em; color: #dcd6cd; }
   .acoes { display: flex; flex-wrap: wrap; align-items: center; gap: 1.2rem 2rem; font-weight: 500; }
-  .hero-foto { grid-column: 8 / span 5; padding-top: 60px; }
+  .assinatura { display: grid; grid-template-columns: 150px 1fr; gap: 1.2rem; align-items: end; }
+  .assinatura p { font-size: var(--fs-0); line-height: 1.45; color: var(--taupe); margin: 0; }
+  .assinatura strong { display: block; font-family: var(--serif); font-weight: var(--peso-serif); font-size: 1.3rem; color: var(--areia); }
+  .foto { padding-top: 40px; }
 
-  .solucoes { padding-block: clamp(64px, 9vw, 120px); }
-  .cabeca { border-top: 1px solid var(--carvao); padding-top: 1.2rem; margin-bottom: clamp(32px, 5vw, 56px); }
-  .cabeca h2 { font-size: var(--fs-4); margin-top: 0.3em; }
-  .lista { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(40px, 6vw, 96px); }
-  .solucao .num { font-family: var(--serif); font-weight: var(--peso-serif); font-size: var(--fs-5); line-height: 1; color: var(--taupe-tinta); }
-  .solucao :global(h3) { font-size: var(--fs-3); margin: 0.2em 0 0.4em; }
-  .para-quem { font-weight: 500; }
-  .solucao p { margin: 0 0 1em; max-width: 46ch; }
-  .solucao .link { font-weight: 500; }
+  /* Problema */
+  .problema h2 { font-size: clamp(2.1rem, 4.6vw, var(--fs-6)); max-width: 17ch; letter-spacing: -0.015em; margin-top: 0.4em; }
+  .sintomas { list-style: none; margin: clamp(40px, 6vw, 72px) 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(20px, 3vw, 48px); }
+  .sintomas li { border-top: 1px solid var(--carvao); padding-top: 1rem; }
+  .sintomas .rotulo { color: var(--laranja-tinta); }
+  .sintomas p { margin: 0.5rem 0 0; font-size: 1.1rem; line-height: 1.5; color: var(--taupe-pedra); }
+  .fecho { margin: clamp(36px, 5vw, 56px) 0 0; font-family: var(--serif); font-size: clamp(1.35rem, 2.3vw, 1.9rem); line-height: 1.3; max-width: 40ch; }
 
+  /* Método */
+  .metodo { background: var(--pedra); }
+  .metodo .kicker { color: var(--taupe-pedra); }
+  .metodo-grade { display: grid; grid-template-columns: 4fr 8fr; gap: clamp(32px, 6vw, 96px); }
+  .metodo h2 { font-size: clamp(2rem, 3.6vw, var(--fs-4)); margin-top: 0.3em; }
+  .passos { list-style: none; margin: 0; padding: 0; }
+  .passo { display: grid; grid-template-columns: 4.5rem 1fr 120px; gap: 1.2rem; align-items: start; padding: 1.4rem 0; border-top: 1px solid var(--taupe); }
+  .passo:last-child { border-bottom: 1px solid var(--taupe); }
+  .passo .n { font-family: var(--serif); font-size: var(--fs-4); line-height: 0.9; color: var(--taupe-pedra); }
+  .passo h3 { font-family: var(--sans); font-size: var(--fs-0); font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; margin: 0.3rem 0 0.4rem; }
+  .passo p { margin: 0; font-size: 1.06rem; line-height: 1.55; color: var(--taupe-pedra); max-width: 46ch; }
+  .passo svg { width: 120px; height: 64px; }
+
+  /* Projetos */
+  .projetos { background: var(--branco); }
+  .cabeca { display: flex; justify-content: space-between; align-items: end; gap: 1rem; flex-wrap: wrap; margin-bottom: clamp(28px, 4vw, 48px); }
+  .cabeca h2 { font-size: clamp(2rem, 3.6vw, var(--fs-4)); margin-top: 0.3em; }
+  .sub { color: var(--taupe-tinta); margin: 0; max-width: 40ch; }
+  .caso { display: grid; grid-template-columns: minmax(220px, 4fr) 7fr; gap: clamp(24px, 4vw, 64px); padding: clamp(28px, 4vw, 44px) 0; border-top: 1px solid var(--carvao); text-decoration: none; }
+  .caso-topo { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+  .caso h3 { font-size: clamp(1.6rem, 3vw, var(--fs-4)); margin: 0.6rem 0 0.6rem; max-width: 20ch; }
+  .caso p { margin: 0 0 1rem; max-width: 56ch; color: var(--taupe-pedra); }
+  .caso .link { font-weight: 500; }
+  .caso:hover h3 { text-decoration: underline; text-decoration-color: var(--laranja); text-underline-offset: 0.12em; text-decoration-thickness: 2px; }
+  .caso :global(.ilustracao) { transition: transform 0.5s cubic-bezier(.2,.7,.2,1), box-shadow 0.5s; }
+  .caso:hover :global(.ilustracao) { transform: translateY(-4px); box-shadow: 0 18px 30px -22px rgba(42, 42, 44, 0.45); }
+  .mais { margin: 1.6rem 0 0; font-weight: 500; }
+
+  /* Soluções */
+  .frentes { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(20px, 3vw, 40px); }
+  .frente { border: 1px solid var(--carvao); padding: clamp(24px, 3vw, 40px); display: flex; flex-direction: column; }
+  .frente h3 { font-size: clamp(1.7rem, 2.8vw, var(--fs-3)); margin: 0.5em 0 0.4em; }
+  .frente p { margin: 0 0 1.2em; }
+  .frente dl { margin: 0 0 1.6rem; display: grid; grid-template-columns: auto 1fr; gap: 0.5rem 1rem; font-size: 1rem; }
+  .frente dt { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--taupe-tinta); padding-top: 0.3rem; }
+  .frente.escuro dt { color: var(--taupe); }
+  .frente dd { margin: 0; }
+  .frente .link { margin-top: auto; align-self: flex-start; font-weight: 500; }
+  .diag { margin-top: clamp(24px, 3vw, 40px); display: flex; justify-content: space-between; align-items: center; gap: 1rem 2rem; flex-wrap: wrap; border-top: 1px solid var(--carvao); border-bottom: 1px solid var(--carvao); padding: 1.2rem 0; }
+  .diag p { margin: 0; }
+  .diag .link { font-weight: 500; }
+
+  /* Quinta */
   .quinta { padding-block: clamp(64px, 9vw, 120px); }
   .quinta-grade { display: grid; grid-template-columns: 5fr 7fr; gap: clamp(32px, 6vw, 96px); }
   .quinta h2 { font-size: var(--fs-4); margin: 0.3em 0 0.4em; }
@@ -120,16 +245,19 @@ const jsonLd = [siteWeb(Astro.site!), pessoaRef(Astro.site!), ...servicos(Astro.
   .edicao p { max-width: 52ch; }
   .links { display: flex; flex-wrap: wrap; gap: 0.8rem 2rem; font-weight: 500; }
 
+  /* Contato */
   .contato { display: grid; grid-template-columns: 5fr 7fr; gap: clamp(32px, 6vw, 96px); padding-block: clamp(64px, 9vw, 120px); }
   .contato h2 { font-size: var(--fs-4); margin: 0.3em 0 0.4em; }
   .contato-texto p:not(.kicker) { max-width: 38ch; }
   .ou { color: var(--taupe-tinta); font-size: var(--fs-0); margin-top: 1.6rem; }
 
   @media (max-width: 900px) {
-    .hero-texto, .hero-foto { grid-column: 1 / -1; }
-    .hero-foto { order: -1; max-width: 280px; width: 70%; margin: 30px auto 0 1.6rem; padding-top: 50px; }
-    .hero-texto { padding-bottom: 56px; }
-    .lead { font-size: 1.35rem; }
-    .lista, .quinta-grade, .contato { grid-template-columns: 1fr; }
+    .hero-base, .metodo-grade, .frentes, .quinta-grade, .contato, .caso { grid-template-columns: 1fr; }
+    .sintomas { grid-template-columns: 1fr; }
+    .passo { grid-template-columns: 3.4rem 1fr; }
+    .passo svg { display: none; }
+  }
+  @media (max-width: 700px) {
+    .assinatura { grid-template-columns: 110px 1fr; }
   }
 </style>

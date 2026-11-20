@@ -6,6 +6,7 @@ const ativo = (href: string) => (atual.startsWith(href) ? 'page' : undefined);
   <div class="wrap">
     <a class="marca" href="/">Letícia <em>Ferracioli</em></a>
     <nav aria-label="Principal">
+      <a class="link" href="/projetos/" aria-current={ativo('/projetos')}>Projetos</a>
       <a class="link" href="/solucoes/" aria-current={ativo('/solucoes')}>Soluções</a>
       <a class="link" href="/desabafos/" aria-current={ativo('/desabafos')}><span class="longo">Quinta do </span>Desabafo</a>
       <a class="link sobre" href="/sobre/" aria-current={ativo('/sobre')}>Sobre</a>
@@ -37,7 +38,7 @@ const ativo = (href: string) => (atual.startsWith(href) ? 'page' : undefined);
     .marca { font-size: 1.3rem; }
     nav { gap: 1.2rem; font-size: 0.8rem; letter-spacing: 0.12em; }
   }
-  @media (max-width: 380px) {
-    .sobre { display: none; }
+  @media (max-width: 760px) {
+    nav { flex-wrap: wrap; row-gap: 0.5rem; }
   }
 </style>

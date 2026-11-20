@@ -1,11 +1,12 @@
 ---
-// Soluções: uma escada do gratuito ao acompanhamento (diagnóstico → e-book → sessão → mentoria → consultoria).
+// Soluções: duas frentes (gestão e liderança · inteligência comercial sob medida), com o diagnóstico
+// gratuito como porta de entrada e o e-book num bloco de materiais.
 // Os textos ficam em src/lib/solucoes.ts (e a sessão, em src/lib/diagnostico.ts).
 import Base from '../layouts/Base.astro';
 import TituloDestaque from '../components/TituloDestaque.astro';
 import BotaoWhatsapp from '../components/BotaoWhatsapp.astro';
 import Pendente from '../components/artigo/Pendente.astro';
-import { DEGRAUS, EBOOK } from '../lib/solucoes';
+import { DEGRAUS, EBOOK, MATERIAL_EBOOK } from '../lib/solucoes';
 import { numeroEdicao } from '../lib/artigos';
 import { servicos, migalhas } from '../lib/seo';
 
@@ -17,8 +18,8 @@ const jsonLd = [
 const faltaEbook = (campo: keyof typeof EBOOK) => EBOOK[campo] === null || (Array.isArray(EBOOK[campo]) && EBOOK[campo].length === 0);
 ---
 <Base
-  title="Soluções comerciais · Letícia Ferracioli"
-  description="Do diagnóstico gratuito à consultoria: e-book, sessão de direcionamento, mentoria para quem lidera e consultoria para organizar a operação comercial."
+  title="Soluções · Gestão comercial e inteligência sob medida"
+  description="Do diagnóstico gratuito à consultoria: liderança e processo comercial, e painéis, radares e análises com IA sob medida para a sua operação."
   imagem="/og/inicio.png"
   jsonLd={jsonLd}
 >
@@ -26,13 +27,13 @@ const faltaEbook = (campo: keyof typeof EBOOK) => EBOOK[campo] === null || (Arra
     <div class="wrap">
       <p class="kicker">Soluções</p>
       <h1>Por onde você quer <span class="destaque">começar</span>?</h1>
-      <p class="lead">Cada operação está num momento. Tem quem precise só de um mapa para enxergar onde a venda escapa, e tem quem precise de alguém dentro da operação, organizando junto. Escolha o degrau que faz sentido agora.</p>
-      <ol class="escada" aria-label="As soluções, do gratuito ao acompanhamento">
+      <p class="lead">Algumas operações precisam de direção: alguém que ajude a organizar o time, o processo e a rotina de gestão. Outras já têm tudo isso e esbarram em outra coisa: os dados existem, mas ninguém consegue ler. Eu trabalho nas duas frentes, e muitas vezes elas se encontram.</p>
+      <ol class="escada" aria-label="As soluções, do diagnóstico ao projeto sob medida">
         {DEGRAUS.map((d, i) => (
           <li>
             <a href={`#${d.id}`}>
               <span class="e-num">{numeroEdicao(i + 1)}</span>
-              <span class="e-nome">{d.id === 'ebook' && faltaEbook('nome') ? 'E-book' : d.nome}</span>
+              <span class="e-nome">{d.nome}</span>
               <span class="e-etapa">{d.etapa}</span>
             </a>
           </li>
@@ -44,8 +45,16 @@ const faltaEbook = (campo: keyof typeof EBOOK) => EBOOK[campo] === null || (Arra
   <div class="wrap corpo">
     {DEGRAUS.map((d, i) => {
       const ebook = d.id === 'ebook';
+      const abreFrente = d.frente && d.frente !== DEGRAUS[i - 1]?.frente;
       return (
-        <section class="degrau" id={d.id}>
+        <>
+        {abreFrente && (
+          <div class="frente-titulo" id={`frente-${d.frente}`}>
+            <span class="rotulo">Frente {d.frente}</span>
+            <h2>{d.frente === 1 ? 'Gestão e liderança comercial' : 'Inteligência comercial sob medida'}</h2>
+          </div>
+        )}
+        <section class:list={['degrau', d.frente === 2 && 'sob-medida']} id={d.id}>
           <span class="num" aria-hidden="true">{numeroEdicao(i + 1)}</span>
           <div>
             <p class="etapa">{d.etapa}</p>
@@ -59,6 +68,12 @@ const faltaEbook = (campo: keyof typeof EBOOK) => EBOOK[campo] === null || (Arra
             {ebook && faltaEbook('conteudo')
               ? <p><Pendente>3 a 5 itens do que tem dentro</Pendente></p>
               : <ul>{d.entregas.map((t) => <li>{t}</li>)}</ul>}
+            {d.passos && (
+              <>
+                <h3>Como funciona</h3>
+                <ol class="passos">{d.passos.map((p) => <li><strong>{p.titulo}:</strong> {p.texto}</li>)}</ol>
+              </>
+            )}
             {d.bonus && (
               <div class="bonus">
                 <p class="bonus-titulo">{d.bonus.titulo}</p>
@@ -69,10 +84,24 @@ const faltaEbook = (campo: keyof typeof EBOOK) => EBOOK[campo] === null || (Arra
             {ebook && faltaEbook('link')
               ? <p><Pendente>link de compra</Pendente></p>
               : <a class="botao" href={d.cta.href} target={d.cta.externo ? '_blank' : undefined} rel={d.cta.externo ? 'noopener' : undefined}>{d.cta.texto} →</a>}
+            {d.nota && <p class="nota">{d.nota}</p>}
           </div>
         </section>
+        </>
       );
     })}
+
+    {/* Materiais: o e-book, fora da escada principal */}
+    <section class="materiais" id={MATERIAL_EBOOK.id} aria-label="Materiais">
+      <span class="rotulo">Materiais</span>
+      {faltaEbook('nome') ? <h2><Pendente>nome do e-book</Pendente></h2> : <TituloDestaque tag="h2" titulo={MATERIAL_EBOOK.nome} destaque={MATERIAL_EBOOK.destaque} />}
+      <p class="etapa">{MATERIAL_EBOOK.etapa}</p>
+      <p>{faltaEbook('paraQuem') ? <Pendente>para quem é o e-book</Pendente> : MATERIAL_EBOOK.paraQuem}</p>
+      <p>{faltaEbook('resumo') ? <Pendente>resumo do e-book</Pendente> : MATERIAL_EBOOK.resumo}</p>
+      {faltaEbook('link')
+        ? <p><Pendente>link de compra</Pendente></p>
+        : <a class="link forte" href={MATERIAL_EBOOK.cta.href} target="_blank" rel="noopener">{MATERIAL_EBOOK.cta.texto} →</a>}
+    </section>
 
     <section class="duvida" aria-labelledby="duvida">
       <h2 id="duvida">Não sabe por qual <span class="destaque">começar</span>?</h2>
@@ -128,6 +157,20 @@ const faltaEbook = (campo: keyof typeof EBOOK) => EBOOK[campo] === null || (Arra
     padding: 1.05rem 1.7rem; background: var(--carvao); color: var(--areia); box-shadow: inset 0 -3px 0 var(--laranja); transition: transform 0.2s;
   }
   .botao:hover { transform: translateY(-1px); }
+  .frente-titulo { border-top: 2px solid var(--carvao); padding-top: 1.2rem; margin-top: clamp(24px, 4vw, 48px); scroll-margin-top: 20px; }
+  .frente-titulo h2 { font-size: clamp(var(--fs-3), 4vw, var(--fs-5)); margin: 0.3em 0 0.2em; }
+  .sob-medida { background: var(--carvao); color: var(--areia); padding-inline: clamp(20px, 3vw, 40px); border-top: 0; margin-top: 1rem; }
+  .sob-medida .num, .sob-medida h3, .sob-medida .formato, .sob-medida .para-quem, .sob-medida .nota { color: var(--taupe); }
+  .sob-medida .etapa { color: var(--laranja-luz); }
+  .sob-medida :global(.destaque) { color: var(--laranja); }
+  .sob-medida .botao { background: var(--areia); color: var(--carvao); }
+  .passos { list-style: none; padding: 0; margin: 0; counter-reset: passo; max-width: var(--medida); }
+  .passos li { counter-increment: passo; padding-left: 2.4rem !important; margin-bottom: 0.5em; position: relative; }
+  .passos li::before { content: counter(passo, decimal-leading-zero) !important; position: absolute; left: 0; top: 0.2em !important; width: auto !important; height: auto !important; background: none !important; font-family: var(--mono); font-size: 0.8rem; color: var(--laranja-luz); }
+  .nota { font-size: var(--fs-0); margin-top: 1.4rem; max-width: var(--medida); }
+  .materiais { border-top: 1px solid var(--carvao); padding: 1.6rem 0 clamp(40px, 6vw, 72px); margin-top: clamp(24px, 4vw, 48px); max-width: var(--medida); }
+  .materiais :global(h2) { font-size: var(--fs-3); margin: 0.4em 0 0.2em; }
+  .materiais .forte { font-weight: 500; }
   .duvida { background: var(--pedra); padding: clamp(32px, 5vw, 56px); margin-top: 1rem; }
   .duvida h2 { font-size: var(--fs-4); margin: 0 0 0.4em; }
   .duvida p { max-width: var(--medida); }

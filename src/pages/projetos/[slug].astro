@@ -1,0 +1,96 @@
+---
+// Página de um projeto (estudo de caso anonimizado).
+import Base from '../../layouts/Base.astro';
+import Ilustracao from '../../components/Ilustracao.astro';
+import Movimento from '../../components/Movimento.astro';
+import BotaoWhatsapp from '../../components/BotaoWhatsapp.astro';
+import { PROJETOS, type Projeto } from '../../lib/projetos';
+import { migalhas, pessoaRef, idPessoa } from '../../lib/seo';
+
+export function getStaticPaths() {
+  return PROJETOS.map((p, i) => ({ params: { slug: p.slug }, props: { projeto: p, indice: i } }));
+}
+const { projeto: p, indice } = Astro.props as { projeto: Projeto; indice: number };
+const proximo = PROJETOS[(indice + 1) % PROJETOS.length];
+const site = Astro.site!;
+const caminho = `/projetos/${p.slug}/`;
+const jsonLd = [
+  {
+    '@type': 'Article',
+    headline: p.titulo,
+    description: p.description,
+    inLanguage: 'pt-BR',
+    url: new URL(caminho, site).href,
+    author: pessoaRef(site),
+    publisher: { '@id': idPessoa(site) },
+  },
+  migalhas(site, [{ nome: 'Início', caminho: '/' }, { nome: 'Projetos', caminho: '/projetos/' }, { nome: p.titulo, caminho }]),
+];
+---
+<Base title={`${p.titulo} · Projetos · Letícia Ferracioli`} description={p.description} imagem="/og/inicio.png" jsonLd={jsonLd}>
+  <header class="topo-pagina escuro pontos">
+    <div class="wrap grade">
+      <div>
+        <p class="kicker"><a class="link" href="/projetos/">Projetos</a> · Nº {String(indice + 1).padStart(2, '0')}</p>
+        <div class="meta"><span class="selo">{p.status}</span><span class="rotulo">{p.contexto}</span></div>
+        <h1>{p.titulo}</h1>
+      </div>
+      <Ilustracao tipo={p.ilustracao} legenda={p.legenda} />
+    </div>
+  </header>
+
+  <article class="wrap corpo">
+    {p.secoes.map((s) => (
+      <section class="dobra bloco revela">
+        <h2 class="rotulo">{s.titulo}</h2>
+        <div>{s.paragrafos.map((t) => <p>{t}</p>)}</div>
+      </section>
+    ))}
+    {p.feitoCom && (
+      <section class="dobra bloco revela">
+        <h2 class="rotulo">Feito com</h2>
+        <div><p class="feito">{p.feitoCom}</p></div>
+      </section>
+    )}
+    {p.cta && <p class="revela"><a class="botao" href={p.cta.href}>{p.cta.texto} →</a></p>}
+  </article>
+
+  <section class="dobra wrap fim">
+    <div class="revela">
+      <p class="kicker">Próximo projeto</p>
+      <a class="proximo" href={`/projetos/${proximo.slug}/`}><h2>{proximo.titulo} →</h2></a>
+    </div>
+    <div class="revela conversa">
+      <p>Tem uma pergunta parecida na sua operação?</p>
+      <BotaoWhatsapp texto="Conversar no WhatsApp" />
+    </div>
+  </section>
+  <Movimento />
+</Base>
+
+<style>
+  .pontos { background-image: radial-gradient(rgba(239, 234, 227, 0.07) 1px, transparent 1.2px); background-size: 22px 22px; }
+  .topo-pagina { padding-block: clamp(48px, 7vw, 100px); }
+  .grade { display: grid; grid-template-columns: 7fr 5fr; gap: clamp(28px, 5vw, 72px); align-items: end; }
+  .meta { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; margin-top: 1.4rem; }
+  h1 { font-size: clamp(2.2rem, 5.2vw, var(--fs-6)); letter-spacing: -0.015em; margin: 0.5em 0 0; max-width: 16ch; }
+  .grade :global(.ilustracao) { background: rgba(239, 234, 227, 0.94); }
+
+  .corpo { max-width: 1000px; padding-block: clamp(48px, 7vw, 96px); }
+  .bloco { display: grid; grid-template-columns: 12rem 1fr; gap: var(--gutter); padding: 1.6rem 0 1.2rem; }
+  .bloco h2 { color: var(--laranja-tinta); padding-top: 0.5rem; }
+  .bloco p { margin: 0 0 1em; max-width: var(--medida); }
+  .feito { font-family: var(--mono); font-size: 0.95rem; color: var(--taupe-tinta); }
+  .botao { display: inline-flex; text-decoration: none; font: 500 var(--fs-0) var(--sans); letter-spacing: 0.12em; text-transform: uppercase; padding: 1.05rem 1.7rem; background: var(--carvao); color: var(--areia); box-shadow: inset 0 -3px 0 var(--laranja); margin-top: 1.4rem; }
+
+  .fim { display: grid; grid-template-columns: 7fr 5fr; gap: clamp(28px, 5vw, 72px); align-items: end; padding-block: clamp(48px, 7vw, 96px); }
+  .proximo { text-decoration: none; }
+  .proximo h2 { font-size: clamp(1.7rem, 3.2vw, var(--fs-4)); margin-top: 0.4em; max-width: 22ch; }
+  .proximo:hover h2 { text-decoration: underline; text-decoration-color: var(--laranja); text-underline-offset: 0.12em; }
+  .conversa p { margin: 0 0 1rem; font-weight: 500; }
+
+  @media (max-width: 900px) {
+    .grade, .fim { grid-template-columns: 1fr; }
+    .bloco { grid-template-columns: 1fr; gap: 0.2rem; }
+  }
+</style>

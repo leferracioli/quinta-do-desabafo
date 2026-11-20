@@ -19,9 +19,9 @@ export const pessoaRef = (site: URL) => ({
 /** Person completa, usada na página Sobre */
 export const pessoaCompleta = (site: URL, imagem?: string) => ({
   ...pessoaRef(site),
-  jobTitle: 'Supervisora comercial',
-  description: 'Supervisora comercial, com mais de 8 anos em marketing digital e liderança de times de vendas.',
-  knowsAbout: ['gestão comercial', 'vendas', 'IA aplicada a vendas', 'marketing digital'],
+  jobTitle: 'Consultora de gestão e inteligência comercial',
+  description: 'Gestão comercial e inteligência de dados: começou como vendedora, foi para a liderança e constrói painéis, radares de oportunidade e análises de atendimento com IA para operações comerciais. No marketing digital desde 2018.',
+  knowsAbout: ['gestão comercial', 'inteligência comercial', 'análise de dados comerciais', 'CRM', 'automação comercial', 'IA aplicada a vendas', 'liderança de equipes de vendas', 'marketing digital'],
   sameAs: [SITE.instagram, SITE.linkedin],
   ...(imagem && { image: imagem }),
 });
@@ -42,7 +42,7 @@ export const siteWeb = (site: URL) => ({
   name: SITE.nome,
   url: url('/', site),
   inLanguage: 'pt-BR',
-  description: 'Mentoria e consultoria comercial com Letícia Ferracioli, e a Quinta do Desabafo: toda quinta, vendas, gestão comercial, IA e marketing digital além da manchete.',
+  description: 'Gestão comercial, inteligência de dados e sistemas com IA com Letícia Ferracioli: mentoria, consultoria e projetos sob medida. E a Quinta do Desabafo: toda quinta, vendas, gestão comercial, IA e marketing digital além da manchete.',
   publisher: { '@id': idPessoa(site) },
 });
 
@@ -87,7 +87,7 @@ export function grafoArtigo(artigo: Artigo, site: URL, imagem: string) {
   return grafo;
 }
 
-/** Mentoria e consultoria como Service, oferecidas pela Letícia */
+/** Mentoria, consultoria e inteligência sob medida como Service, oferecidas pela Letícia */
 export const servicos = (site: URL) =>
   SOLUCOES.map((s) => ({
     '@type': 'Service',

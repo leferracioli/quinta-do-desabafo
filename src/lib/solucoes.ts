@@ -5,10 +5,10 @@ import { SITE } from './site';
 const zap = (mensagem: string) => `${SITE.whatsapp.split('?')[0]}?text=${encodeURIComponent(mensagem)}`;
 
 // ---------------------------------------------------------------------------
-// Mentoria e consultoria: os serviços (aparecem na home e viram "Service" no Google)
+// Mentoria, consultoria e inteligência sob medida: os serviços (viram "Service" no Google)
 // ---------------------------------------------------------------------------
 export interface Solucao {
-  id: 'mentoria' | 'consultoria';
+  id: 'mentoria' | 'consultoria' | 'inteligencia';
   nome: string;
   destaque: string; // palavra do nome em itálico laranja
   paraQuem: string;
@@ -32,8 +32,23 @@ export const SOLUCOES: Solucao[] = [
     destaque: 'Consultoria',
     paraQuem: 'Para empresas em que o resultado depende de poucas pessoas fazendo muito, cada uma do seu jeito.',
     resumo:
-      'Um olhar de fora sobre a operação inteira, do primeiro contato com o lead ao pós-venda: onde a venda escapa, o que está desconectado e qual jeito de trabalhar o time consegue sustentar. E a organização disso junto com você.',
+      'Um olhar de fora sobre a operação inteira, do primeiro contato com o lead ao pós-venda: onde a venda escapa, o que está desconectado e qual jeito de trabalhar o time consegue sustentar. E a organização disso junto com você. Quando faz sentido, a consultoria inclui as ferramentas: o painel, o radar ou a análise que a operação precisa para continuar de pé depois que eu saio.',
     temas: ['Processo e funil de vendas', 'Indicadores e acompanhamento', 'CRM e automações', 'Integração entre marketing e vendas'],
+  },
+  {
+    id: 'inteligencia',
+    nome: 'Inteligência comercial sob medida',
+    destaque: 'Inteligência',
+    paraQuem: 'Para operações que já têm CRM, atendimento registrado e algum histórico, mas ainda decidem no feeling.',
+    resumo:
+      'Eu entendo o que você precisa enxergar e construo a ferramenta para isso, ligada aos sistemas que você já usa: painéis, radares de oportunidade e análises com IA, dentro de uma consultoria ou como projeto à parte.',
+    temas: [
+      'Painel de desempenho por vendedor: atendimento, conversão, meta e tempo de resposta, atualizados sozinhos e vistos por cada pessoa do time.',
+      'Radar de oportunidades: quais leads estão esfriando, quais negócios pararam e por onde recuperar, com a fila pronta para o time agir.',
+      'Análise de atendimento com IA: a conversa inteira avaliada em critérios definidos com você, com pontos fortes, pontos a melhorar e uma ação recomendada.',
+      'Estudos pontuais: “esse indicador prevê alguma coisa?”, “quanto tempo um lead leva para decidir?”, “onde o funil perde mais?”.',
+      'Réguas e automações: sequências de mensagens e e-mails para abandono, reativação e retomada.',
+    ],
   },
 ];
 
@@ -79,10 +94,13 @@ export interface Degrau {
   tituloEntregas: string;
   formato: string;
   bonus?: { titulo: string; texto: string };
+  frente?: 1 | 2; // frente da página /solucoes/ (abre um título de seção quando muda)
+  passos?: { titulo: string; texto: string }[];
+  nota?: string;
   cta: { texto: string; href: string; externo: boolean };
 }
 
-const [mentoria, consultoria] = SOLUCOES;
+const [mentoria, consultoria, inteligencia] = SOLUCOES;
 
 export const DEGRAUS: Degrau[] = [
   {
@@ -99,21 +117,8 @@ export const DEGRAUS: Degrau[] = [
     cta: { texto: 'Fazer o diagnóstico', href: '/diagnostico/', externo: false },
   },
   {
-    id: 'ebook',
-    nome: EBOOK.nome ?? 'E-book',
-    destaque: EBOOK.destaque ?? 'E-book',
-    etapa: EBOOK.preco ? `${EBOOK.preco} · e-book + planilha bônus` : 'E-book + planilha bônus',
-    paraQuem: EBOOK.paraQuem ?? '',
-    promessa: EBOOK.promessa,
-    resumo: EBOOK.resumo ?? '',
-    tituloEntregas: 'O que tem dentro',
-    entregas: EBOOK.conteudo,
-    bonus: EBOOK.bonus,
-    formato: EBOOK.formato,
-    cta: { texto: 'Quero o e-book', href: EBOOK.link ?? '#', externo: true },
-  },
-  {
     id: 'direcionamento',
+    frente: 1,
     nome: OFERTA.nome,
     destaque: OFERTA.destaque,
     etapa: 'Uma conversa · 60 minutos',
@@ -127,6 +132,7 @@ export const DEGRAUS: Degrau[] = [
   },
   {
     id: mentoria.id,
+    frente: 1,
     nome: mentoria.nome,
     destaque: mentoria.destaque,
     etapa: 'Acompanhamento · para quem lidera',
@@ -140,6 +146,7 @@ export const DEGRAUS: Degrau[] = [
   },
   {
     id: consultoria.id,
+    frente: 1,
     nome: consultoria.nome,
     destaque: consultoria.destaque,
     etapa: 'Projeto · para a operação inteira',
@@ -151,4 +158,44 @@ export const DEGRAUS: Degrau[] = [
     formato: 'Projeto sob medida, desenhado depois de uma conversa inicial.',
     cta: { texto: 'Quero conversar sobre a consultoria', href: zap('Oi, Letícia! Tenho interesse na Consultoria comercial.'), externo: true },
   },
+  {
+    id: inteligencia.id,
+    frente: 2,
+    nome: inteligencia.nome,
+    destaque: inteligencia.destaque,
+    etapa: 'Projeto sob medida · dentro da consultoria ou à parte',
+    paraQuem: inteligencia.paraQuem,
+    promessa: 'Os seus dados já sabem onde a venda escapa.',
+    resumo: inteligencia.resumo,
+    tituloEntregas: 'Exemplos do que dá para construir',
+    entregas: inteligencia.temas,
+    passos: [
+      { titulo: 'Conversa', texto: 'o que você quer enxergar e por quê.' },
+      { titulo: 'Levantamento', texto: 'que dados existem, onde estão, como saem (API, webhook, exportação) e o que falta.' },
+      { titulo: 'Construção', texto: 'em etapas curtas, com você validando cada uma.' },
+      { titulo: 'Implantação', texto: 'junto com o time, até virar rotina.' },
+    ],
+    formato: 'Projeto sob medida, com escopo e investimento definidos depois da conversa inicial. Não existe pacote pronto: cada operação tem uma pergunta diferente.',
+    nota: 'Os dados da sua operação ficam com a sua operação. Eu trabalho com o mínimo de acesso necessário e nada é publicado sem autorização.',
+    cta: { texto: 'Quero conversar sobre um projeto', href: zap('Oi, Letícia! Quero conversar sobre um projeto de inteligência comercial.'), externo: true },
+  },
 ];
+
+// ---------------------------------------------------------------------------
+// Materiais (fora da escada): o e-book
+// ---------------------------------------------------------------------------
+export const MATERIAL_EBOOK: Degrau =
+{
+    id: 'ebook',
+    nome: EBOOK.nome ?? 'E-book',
+    destaque: EBOOK.destaque ?? 'E-book',
+    etapa: EBOOK.preco ? `${EBOOK.preco} · e-book + planilha bônus` : 'E-book + planilha bônus',
+    paraQuem: EBOOK.paraQuem ?? '',
+    promessa: EBOOK.promessa,
+    resumo: EBOOK.resumo ?? '',
+    tituloEntregas: 'O que tem dentro',
+    entregas: EBOOK.conteudo,
+    bonus: EBOOK.bonus,
+    formato: EBOOK.formato,
+    cta: { texto: 'Quero o e-book', href: EBOOK.link ?? '#', externo: true },
+  };

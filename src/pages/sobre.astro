@@ -27,16 +27,16 @@ const jsonLd = [
 <Base
   tipo="profile"
   jsonLd={jsonLd}
-  title="Sobre Letícia Ferracioli · Quinta do Desabafo"
-  description="Letícia Ferracioli é supervisora comercial, com mais de 8 anos em marketing digital e liderança de times de vendas. Conheça a autora da Quinta do Desabafo."
+  title="Sobre Letícia Ferracioli · Gestão e inteligência comercial"
+  description="Letícia Ferracioli trabalha com gestão comercial e inteligência de dados: começou vendendo, foi liderar quem vendia e passou a construir as ferramentas que faltavam para a gestão."
 >
   <header class="abertura-sobre escuro">
     <div class="wrap grade">
       <div class="texto">
         <p class="kicker">Sobre a autora</p>
         <h1>Letícia <span class="destaque">Ferracioli</span></h1>
-        <p class="cargo">Supervisora comercial · no marketing digital desde 2018, hoje na gestão comercial</p>
-        <p class="temas">Escreve sobre gestão comercial, vendas, IA aplicada a vendas e marketing digital.</p>
+        <p class="cargo">Gestão comercial e inteligência de dados · no marketing digital desde 2018</p>
+        <p class="temas">Trabalha com gestão comercial, dados e sistemas. Escreve sobre gestão comercial, vendas, IA aplicada a vendas e marketing digital.</p>
       </div>
       <div class="foto"><Retrato prioridade sizes="(max-width: 900px) 60vw, 380px" /></div>
     </div>
@@ -52,7 +52,7 @@ const jsonLd = [
     </ul>
   </div>
 
-  {/* Cartões no formato de perfil do Instagram, sem nenhum link para os perfis */}
+  {/* Cartões compactos (foto, @ e nome), sem números de terceiros e sem links para os perfis */}
   <section class="empresas" aria-labelledby="empresas-titulo">
     <div class="wrap">
       <h2 id="empresas-titulo">Empresas em que já trabalhei</h2>
@@ -60,16 +60,10 @@ const jsonLd = [
       <ul class="perfis" tabindex="0" aria-labelledby="empresas-titulo">
         {EMPRESAS.map((e) => (
           <li class="perfil">
-            <Image class="avatar" src={e.foto} alt={`Foto de perfil de ${e.nome}`} width={150} height={150} format="webp" loading="lazy" />
+            <Image class="avatar" src={e.foto} alt={`Foto de perfil de ${e.nome}`} width={96} height={96} format="webp" loading="lazy" />
             <div class="dados">
               <h3>{e.usuario}</h3>
               <p class="nome">{e.nome}</p>
-              <p class="numeros">
-                <span><strong>{e.posts}</strong> posts</span>
-                <span><strong>{e.seguidores}</strong> seguidores</span>
-                <span><strong>{e.seguindo}</strong> seguindo</span>
-              </p>
-              <p class="bio">{e.bio.map((linha) => <span>{linha}</span>)}</p>
             </div>
           </li>
         ))}
@@ -97,8 +91,8 @@ const jsonLd = [
   .conteudo :global(.pendente) { background: rgba(224, 102, 47, 0.18); color: inherit; padding: 0.1em 0.4em; border-left: 3px solid var(--laranja); }
   .redes a { font-weight: 500; }
 
-  .empresas { background: var(--pedra); padding-block: clamp(56px, 8vw, 96px); }
-  .empresas h2 { font-size: var(--fs-3); margin: 0 0 clamp(28px, 4vw, 44px); }
+  .empresas { background: var(--pedra); padding-block: clamp(40px, 5vw, 64px); }
+  .empresas h2 { font-size: var(--fs-2); margin: 0 0 clamp(20px, 3vw, 28px); }
   /* Fileira rolável: encosta nas bordas da tela e o próximo card aparece cortado, indicando que há mais */
   .perfis {
     list-style: none; margin: 0 calc(-1 * var(--gutter)); padding: 0 var(--gutter) 18px;
@@ -107,16 +101,11 @@ const jsonLd = [
     scrollbar-width: thin; scrollbar-color: var(--laranja-tinta) transparent;
   }
   .perfis:focus-visible { outline: 2px solid var(--laranja-tinta); outline-offset: 2px; }
-  .perfil { flex: 0 0 clamp(300px, 34vw, 430px); scroll-snap-align: start; background: var(--branco); padding: clamp(18px, 2vw, 24px); display: flex; gap: 16px; align-items: flex-start; }
-  .perfil :global(.avatar) { flex: none; width: clamp(64px, 7vw, 88px); height: auto; aspect-ratio: 1; border-radius: 50%; object-fit: cover; padding: 3px; border: 2px solid var(--laranja); }
+  .perfil { flex: 0 0 clamp(220px, 22vw, 280px); scroll-snap-align: start; background: var(--branco); padding: 14px 16px; display: flex; gap: 12px; align-items: center; }
+  .perfil :global(.avatar) { flex: none; width: 48px; height: auto; aspect-ratio: 1; border-radius: 50%; object-fit: cover; padding: 3px; border: 2px solid var(--laranja); }
   .dados { min-width: 0; }
   .perfil h3 { font-family: var(--sans); font-size: 1rem; font-weight: 600; line-height: 1.25; margin: 0; overflow-wrap: anywhere; }
-  .nome { font-size: var(--fs-0); line-height: 1.35; color: var(--taupe-tinta); margin: 0.15em 0 0.7em; }
-  .numeros { display: grid; grid-template-columns: repeat(3, auto); justify-content: start; gap: clamp(14px, 2vw, 24px); font-size: 0.8125rem; line-height: 1.3; margin: 0 0 0.9em; }
-  .numeros span { display: flex; flex-direction: column; }
-  .numeros strong { font-size: var(--fs-0); font-weight: 600; }
-  .bio { font-size: var(--fs-0); line-height: 1.45; margin: 0; }
-  .bio span { display: block; }
+  .nome { font-size: 0.85rem; line-height: 1.35; color: var(--taupe-pedra); margin: 0.1em 0 0; }
 
   @media (max-width: 900px) {
     .texto, .foto { grid-column: 1 / -1; }

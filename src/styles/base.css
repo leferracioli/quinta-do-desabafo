@@ -52,6 +52,35 @@ h1, h2, h3 {
 
 .wrap { max-width: var(--largura); margin: 0 auto; padding: 0 var(--gutter); }
 
+/* Rótulo técnico em mono (status, legendas, radar) */
+.rotulo { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--taupe-tinta); }
+.escuro .rotulo { color: var(--taupe); }
+.selo { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; border: 1px solid currentColor; padding: 0.15em 0.6em; color: var(--laranja-tinta); white-space: nowrap; }
+.selo.cinza { color: var(--taupe-tinta); }
+.escuro .selo { color: var(--laranja-luz); }
+
+/* Movimento entre as dobras (ativado pelo componente Movimento: classe .js no <html>).
+   Sem JS ou com movimento reduzido, tudo aparece parado. */
+.dobra { position: relative; }
+.dobra::before {
+  content: ''; position: absolute; top: 0; left: 0; height: 2px; width: 100%; background: var(--laranja);
+  transform: scaleX(0); transform-origin: 0 50%; transition: transform 1.4s cubic-bezier(.2,.7,.2,1);
+}
+.dobra.visivel::before { transform: scaleX(1); }
+@media (prefers-reduced-motion: no-preference) {
+  .js .revela { opacity: 0; transform: translateY(26px); transition: opacity .8s ease, transform .8s cubic-bezier(.2,.7,.2,1); }
+  .js .revela.visivel { opacity: 1; transform: none; }
+  .js .anima rect { transform: scaleY(0); transform-box: fill-box; transform-origin: 50% 100%; transition: transform .9s cubic-bezier(.2,.7,.2,1); }
+  .js .anima circle, .js .anima text { opacity: 0; transition: opacity .5s .3s; }
+  .js .anima.visivel rect { transform: none; }
+  .js .anima.visivel circle, .js .anima.visivel text { opacity: 1; }
+  .js .anima.visivel rect:nth-of-type(2), .js .anima.visivel circle:nth-of-type(2) { transition-delay: .1s; }
+  .js .anima.visivel rect:nth-of-type(3), .js .anima.visivel circle:nth-of-type(3) { transition-delay: .2s; }
+  .js .anima.visivel rect:nth-of-type(4), .js .anima.visivel circle:nth-of-type(4) { transition-delay: .3s; }
+  .js .anima.visivel rect:nth-of-type(5), .js .anima.visivel circle:nth-of-type(5) { transition-delay: .4s; }
+  .js .anima.visivel rect:nth-of-type(6), .js .anima.visivel circle:nth-of-type(6) { transition-delay: .5s; }
+}
+
 /* Texto só para leitores de tela e buscadores */
 .sr-only {
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;

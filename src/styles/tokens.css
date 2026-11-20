@@ -19,6 +19,8 @@
   /* Tipografia: Fraunces = voz editorial; Jost = leitura */
   --serif: 'Fraunces Variable', Georgia, serif;
   --sans: 'Jost', system-ui, sans-serif;
+  /* Mono: só rótulos técnicos (status, legendas de gráfico, radar) */
+  --mono: 'JetBrains Mono', ui-monospace, monospace;
 
   /* Escala 1.333 (quarta perfeita), base 20px */
   --fs-0: 0.9375rem; /* 15px  metadados, kicker */

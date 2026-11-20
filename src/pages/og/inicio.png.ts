@@ -4,9 +4,9 @@ import { gerarOg } from '../../lib/og';
 
 export const GET: APIRoute = async () => {
   const png = await gerarOg({
-    kicker: 'Mentoria e consultoria comercial',
-    titulo: 'Vendas e gestão comercial, sem fórmula mágica.',
-    destaque: 'mágica',
+    kicker: 'Gestão comercial · Inteligência de dados · Sistemas com IA',
+    titulo: 'Eu construo as ferramentas que a operação comercial ainda não tem.',
+    destaque: 'construo',
   });
   return new Response(new Uint8Array(png), { headers: { 'Content-Type': 'image/png' } });
 };

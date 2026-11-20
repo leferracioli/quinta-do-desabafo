@@ -1,0 +1,58 @@
+---
+// Mini gráficos ilustrativos dos projetos (sem nenhum dado real).
+// Linha fina em taupe, um único destaque em laranja.
+import type { Ilustracao } from '../lib/projetos';
+interface Props { tipo: Ilustracao; legenda?: string }
+const { tipo, legenda } = Astro.props;
+const T = '#a89f94', P = '#cfc7bc', L = '#e0662f', C = '#2a2a2c', TT = '#6e665d', LT = '#b4481a';
+---
+<figure class="ilustracao" aria-hidden="true">
+  {tipo === 'barras' && (
+    <svg class="anima" viewBox="0 0 240 110">
+      <g fill={P}><rect x="10" y="50" width="22" height="50"/><rect x="44" y="34" width="22" height="66"/><rect x="78" y="60" width="22" height="40"/><rect x="146" y="44" width="22" height="56"/><rect x="180" y="70" width="22" height="30"/></g>
+      <rect x="112" y="20" width="22" height="80" fill={L}/>
+      <line x1="0" y1="38" x2="240" y2="38" stroke={C} stroke-dasharray="4 4"/>
+      <text x="206" y="32" fill={TT} font-family="JetBrains Mono, monospace" font-size="9">META</text>
+      <line x1="0" y1="100" x2="240" y2="100" stroke={TT}/>
+    </svg>
+  )}
+  {tipo === 'farol' && (
+    <svg class="anima" viewBox="0 0 240 110">
+      <line x1="120" y1="8" x2="120" y2="96" stroke={C}/>
+      <text x="126" y="18" fill={TT} font-family="JetBrains Mono, monospace" font-size="9">COMPRA</text>
+      <g fill={P}><circle cx="128" cy="40" r="4"/><circle cx="140" cy="52" r="4"/><circle cx="122" cy="62" r="4"/><circle cx="156" cy="44" r="4"/><circle cx="134" cy="74" r="4"/><circle cx="170" cy="60" r="4"/><circle cx="120" cy="50" r="4"/><circle cx="148" cy="82" r="4"/></g>
+      <g fill={L}><circle cx="70" cy="48" r="4"/><circle cx="92" cy="66" r="4"/></g>
+      <text x="16" y="104" fill={LT} font-family="JetBrains Mono, monospace" font-size="9">ANTES</text>
+      <text x="184" y="104" fill={TT} font-family="JetBrains Mono, monospace" font-size="9">DEPOIS</text>
+    </svg>
+  )}
+  {tipo === 'sessoes' && (
+    <svg class="anima" viewBox="0 0 240 110">
+      <g fill={P}><rect x="10" y="24" width="44" height="12"/><rect x="74" y="24" width="28" height="12"/><rect x="132" y="24" width="56" height="12"/><rect x="204" y="24" width="26" height="12"/></g>
+      <g stroke={TT} stroke-dasharray="2 3"><line x1="32" y1="40" x2="120" y2="70"/><line x1="88" y1="40" x2="120" y2="70"/><line x1="160" y1="40" x2="120" y2="70"/><line x1="217" y1="40" x2="120" y2="70"/></g>
+      <rect x="10" y="74" width="220" height="14" fill={L}/>
+      <text x="10" y="104" fill={TT} font-family="JetBrains Mono, monospace" font-size="9">A CONVERSA INTEIRA</text>
+    </svg>
+  )}
+  {tipo === 'funil' && (
+    <svg class="anima" viewBox="0 0 240 110">
+      <g fill={P}><rect x="20" y="10" width="200" height="14"/><rect x="45" y="30" width="150" height="14"/><rect x="70" y="50" width="100" height="14"/></g>
+      <rect x="95" y="70" width="50" height="14" fill={L}/>
+      <g fill={T}><circle cx="208" cy="57" r="3"/><circle cx="216" cy="57" r="3"/><circle cx="224" cy="57" r="3"/></g>
+      <text x="168" y="104" fill={TT} font-family="JetBrains Mono, monospace" font-size="9">PARADOS</text>
+    </svg>
+  )}
+  {tipo === 'teia' && (
+    <svg class="anima" viewBox="0 0 240 110">
+      <g fill="none" stroke={P}><polygon points="120,8 158,22 172,55 158,88 120,102 82,88 68,55 82,22"/><polygon points="120,30 142,38 150,55 142,72 120,80 98,72 90,55 98,38"/></g>
+      <polygon points="120,18 150,30 140,55 160,84 120,74 92,80 84,55 104,36" fill={L} fill-opacity=".25" stroke={L} stroke-width="1.5"/>
+      <g fill={L}><circle cx="120" cy="18" r="2.5"/><circle cx="160" cy="84" r="2.5"/></g>
+    </svg>
+  )}
+  {legenda && <figcaption class="rotulo">{legenda}</figcaption>}
+</figure>
+
+<style>
+  .ilustracao { margin: 0; background: var(--areia); padding: 1.2rem; aspect-ratio: 16 / 10; display: flex; flex-direction: column; justify-content: space-between; gap: 0.6rem; }
+  .ilustracao svg { width: 100%; height: auto; flex: 1; min-height: 0; }
+</style>

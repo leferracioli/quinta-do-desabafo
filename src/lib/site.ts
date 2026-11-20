@@ -1,6 +1,6 @@
 // Dados fixos do site
 const WHATSAPP = '5518997357258';
-const MENSAGEM_WHATSAPP = 'Tenho interesse na sua Mentoria/Consultoria';
+const MENSAGEM_WHATSAPP = 'Oi, Letícia! Vim pelo seu site e quero conversar sobre a minha operação comercial.';
 
 export const SITE = {
   nome: 'Letícia Ferracioli',

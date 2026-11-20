@@ -1,0 +1,21 @@
+---
+// Ativa o movimento entre as dobras: revela blocos (.revela), anima mini gráficos (.anima)
+// e desenha o fio laranja no topo de cada .dobra quando entram na tela.
+// Sem JS ou com prefers-reduced-motion: reduce, tudo fica visível e parado (ver base.css).
+---
+<script>
+  const raiz = document.documentElement;
+  const reduzido = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!reduzido && 'IntersectionObserver' in window) {
+    raiz.classList.add('js');
+    const io = new IntersectionObserver(
+      (entradas) => entradas.forEach((e) => {
+        if (e.isIntersecting) { e.target.classList.add('visivel'); io.unobserve(e.target); }
+      }),
+      { threshold: 0.15 },
+    );
+    document.querySelectorAll('.revela, .anima, .dobra').forEach((el) => io.observe(el));
+  } else {
+    document.querySelectorAll('.dobra').forEach((el) => el.classList.add('visivel'));
+  }
+</script>

@@ -1,0 +1,75 @@
+---
+// Abertura da home: linha do tempo ilustrativa que se desenha sozinha + "radar" simulado
+// com alertas entrando. Nada aqui é dado real, e a tela diz isso.
+const EVENTOS = [
+  'lead sem resposta há 2 dias → fila de recuperação',
+  'negócio parado na etapa “proposta” → alerta ao vendedor',
+  'atendimento avaliado → 3 pontos a melhorar',
+  'lead voltou a conversar → prioridade alta',
+  'primeira resposta acima do combinado → aviso à gestão',
+];
+---
+<div class="radar-sim" aria-hidden="true">
+  <svg class="linha" viewBox="0 0 1200 120" preserveAspectRatio="none">
+    <line x1="0" y1="100" x2="1200" y2="100" stroke="#46464a" />
+    <polyline class="traco" fill="none" stroke="#a89f94" stroke-width="1" vector-effect="non-scaling-stroke"
+      points="0,82 60,78 120,70 180,74 240,60 300,64 360,52 420,58 480,46 540,50 600,40 660,48 720,36 780,44 840,58 900,72 960,80 1020,76 1080,84 1140,88 1200,90" />
+    <line x1="780" y1="16" x2="780" y2="100" stroke="#a89f94" stroke-dasharray="3 4" vector-effect="non-scaling-stroke" />
+  </svg>
+  <span class="ponto"><span class="halo"></span></span>
+  <span class="anota rotulo">Aqui o lead começou a esfriar. Alguém viu?</span>
+  <div class="legenda"><span class="rotulo">Ilustração · o que um radar mostra antes do relatório do mês</span><span class="rotulo">sem dado real</span></div>
+  <div class="log">
+    <span class="rotulo log-tit">radar · simulação</span>
+    <ul data-eventos={JSON.stringify(EVENTOS)}></ul>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLUListElement>('.radar-sim ul[data-eventos]').forEach((ul) => {
+    const eventos: string[] = JSON.parse(ul.dataset.eventos ?? '[]');
+    let i = 0;
+    const hora = () => new Date().toTimeString().slice(0, 5);
+    const novo = () => {
+      const li = document.createElement('li');
+      li.textContent = `${hora()}  ${eventos[i++ % eventos.length]}`;
+      ul.prepend(li);
+      while (ul.children.length > 3) ul.lastElementChild?.remove();
+    };
+    novo(); novo();
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) setInterval(novo, 3200);
+  });
+</script>
+
+<style>
+  .radar-sim { position: relative; border-top: 1px solid var(--linha-escura); padding-top: 1rem; }
+  .linha { display: block; width: 100%; height: clamp(70px, 9vw, 120px); }
+  /* Ponto e anotação posicionados em % (o SVG estica na horizontal) */
+  /* x = 780/1200 do gráfico; y = 44/120 da altura da linha */
+  .ponto { position: absolute; left: 65%; top: calc(1rem + clamp(70px, 9vw, 120px) * 0.367); width: 12px; height: 12px; margin: -6px 0 0 -6px; border-radius: 50%; background: var(--laranja); }
+  .halo { position: absolute; inset: 0; border-radius: 50%; border: 1px solid var(--laranja); }
+  .anota { position: absolute; left: calc(65% + 14px); top: calc(1rem + 2px); color: var(--laranja-luz) !important; max-width: 34%; }
+  .legenda { display: flex; justify-content: space-between; gap: 0.6rem 1rem; flex-wrap: wrap; margin-top: 0.5rem; }
+  .log { margin-top: 1.4rem; display: grid; grid-template-columns: auto 1fr; gap: 0.4rem 1.2rem; align-items: start; font-family: var(--mono); font-size: 0.78rem; color: var(--taupe); }
+  .log-tit { color: var(--laranja-luz) !important; white-space: nowrap; }
+  .log-tit::before { content: ''; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--laranja); margin-right: 0.5em; }
+  .log ul { list-style: none; margin: 0; padding: 0; min-height: 4.8em; }
+  .log li:not(:first-child) { opacity: 0.55; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .traco { stroke-dasharray: 1400; stroke-dashoffset: 1400; animation: desenha 2.6s 0.3s cubic-bezier(.4,0,.2,1) forwards; }
+    .ponto, .anota { opacity: 0; animation: aparece 0.6s 2.2s forwards; }
+    .halo { animation: halo 2.2s 2.6s infinite; }
+    .log-tit::before { animation: piscar 1.6s infinite; }
+    .log li { animation: entra 0.5s ease-out both; }
+  }
+  @keyframes desenha { to { stroke-dashoffset: 0; } }
+  @keyframes aparece { to { opacity: 1; } }
+  @keyframes halo { from { transform: scale(1); opacity: 0.9; } to { transform: scale(4); opacity: 0; } }
+  @keyframes piscar { 50% { opacity: 0.25; } }
+  @keyframes entra { from { opacity: 0; transform: translateY(-6px); } }
+  @media (max-width: 700px) {
+    .log { grid-template-columns: 1fr; }
+    .anota { max-width: 33%; font-size: 0.62rem; }
+  }
+</style>
