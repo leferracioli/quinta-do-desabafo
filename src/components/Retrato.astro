@@ -1,10 +1,17 @@
 ---
-// Foto da Letícia dentro do arco, com a cabeça "vazando" por cima.
-// Os lados e a base ficam presos ao arco; o recorte acima da curva é mais largo.
+// Foto da Letícia dentro do arco.
+// - foto="recorte" (padrão): a cabeça "vaza" por cima do arco; os lados e a base ficam presos nele.
+// - foto="sorrindo" | "pensativa": a foto inteira preenche o arco (sem vazar), para variar o site.
 import { Picture } from 'astro:assets';
 import recorte from '../assets/leticia-recorte.webp';
+import sorrindo from '../assets/fotos/leticia-sorrindo.webp';
+import pensativa from '../assets/fotos/leticia-pensativa.webp';
+
+const FOTOS = { sorrindo, pensativa };
 
 interface Props {
+  /** qual foto usar (padrão: o recorte com a cabeça vazando o arco) */
+  foto?: 'recorte' | 'sorrindo' | 'pensativa';
   /** true na capa (acima da dobra): carrega na hora, com prioridade */
   prioridade?: boolean;
   /** true quando a foto é só decorativa (alt vazio) */
@@ -13,24 +20,40 @@ interface Props {
   sizes?: string;
   class?: string;
 }
-// A foto ocupa 104% da largura do arco: o sizes considera isso para o navegador não ampliar a imagem
-const { prioridade = false, decorativo = false, sizes = '(max-width: 900px) 76vw, 520px', class: classe } = Astro.props;
+// No recorte, a foto ocupa 104% da largura do arco: o sizes considera isso para o navegador não ampliar a imagem
+const { foto = 'recorte', prioridade = false, decorativo = false, sizes = '(max-width: 900px) 76vw, 520px', class: classe } = Astro.props;
+const alt = decorativo ? '' : 'Letícia Ferracioli';
 ---
-<figure class:list={['retrato', classe]} aria-hidden={decorativo ? 'true' : undefined}>
-  <div class="retrato-fundo"></div>
-  <div class="retrato-clip">
+{foto === 'recorte' ? (
+  <figure class:list={['retrato', classe]} aria-hidden={decorativo ? 'true' : undefined}>
+    <div class="retrato-fundo"></div>
+    <div class="retrato-clip">
+      <Picture
+        src={recorte}
+        formats={['avif', 'webp']}
+        widths={[240, 360, 480, 640, 800, 940]}
+        quality={88}
+        sizes={sizes}
+        alt={alt}
+        loading={prioridade ? 'eager' : 'lazy'}
+        fetchpriority={prioridade ? 'high' : 'auto'}
+      />
+    </div>
+  </figure>
+) : (
+  <figure class:list={['retrato', 'retrato-inteiro', `foto-${foto}`, classe]} aria-hidden={decorativo ? 'true' : undefined}>
     <Picture
-      src={recorte}
+      src={FOTOS[foto]}
       formats={['avif', 'webp']}
-      widths={[240, 360, 480, 640, 800, 940]}
-      quality={88}
+      widths={[240, 360, 480, 640, 800, 1000]}
+      quality={85}
       sizes={sizes}
-      alt={decorativo ? '' : 'Letícia Ferracioli'}
+      alt={alt}
       loading={prioridade ? 'eager' : 'lazy'}
       fetchpriority={prioridade ? 'high' : 'auto'}
     />
-  </div>
-</figure>
+  </figure>
+)}
 
 <style>
   .retrato { position: relative; aspect-ratio: 3 / 4; margin: 0; }
@@ -47,4 +70,10 @@ const { prioridade = false, decorativo = false, sizes = '(max-width: 900px) 76vw
   .retrato-clip :global(img) {
     position: absolute; width: 104%; max-width: none; height: auto; left: -2%; top: 10.6%;
   }
+
+  /* Foto inteira dentro do arco */
+  .retrato-inteiro { overflow: hidden; border-radius: 999px 999px 0 0; background: var(--pedra); }
+  .retrato-inteiro :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .foto-sorrindo :global(img) { object-position: 45% 20%; }
+  .foto-pensativa :global(img) { object-position: 45% 35%; }
 </style>
