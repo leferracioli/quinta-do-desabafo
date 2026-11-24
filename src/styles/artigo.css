@@ -134,6 +134,7 @@
   font-family: var(--serif); font-weight: var(--peso-serif);
   font-size: clamp(var(--fs-6), 10vw, var(--fs-7)); line-height: 0.85; white-space: nowrap;
 }
+.dado-num.longo { font-size: clamp(2.4rem, 12vw, var(--fs-7)); }
 .dado-txt { font-size: var(--fs-1); line-height: 1.4; border-left: 3px solid var(--laranja); padding: 0 0 0.4rem 1rem; }
 .dado-fonte { grid-column: 1 / -1; font-size: var(--fs-0); color: var(--taupe-pedra); margin-top: 1rem; }
 @media (max-width: 900px) {

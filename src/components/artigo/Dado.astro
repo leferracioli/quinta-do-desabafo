@@ -3,9 +3,11 @@
 // Uso: <Dado numero="54%" fonte="Instituição, ano">das empresas operam sem CRM.</Dado>
 interface Props { numero: string; fonte: string }
 const { numero, fonte } = Astro.props;
+// Números longos (ex.: "35% x 13%") ganham um tamanho menor no celular para não vazar da tela
+const longo = numero.length > 6;
 ---
 <figure class="dado revela">
-  <p class="dado-num">{numero}</p>
+  <p class:list={['dado-num', { longo }]}>{numero}</p>
   <p class="dado-txt"><slot /></p>
   <figcaption class="dado-fonte">Fonte: {fonte}</figcaption>
 </figure>
